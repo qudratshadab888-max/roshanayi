@@ -1,0 +1,9 @@
+{
+  "name": "Roshanayi Academy",
+  "short_name": "Roshanayi",
+  "description": "Online learning for Afghan children abroad.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#6D28D9"
+}
