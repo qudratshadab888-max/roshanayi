@@ -2,7 +2,6 @@
 import {
   getClassroomSchedule,
   getCourseTitle,
-  getReferralShareMessage,
   getStudentClassroomAccess,
   getStudentClassrooms,
   getStudentReferralSummary,
@@ -10,8 +9,15 @@ import {
   managementStudents,
   referralGoalCount
 } from '~/data/management'
+import {
+  getAccessMessageLabel,
+  getLocalizedScheduleLabel,
+  getLocalizedValue,
+  getReferralNoteLabel,
+  getUiCopy
+} from '~/data/uiCopy'
 
-const { t, tm } = useI18n()
+const { locale, t, tm } = useI18n()
 
 useSeoMeta({
   title: () => t('seo.dashboard.title'),
@@ -21,6 +27,10 @@ useSeoMeta({
 const isDashboardLoading = ref(false)
 const copiedReferralCode = ref(false)
 const sampleStudent = managementStudents[0]!
+const ui = computed(() => getUiCopy(locale.value))
+const localText = (value: string) => getLocalizedValue(locale.value, value)
+const scheduleLabel = (day: string, time?: string, timezone?: string) =>
+  getLocalizedScheduleLabel(locale.value, day, time, timezone)
 const referralSummary = computed(() => getStudentReferralSummary(sampleStudent.id))
 const sampleClassrooms = computed(() =>
   getStudentClassrooms(sampleStudent.id).map((classroom) => {
@@ -31,7 +41,7 @@ const sampleClassrooms = computed(() =>
       classroom,
       schedule,
       access,
-      courseTitle: getCourseTitle(classroom.courseId),
+      courseTitle: localText(getCourseTitle(classroom.courseId)),
       teacherName: getTeacherName(classroom.teacherId)
     }
   })
@@ -80,7 +90,10 @@ const copyReferralCode = async () => {
 }
 
 const shareReferralCode = async () => {
-  const message = getReferralShareMessage(referralSummary.value.referralCode)
+  const message = ui.value.dashboard.referralShareMessage.replace(
+    '{code}',
+    referralSummary.value.referralCode
+  )
   copiedReferralCode.value = true
 
   if (import.meta.client && 'share' in navigator) {
@@ -92,6 +105,9 @@ const shareReferralCode = async () => {
     await navigator.clipboard.writeText(message)
   }
 }
+
+const accessMessage = (message: string) => getAccessMessageLabel(locale.value, message)
+const referralNote = (note: string) => getReferralNoteLabel(locale.value, note)
 </script>
 
 <template>
@@ -186,13 +202,13 @@ const shareReferralCode = async () => {
 
           <aside class="space-y-6">
             <article class="rounded-lg border border-slate-200 bg-white p-6 shadow-soft dark:border-slate-800 dark:bg-slate-900">
-              <p class="eyebrow">Classroom Access</p>
-              <h2 class="mt-2 text-2xl font-bold text-slate-950 dark:text-white">My live classes</h2>
+              <p class="eyebrow">{{ ui.dashboard.classroomAccess }}</p>
+              <h2 class="mt-2 text-2xl font-bold text-slate-950 dark:text-white">{{ ui.dashboard.myLiveClasses }}</h2>
               <div class="mt-5 grid gap-4">
                 <div v-for="item in sampleClassrooms" :key="item.classroom.id" class="rounded-md border border-slate-200 p-4 dark:border-slate-800">
                   <div class="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                     <div>
-                      <p class="font-bold text-slate-950 dark:text-white">{{ item.classroom.className }}</p>
+                      <p class="font-bold text-slate-950 dark:text-white">{{ localText(item.classroom.className) }}</p>
                       <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">{{ item.courseTitle }}</p>
                       <p class="mt-2 text-sm font-semibold text-brand-purple dark:text-brand-gold">{{ item.teacherName }}</p>
                     </div>
@@ -201,10 +217,10 @@ const shareReferralCode = async () => {
                     </span>
                   </div>
                   <p class="mt-3 text-sm text-slate-600 dark:text-slate-300">
-                    {{ item.schedule ? `${item.schedule.day}, ${item.schedule.time} ${item.schedule.timezone}` : 'Schedule pending' }}
+                    {{ item.schedule ? scheduleLabel(item.schedule.day, item.schedule.time, item.schedule.timezone) : ui.common.schedulePending }}
                   </p>
                   <div class="mt-4 flex flex-col gap-2 sm:flex-row">
-                    <BaseButton :to="`/classrooms/${item.classroom.id}`" size="sm">Open classroom</BaseButton>
+                    <BaseButton :to="`/classrooms/${item.classroom.id}`" size="sm">{{ ui.common.openClassroom }}</BaseButton>
                     <a
                       v-if="item.access.canJoin && item.schedule"
                       :href="item.schedule.meetingLink"
@@ -212,28 +228,28 @@ const shareReferralCode = async () => {
                       rel="noreferrer"
                       class="focus-ring inline-flex items-center justify-center rounded-md border border-slate-300 bg-white px-3 py-2 text-sm font-semibold text-slate-900 hover:border-brand-purple hover:text-brand-purple dark:border-slate-700 dark:bg-slate-950 dark:text-white dark:hover:border-brand-gold dark:hover:text-brand-gold"
                     >
-                      Join Live Class
+                      {{ ui.common.joinLiveClass }}
                     </a>
                   </div>
                   <p v-if="!item.access.canJoin" class="mt-3 rounded-md bg-amber-50 p-3 text-sm font-semibold text-amber-800 dark:bg-amber-950/40 dark:text-amber-100">
-                    {{ item.access.message }}
+                    {{ accessMessage(item.access.message) }}
                   </p>
                 </div>
               </div>
             </article>
 
             <article class="rounded-lg border border-purple-100 bg-purple-50 p-6 shadow-soft dark:border-purple-900/50 dark:bg-purple-950/30">
-              <p class="eyebrow">Student Profile</p>
-              <h2 class="mt-2 text-2xl font-bold text-slate-950 dark:text-white">Referral Code</h2>
+              <p class="eyebrow">{{ ui.dashboard.studentProfile }}</p>
+              <h2 class="mt-2 text-2xl font-bold text-slate-950 dark:text-white">{{ ui.dashboard.referralCode }}</h2>
               <p class="mt-3 text-sm leading-6 text-slate-600 dark:text-slate-300">
-                Share this code with another family. The reward counts only after their trial classes and first admin-confirmed payment.
+                {{ ui.dashboard.referralDescription }}
               </p>
               <p class="mt-5 rounded-md bg-white p-4 text-2xl font-black text-brand-purple dark:bg-slate-900 dark:text-brand-gold">
                 {{ referralSummary.referralCode }}
               </p>
               <div class="mt-4">
                 <div class="flex items-center justify-between text-sm font-semibold text-slate-700 dark:text-slate-200">
-                  <span>{{ referralSummary.progressLabel }}</span>
+                  <span>{{ referralSummary.verifiedCount }}/{{ referralGoalCount }} {{ ui.dashboard.verifiedReferrals }}</span>
                   <span>{{ referralSummary.verifiedCount }} / {{ referralGoalCount }}</span>
                 </div>
                 <div class="mt-2 h-2 rounded-full bg-white dark:bg-slate-800">
@@ -241,17 +257,17 @@ const shareReferralCode = async () => {
                 </div>
               </div>
               <p v-if="referralSummary.rewardStatus === 'available' || referralSummary.rewardStatus === 'eligible' || referralSummary.rewardStatus === 'approved'" class="mt-4 rounded-md bg-white p-3 text-sm font-semibold text-emerald-600 dark:bg-slate-900 dark:text-emerald-300">
-                Congratulations! You earned one month free tuition.
+                {{ ui.common.congratulations }}
               </p>
-              <p v-else class="mt-4 text-sm leading-6 text-slate-600 dark:text-slate-300">{{ referralSummary.rewardNote }}</p>
+              <p v-else class="mt-4 text-sm leading-6 text-slate-600 dark:text-slate-300">{{ referralNote(referralSummary.rewardNote) }}</p>
               <div class="mt-4 flex flex-wrap gap-2">
                 <button type="button" class="focus-ring rounded-md bg-brand-purple px-4 py-2 text-sm font-semibold text-white dark:bg-brand-gold dark:text-slate-950" @click="copyReferralCode">
-                  Copy code
+                  {{ ui.common.copyCode }}
                 </button>
                 <button type="button" class="focus-ring rounded-md border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-700 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200" @click="shareReferralCode">
-                  Share message
+                  {{ ui.common.shareMessage }}
                 </button>
-                <span v-if="copiedReferralCode" class="inline-flex items-center text-sm font-semibold text-emerald-600 dark:text-emerald-300">Copied</span>
+                <span v-if="copiedReferralCode" class="inline-flex items-center text-sm font-semibold text-emerald-600 dark:text-emerald-300">{{ ui.common.copied }}</span>
               </div>
             </article>
 

@@ -38,12 +38,14 @@ onMounted(() => {
   <header class="sticky top-0 z-50 border-b border-slate-200 bg-white/95 backdrop-blur dark:border-slate-800 dark:bg-slate-950/95">
     <nav class="container-wide grid min-h-20 grid-cols-[1fr_auto] items-center gap-4 lg:grid-cols-[auto_1fr_auto]" :aria-label="t('common.menu.mainNavigation')">
       <NuxtLink to="/" class="focus-ring flex items-center gap-3 rounded-md">
-        <span class="flex h-11 w-11 items-center justify-center rounded-lg bg-brand-purple text-lg font-black text-white shadow-lift">
-          {{ t('common.brand.initials') }}
-        </span>
+        <img
+          src="/images/logo%20roshnayi.png"
+          :alt="t('common.brand.name')"
+          class="h-11 w-11 rounded-lg object-cover shadow-lift"
+        >
         <span>
           <span class="block text-base font-black tracking-tight text-slate-950 dark:text-white">{{ t('common.brand.shortName') }}</span>
-          <span class="block text-xs font-semibold uppercase tracking-[0.2em] text-brand-purple dark:text-brand-gold">{{ t('common.brand.academy') }}</span>
+          <span class="mt-0.5 block text-xs font-semibold tracking-[0.2em] text-brand-purple dark:text-brand-gold">{{ t('common.brand.academy') }}</span>
         </span>
       </NuxtLink>
 

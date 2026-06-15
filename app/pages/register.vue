@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { generateReferralCode } from '~/data/management'
+import { getUiCopy } from '~/data/uiCopy'
 
-const { t, tm } = useI18n()
+const { locale, t, tm } = useI18n()
 const { courseCategories } = useAcademyData()
 
 useSeoMeta({
@@ -22,6 +23,7 @@ const courseOptions = computed(() => [
   t('common.categories.notSure')
 ])
 const registrationSteps = computed(() => tm<string[]>('register.steps'))
+const ui = computed(() => getUiCopy(locale.value))
 
 const submitRegistration = () => {
   isSubmitting.value = true
@@ -91,16 +93,16 @@ const submitRegistration = () => {
             <input id="preferred-time" type="text" :placeholder="t('register.placeholders.preferredTime')" class="focus-ring mt-2 w-full rounded-md border border-slate-300 bg-white px-4 py-3 text-sm dark:border-slate-700 dark:bg-slate-950">
           </div>
           <div class="sm:col-span-2">
-            <label class="text-sm font-semibold text-slate-700 dark:text-slate-200" for="referral-code">Referral Code</label>
+            <label class="text-sm font-semibold text-slate-700 dark:text-slate-200" for="referral-code">{{ ui.register.referralCode }}</label>
             <input
               id="referral-code"
               v-model="registration.invitedReferralCode"
               type="text"
-              placeholder="Enter referral code if someone invited you"
+              :placeholder="ui.register.referralPlaceholder"
               class="focus-ring mt-2 w-full rounded-md border border-slate-300 bg-white px-4 py-3 text-sm uppercase dark:border-slate-700 dark:bg-slate-950"
             >
             <p class="mt-2 text-xs leading-5 text-slate-500 dark:text-slate-400">
-              Referral rewards count only after trial classes, first payment, and admin confirmation.
+              {{ ui.register.referralHelp }}
             </p>
           </div>
           <div class="sm:col-span-2">
@@ -117,7 +119,8 @@ const submitRegistration = () => {
           </p>
         </div>
         <div v-if="submitted && generatedReferralCode" class="mt-5 rounded-lg bg-purple-50 p-4 text-sm text-brand-purple dark:bg-purple-950/40 dark:text-purple-100">
-          New student referral code: <strong>{{ generatedReferralCode }}</strong>. Share it after enrollment so verified referrals can count toward one month free tuition.
+          {{ ui.register.generatedPrefix }} <strong>{{ generatedReferralCode }}</strong>.
+          {{ ui.register.generatedSuffix }}
         </div>
       </form>
     </div>

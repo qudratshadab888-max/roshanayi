@@ -4,13 +4,13 @@ import {
   classrooms,
   classSchedules,
   getClassroomCardRows,
+  getClassroomSchedule,
   getCourseTitle,
   getParentName,
   getParentStudents,
   getPaymentForStudent,
   getParentReferralSummaries,
   getReferralManagementRows,
-  getReferralShareMessage,
   getStudentReferralSummary,
   getStatusTone,
   getStudentAttendance,
@@ -31,12 +31,32 @@ import {
   studentStatuses,
   teacherCanExportStudentLists
 } from '~/data/management'
+import {
+  getLocalizedScheduleLabel,
+  getLocalizedValue,
+  getReferralNoteLabel,
+  getStatusLabel,
+  getUiCopy
+} from '~/data/uiCopy'
 import type { ReferralRewardStatus } from '~/types'
 
+const { locale } = useI18n()
+const ui = computed(() => getUiCopy(locale.value))
+const localText = (value: string) => getLocalizedValue(locale.value, value)
+const localList = (items: string[]) =>
+  items.map((item) => localText(item)).join(locale.value === 'en' ? ', ' : '، ')
+const scheduleLabel = (day: string, time?: string, timezone?: string) =>
+  getLocalizedScheduleLabel(locale.value, day, time, timezone)
+const courseTitleById = (courseId: string) => localText(getCourseTitle(courseId))
+const classroomScheduleLabel = (classroomId: string) => {
+  const schedule = getClassroomSchedule(classroomId)
+
+  return schedule ? scheduleLabel(schedule.day, schedule.time, schedule.timezone) : ui.value.common.schedulePending
+}
+
 useSeoMeta({
-  title: 'Management System Phase 1',
-  description:
-    'Phase 1 mock student management dashboard for Roshanayi Academy with students, courses, teachers, schedules, attendance, payments, and role views.'
+  title: () => ui.value.management.seoTitle,
+  description: () => ui.value.management.seoDescription
 })
 
 const selectedParentId = ref(managementParents[0]?.id ?? '')
@@ -47,11 +67,31 @@ const referralRewardOverrides = reactive<Record<string, ReferralRewardStatus>>({
 const formatCurrency = (amount: number) => `$${amount.toLocaleString('en-US')}`
 
 const overviewStats = computed(() => [
-  { label: 'Students', value: managementStudents.length.toString(), detail: 'Mock registrations' },
-  { label: 'Active', value: managementStudents.filter((student) => student.status === 'Active').length.toString(), detail: 'Can attend paid classes' },
-  { label: 'Payment required', value: managementStudents.filter((student) => student.status === 'Payment Required').length.toString(), detail: 'Needs admin follow-up' },
-  { label: 'Courses', value: managementCourses.length.toString(), detail: 'Available programs' },
-  { label: 'Classrooms', value: classrooms.length.toString(), detail: 'Virtual class groups' }
+  {
+    label: ui.value.management.stats.students,
+    value: managementStudents.length.toString(),
+    detail: ui.value.management.stats.mockRegistrations
+  },
+  {
+    label: ui.value.management.stats.active,
+    value: managementStudents.filter((student) => student.status === 'Active').length.toString(),
+    detail: ui.value.management.stats.canAttendPaidClasses
+  },
+  {
+    label: ui.value.management.stats.paymentRequired,
+    value: managementStudents.filter((student) => student.status === 'Payment Required').length.toString(),
+    detail: ui.value.management.stats.needsAdminFollowUp
+  },
+  {
+    label: ui.value.management.stats.courses,
+    value: managementCourses.length.toString(),
+    detail: ui.value.management.stats.availablePrograms
+  },
+  {
+    label: ui.value.management.stats.classrooms,
+    value: classrooms.length.toString(),
+    detail: ui.value.management.stats.virtualClassGroups
+  }
 ])
 
 const statusCounts = computed(() =>
@@ -65,7 +105,7 @@ const studentsWithDetails = computed(() =>
   managementStudents.map((student) => ({
     ...student,
     parentName: getParentName(student.parentId),
-    courseTitle: getCourseTitle(student.selectedCourseId),
+    courseTitle: courseTitleById(student.selectedCourseId),
     payment: getPaymentForStudent(student.id),
     trialCount: getTrialAttendanceCount(student.id),
     referral: getStudentReferralSummary(student.id)
@@ -87,7 +127,7 @@ const coursesWithDetails = computed(() =>
 const schedulesWithDetails = computed(() =>
   classSchedules.map((schedule) => ({
     ...schedule,
-    courseTitle: getCourseTitle(schedule.courseId),
+    courseTitle: courseTitleById(schedule.courseId),
     teacherName: getTeacherName(schedule.teacherId),
     enrolled: schedule.enrolledStudentIds.length
   }))
@@ -99,7 +139,7 @@ const attendanceWithDetails = computed(() =>
   attendanceRecords.map((record) => ({
     ...record,
     studentName: getStudentName(record.studentId),
-    courseTitle: getCourseTitle(record.courseId),
+    courseTitle: courseTitleById(record.courseId),
     teacherName: getTeacherName(record.teacherId)
   }))
 )
@@ -109,7 +149,7 @@ const paymentsWithDetails = computed(() =>
     ...payment,
     studentName: getStudentName(payment.studentId),
     parentName: getParentName(payment.parentId),
-    courseTitle: getCourseTitle(payment.courseId)
+    courseTitle: courseTitleById(payment.courseId)
   }))
 )
 
@@ -124,7 +164,7 @@ const selectedTeacher = computed(() =>
 const parentDashboardRows = computed(() =>
   getParentStudents(selectedParentId.value).map((student) => ({
     student,
-    courseTitle: getCourseTitle(student.selectedCourseId),
+    courseTitle: courseTitleById(student.selectedCourseId),
     payment: getPaymentForStudent(student.id),
     attendance: getStudentAttendance(student.id),
     schedule: getStudentNextSchedule(student),
@@ -135,7 +175,13 @@ const parentDashboardRows = computed(() =>
 
 const teacherSchedules = computed(() => getTeacherSchedules(selectedTeacherId.value))
 const teacherClassrooms = computed(() => getTeacherClassrooms(selectedTeacherId.value))
-const teacherRoster = computed(() => getTeacherSafeRoster(selectedTeacherId.value))
+const teacherRoster = computed(() =>
+  getTeacherSafeRoster(selectedTeacherId.value).map((student) => ({
+    ...student,
+    course: localText(student.course),
+    currentLevel: localText(student.currentLevel)
+  }))
+)
 const parentReferralCards = computed(() => getParentReferralSummaries(selectedParentId.value))
 const referralManagementRows = computed(() =>
   getReferralManagementRows().map((row) => ({
@@ -153,7 +199,7 @@ const copyReferralCode = async (referralCode: string) => {
 }
 
 const shareReferralCode = async (referralCode: string) => {
-  const message = getReferralShareMessage(referralCode)
+  const message = ui.value.dashboard.referralShareMessage.replace('{code}', referralCode)
   copiedReferralCode.value = referralCode
 
   if (import.meta.client && 'share' in navigator) {
@@ -169,16 +215,31 @@ const shareReferralCode = async (referralCode: string) => {
 const setReferralRewardStatus = (referralCode: string, status: 'approved' | 'rejected') => {
   referralRewardOverrides[referralCode] = status
 }
+
+const booleanLabel = (value: boolean) =>
+  value ? ui.value.classroomDetail.fallbacks.yes : ui.value.classroomDetail.fallbacks.no
+const parentViewingAs = (name = '') => ui.value.management.parent.viewingAs.replace('{name}', name)
+const referralCodeTitle = (name: string) =>
+  ui.value.management.parent.referralCodeTitle.replace('{name}', name)
+const rewardNote = (note: string) => getReferralNoteLabel(locale.value, note)
+const statusLabel = (status: string) => getStatusLabel(locale.value, status)
+const teacherViewingAs = (name = '') =>
+  ui.value.management.teacher.viewingAs
+    .replace('{name}', name)
+    .replace(
+      '{status}',
+      teacherCanExportStudentLists ? ui.value.common.enabled : ui.value.common.disabled
+    )
 </script>
 
 <template>
   <div>
     <section class="bg-slate-950 py-14 text-white">
       <div class="container-wide">
-        <p class="text-sm font-semibold uppercase tracking-[0.16em] text-brand-gold">Roshanayi Academy</p>
-        <h1 class="mt-4 max-w-4xl text-4xl font-black tracking-tight sm:text-5xl">Management System Phase 1</h1>
+        <p class="text-sm font-semibold uppercase tracking-[0.16em] text-brand-gold">{{ ui.management.heroEyebrow }}</p>
+        <h1 class="mt-4 max-w-4xl text-4xl font-black tracking-tight sm:text-5xl">{{ ui.management.heroTitle }}</h1>
         <p class="mt-5 max-w-3xl text-lg leading-8 text-slate-200">
-          A clean mock-data foundation for admin, parent, and teacher workflows. No backend, no payment gateway, and no complex features yet.
+          {{ ui.management.heroDescription }}
         </p>
       </div>
     </section>
@@ -197,40 +258,40 @@ const setReferralRewardStatus = (referralCode: string, status: 'approved' | 'rej
       <div class="container-wide grid gap-8">
         <div class="grid gap-4 lg:grid-cols-[0.9fr_1.1fr] lg:items-start">
           <div>
-            <p class="eyebrow">Admin Dashboard</p>
-            <h2 class="mt-3 text-3xl font-bold text-slate-950 dark:text-white">Overview for Phase 1 operations</h2>
+            <p class="eyebrow">{{ ui.management.admin.eyebrow }}</p>
+            <h2 class="mt-3 text-3xl font-bold text-slate-950 dark:text-white">{{ ui.management.admin.title }}</h2>
             <p class="mt-4 leading-7 text-slate-600 dark:text-slate-300">
-              Admin can review student registrations, class status, schedules, attendance, and payments from one simple page.
+              {{ ui.management.admin.description }}
             </p>
           </div>
 
           <div class="grid gap-3 sm:grid-cols-2">
             <div v-for="item in statusCounts" :key="item.status" class="rounded-lg border border-slate-200 bg-white p-4 dark:border-slate-800 dark:bg-slate-900">
-              <span :class="['rounded-full px-3 py-1 text-xs font-bold', getStatusTone(item.status)]">{{ item.status }}</span>
+              <span :class="['rounded-full px-3 py-1 text-xs font-bold', getStatusTone(item.status)]">{{ statusLabel(item.status) }}</span>
               <p class="mt-3 text-2xl font-black text-slate-950 dark:text-white">{{ item.count }}</p>
-              <p class="text-sm text-slate-500 dark:text-slate-400">students</p>
+              <p class="text-sm text-slate-500 dark:text-slate-400">{{ ui.management.admin.studentsSmall }}</p>
             </div>
           </div>
         </div>
 
         <div class="overflow-hidden rounded-lg border border-slate-200 bg-white shadow-soft dark:border-slate-800 dark:bg-slate-900">
           <div class="border-b border-slate-200 p-5 dark:border-slate-800">
-            <h3 class="text-xl font-bold text-slate-950 dark:text-white">Student Registration List</h3>
-            <p class="mt-1 text-sm text-slate-600 dark:text-slate-300">Mock records only. Statuses are Trial, Payment Required, Active, and Inactive.</p>
+            <h3 class="text-xl font-bold text-slate-950 dark:text-white">{{ ui.management.admin.studentListTitle }}</h3>
+            <p class="mt-1 text-sm text-slate-600 dark:text-slate-300">{{ ui.management.admin.studentListDescription }}</p>
           </div>
           <div class="overflow-x-auto">
             <table class="w-full min-w-[1080px] text-sm">
               <thead class="bg-slate-50 text-left text-slate-500 dark:bg-slate-800/60 dark:text-slate-300">
                 <tr>
-                  <th class="px-5 py-3 font-semibold">Student</th>
-                  <th class="px-5 py-3 font-semibold">Parent</th>
-                  <th class="px-5 py-3 font-semibold">Age</th>
-                  <th class="px-5 py-3 font-semibold">Country</th>
-                  <th class="px-5 py-3 font-semibold">Course</th>
-                  <th class="px-5 py-3 font-semibold">Preferred Time</th>
-                  <th class="px-5 py-3 font-semibold">Trials</th>
-                  <th class="px-5 py-3 font-semibold">Referral Code</th>
-                  <th class="px-5 py-3 font-semibold">Status</th>
+                  <th class="px-5 py-3 font-semibold">{{ ui.management.labels.student }}</th>
+                  <th class="px-5 py-3 font-semibold">{{ ui.management.labels.parent }}</th>
+                  <th class="px-5 py-3 font-semibold">{{ ui.management.labels.age }}</th>
+                  <th class="px-5 py-3 font-semibold">{{ ui.management.labels.country }}</th>
+                  <th class="px-5 py-3 font-semibold">{{ ui.management.labels.course }}</th>
+                  <th class="px-5 py-3 font-semibold">{{ ui.management.labels.preferredTime }}</th>
+                  <th class="px-5 py-3 font-semibold">{{ ui.management.labels.trials }}</th>
+                  <th class="px-5 py-3 font-semibold">{{ ui.management.labels.referralCode }}</th>
+                  <th class="px-5 py-3 font-semibold">{{ ui.management.labels.status }}</th>
                 </tr>
               </thead>
               <tbody class="divide-y divide-slate-200 dark:divide-slate-800">
@@ -238,13 +299,13 @@ const setReferralRewardStatus = (referralCode: string, status: 'approved' | 'rej
                   <td class="px-5 py-4 font-semibold text-slate-950 dark:text-white">{{ student.name }}</td>
                   <td class="px-5 py-4">{{ student.parentName }}</td>
                   <td class="px-5 py-4">{{ student.age }}</td>
-                  <td class="px-5 py-4">{{ student.country }}</td>
+                  <td class="px-5 py-4">{{ localText(student.country) }}</td>
                   <td class="px-5 py-4">{{ student.courseTitle }}</td>
-                  <td class="px-5 py-4">{{ student.preferredClassTime }}</td>
+                  <td class="px-5 py-4">{{ localText(student.preferredClassTime) }}</td>
                   <td class="px-5 py-4">{{ student.trialCount }} / {{ student.trialClassesAllowed }}</td>
                   <td class="px-5 py-4 font-semibold text-brand-purple dark:text-brand-gold">{{ student.referralCode }}</td>
                   <td class="px-5 py-4">
-                    <span :class="['rounded-full px-3 py-1 text-xs font-bold', getStatusTone(student.status)]">{{ student.status }}</span>
+                    <span :class="['rounded-full px-3 py-1 text-xs font-bold', getStatusTone(student.status)]">{{ statusLabel(student.status) }}</span>
                   </td>
                 </tr>
               </tbody>
@@ -255,19 +316,19 @@ const setReferralRewardStatus = (referralCode: string, status: 'approved' | 'rej
         <div class="grid gap-8 xl:grid-cols-2">
           <div class="overflow-hidden rounded-lg border border-slate-200 bg-white shadow-soft dark:border-slate-800 dark:bg-slate-900">
             <div class="border-b border-slate-200 p-5 dark:border-slate-800">
-              <h3 class="text-xl font-bold text-slate-950 dark:text-white">Courses List</h3>
+              <h3 class="text-xl font-bold text-slate-950 dark:text-white">{{ ui.management.admin.coursesListTitle }}</h3>
             </div>
             <div class="divide-y divide-slate-200 dark:divide-slate-800">
               <article v-for="course in coursesWithDetails" :key="course.id" class="p-5">
                 <div class="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                   <div>
-                    <p class="font-bold text-slate-950 dark:text-white">{{ course.title }}</p>
-                    <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">{{ course.level }} | {{ course.ageGroup }}</p>
-                    <p class="mt-2 text-sm leading-6 text-slate-600 dark:text-slate-300">{{ course.description }}</p>
+                    <p class="font-bold text-slate-950 dark:text-white">{{ localText(course.title) }}</p>
+                    <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">{{ localText(course.level) }} | {{ localText(course.ageGroup) }}</p>
+                    <p class="mt-2 text-sm leading-6 text-slate-600 dark:text-slate-300">{{ localText(course.description) }}</p>
                   </div>
                   <div class="text-sm font-semibold text-slate-700 dark:text-slate-200">
                     <p>{{ formatCurrency(course.price) }}</p>
-                    <p>{{ course.enrolled }} / {{ course.capacity }} seats</p>
+                    <p>{{ course.enrolled }} / {{ course.capacity }} {{ ui.management.labels.capacity }}</p>
                   </div>
                 </div>
               </article>
@@ -276,18 +337,18 @@ const setReferralRewardStatus = (referralCode: string, status: 'approved' | 'rej
 
           <div class="overflow-hidden rounded-lg border border-slate-200 bg-white shadow-soft dark:border-slate-800 dark:bg-slate-900">
             <div class="border-b border-slate-200 p-5 dark:border-slate-800">
-              <h3 class="text-xl font-bold text-slate-950 dark:text-white">Teachers List</h3>
+              <h3 class="text-xl font-bold text-slate-950 dark:text-white">{{ ui.management.admin.teachersListTitle }}</h3>
             </div>
             <div class="divide-y divide-slate-200 dark:divide-slate-800">
               <article v-for="teacher in managementTeachers" :key="teacher.id" class="p-5">
                 <div class="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                   <div>
                     <p class="font-bold text-slate-950 dark:text-white">{{ teacher.name }}</p>
-                    <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">{{ teacher.timezone }} timezone</p>
-                    <p class="mt-2 text-sm text-slate-600 dark:text-slate-300">{{ teacher.specialties.join(', ') }}</p>
+                    <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">{{ teacher.timezone }} {{ ui.management.labels.timezone }}</p>
+                    <p class="mt-2 text-sm text-slate-600 dark:text-slate-300">{{ localList(teacher.specialties) }}</p>
                   </div>
                   <span class="rounded-full bg-purple-50 px-3 py-1 text-xs font-bold text-brand-purple dark:bg-purple-950/40 dark:text-purple-100">
-                    {{ teacher.activeClasses }} classes
+                    {{ teacher.activeClasses }} {{ ui.management.teacher.classes }}
                   </span>
                 </div>
               </article>
@@ -297,25 +358,25 @@ const setReferralRewardStatus = (referralCode: string, status: 'approved' | 'rej
 
         <div class="overflow-hidden rounded-lg border border-slate-200 bg-white shadow-soft dark:border-slate-800 dark:bg-slate-900">
           <div class="border-b border-slate-200 p-5 dark:border-slate-800">
-            <h3 class="text-xl font-bold text-slate-950 dark:text-white">Class Schedule List</h3>
+            <h3 class="text-xl font-bold text-slate-950 dark:text-white">{{ ui.management.admin.classScheduleTitle }}</h3>
           </div>
           <div class="overflow-x-auto">
             <table class="w-full min-w-[820px] text-sm">
               <thead class="bg-slate-50 text-left text-slate-500 dark:bg-slate-800/60 dark:text-slate-300">
                 <tr>
-                  <th class="px-5 py-3 font-semibold">Course</th>
-                  <th class="px-5 py-3 font-semibold">Teacher</th>
-                  <th class="px-5 py-3 font-semibold">Day</th>
-                  <th class="px-5 py-3 font-semibold">Time</th>
-                  <th class="px-5 py-3 font-semibold">Timezone</th>
-                  <th class="px-5 py-3 font-semibold">Capacity</th>
+                  <th class="px-5 py-3 font-semibold">{{ ui.management.labels.course }}</th>
+                  <th class="px-5 py-3 font-semibold">{{ ui.management.labels.teacher }}</th>
+                  <th class="px-5 py-3 font-semibold">{{ ui.management.labels.day }}</th>
+                  <th class="px-5 py-3 font-semibold">{{ ui.management.labels.time }}</th>
+                  <th class="px-5 py-3 font-semibold">{{ ui.management.labels.timezone }}</th>
+                  <th class="px-5 py-3 font-semibold">{{ ui.management.labels.capacity }}</th>
                 </tr>
               </thead>
               <tbody class="divide-y divide-slate-200 dark:divide-slate-800">
                 <tr v-for="schedule in schedulesWithDetails" :key="schedule.id">
                   <td class="px-5 py-4 font-semibold text-slate-950 dark:text-white">{{ schedule.courseTitle }}</td>
                   <td class="px-5 py-4">{{ schedule.teacherName }}</td>
-                  <td class="px-5 py-4">{{ schedule.day }}</td>
+                  <td class="px-5 py-4">{{ localText(schedule.day) }}</td>
                   <td class="px-5 py-4">{{ schedule.time }}</td>
                   <td class="px-5 py-4">{{ schedule.timezone }}</td>
                   <td class="px-5 py-4">{{ schedule.enrolled }} / {{ schedule.capacity }}</td>
@@ -328,41 +389,41 @@ const setReferralRewardStatus = (referralCode: string, status: 'approved' | 'rej
         <div class="overflow-hidden rounded-lg border border-slate-200 bg-white shadow-soft dark:border-slate-800 dark:bg-slate-900">
           <div class="flex flex-col gap-4 border-b border-slate-200 p-5 dark:border-slate-800 sm:flex-row sm:items-end sm:justify-between">
             <div>
-              <h3 class="text-xl font-bold text-slate-950 dark:text-white">Classroom Management</h3>
+              <h3 class="text-xl font-bold text-slate-950 dark:text-white">{{ ui.management.admin.classroomManagementTitle }}</h3>
               <p class="mt-1 text-sm text-slate-600 dark:text-slate-300">
-                Admin can review class groups, meeting providers, enrolled students, schedules, and classroom pages.
+                {{ ui.management.admin.classroomManagementDescription }}
               </p>
             </div>
-            <BaseButton to="/classrooms" variant="outline" size="sm">View all classrooms</BaseButton>
+            <BaseButton to="/classrooms" variant="outline" size="sm">{{ ui.management.actions.viewAllClassrooms }}</BaseButton>
           </div>
           <div class="overflow-x-auto">
             <table class="w-full min-w-[980px] text-sm">
               <thead class="bg-slate-50 text-left text-slate-500 dark:bg-slate-800/60 dark:text-slate-300">
                 <tr>
-                  <th class="px-5 py-3 font-semibold">Classroom</th>
-                  <th class="px-5 py-3 font-semibold">Course</th>
-                  <th class="px-5 py-3 font-semibold">Teacher</th>
-                  <th class="px-5 py-3 font-semibold">Schedule</th>
-                  <th class="px-5 py-3 font-semibold">Provider</th>
-                  <th class="px-5 py-3 font-semibold">Students</th>
-                  <th class="px-5 py-3 font-semibold">Status</th>
-                  <th class="px-5 py-3 font-semibold">Page</th>
+                  <th class="px-5 py-3 font-semibold">{{ ui.management.labels.classroom }}</th>
+                  <th class="px-5 py-3 font-semibold">{{ ui.management.labels.course }}</th>
+                  <th class="px-5 py-3 font-semibold">{{ ui.management.labels.teacher }}</th>
+                  <th class="px-5 py-3 font-semibold">{{ ui.management.labels.schedule }}</th>
+                  <th class="px-5 py-3 font-semibold">{{ ui.management.labels.provider }}</th>
+                  <th class="px-5 py-3 font-semibold">{{ ui.management.labels.students }}</th>
+                  <th class="px-5 py-3 font-semibold">{{ ui.management.labels.status }}</th>
+                  <th class="px-5 py-3 font-semibold">{{ ui.management.labels.page }}</th>
                 </tr>
               </thead>
               <tbody class="divide-y divide-slate-200 dark:divide-slate-800">
                 <tr v-for="row in classroomRows" :key="row.classroom.id">
-                  <td class="px-5 py-4 font-semibold text-slate-950 dark:text-white">{{ row.classroom.className }}</td>
-                  <td class="px-5 py-4">{{ row.courseTitle }}</td>
+                  <td class="px-5 py-4 font-semibold text-slate-950 dark:text-white">{{ localText(row.classroom.className) }}</td>
+                  <td class="px-5 py-4">{{ localText(row.courseTitle) }}</td>
                   <td class="px-5 py-4">{{ row.teacherName }}</td>
-                  <td class="px-5 py-4">{{ row.scheduleLabel }}</td>
+                  <td class="px-5 py-4">{{ classroomScheduleLabel(row.classroom.id) }}</td>
                   <td class="px-5 py-4">{{ row.classroom.meetingProvider }}</td>
                   <td class="px-5 py-4">{{ row.enrolledCount }} / {{ row.capacity }}</td>
                   <td class="px-5 py-4">
-                    <span :class="['rounded-full px-3 py-1 text-xs font-bold uppercase', getStatusTone(row.classroom.status)]">{{ row.classroom.status }}</span>
+                    <span :class="['rounded-full px-3 py-1 text-xs font-bold uppercase', getStatusTone(row.classroom.status)]">{{ statusLabel(row.classroom.status) }}</span>
                   </td>
                   <td class="px-5 py-4">
                     <NuxtLink :to="`/classrooms/${row.classroom.id}`" class="focus-ring rounded-md font-bold text-brand-purple dark:text-brand-gold">
-                      Open
+                      {{ ui.management.actions.open }}
                     </NuxtLink>
                   </td>
                 </tr>
@@ -374,17 +435,17 @@ const setReferralRewardStatus = (referralCode: string, status: 'approved' | 'rej
         <div class="grid gap-8 xl:grid-cols-2">
           <div class="overflow-hidden rounded-lg border border-slate-200 bg-white shadow-soft dark:border-slate-800 dark:bg-slate-900">
             <div class="border-b border-slate-200 p-5 dark:border-slate-800">
-              <h3 class="text-xl font-bold text-slate-950 dark:text-white">Attendance Table</h3>
+              <h3 class="text-xl font-bold text-slate-950 dark:text-white">{{ ui.management.admin.attendanceTableTitle }}</h3>
             </div>
             <div class="overflow-x-auto">
               <table class="w-full min-w-[760px] text-sm">
                 <thead class="bg-slate-50 text-left text-slate-500 dark:bg-slate-800/60 dark:text-slate-300">
                   <tr>
-                    <th class="px-5 py-3 font-semibold">Date</th>
-                    <th class="px-5 py-3 font-semibold">Student</th>
-                    <th class="px-5 py-3 font-semibold">Course</th>
-                    <th class="px-5 py-3 font-semibold">Teacher</th>
-                    <th class="px-5 py-3 font-semibold">Status</th>
+                    <th class="px-5 py-3 font-semibold">{{ ui.management.labels.date }}</th>
+                    <th class="px-5 py-3 font-semibold">{{ ui.management.labels.student }}</th>
+                    <th class="px-5 py-3 font-semibold">{{ ui.management.labels.course }}</th>
+                    <th class="px-5 py-3 font-semibold">{{ ui.management.labels.teacher }}</th>
+                    <th class="px-5 py-3 font-semibold">{{ ui.management.labels.status }}</th>
                   </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-200 dark:divide-slate-800">
@@ -394,7 +455,7 @@ const setReferralRewardStatus = (referralCode: string, status: 'approved' | 'rej
                     <td class="px-5 py-4">{{ record.courseTitle }}</td>
                     <td class="px-5 py-4">{{ record.teacherName }}</td>
                     <td class="px-5 py-4">
-                      <span class="rounded-full bg-slate-100 px-3 py-1 text-xs font-bold uppercase text-slate-700 dark:bg-slate-800 dark:text-slate-200">{{ record.status }}</span>
+                      <span class="rounded-full bg-slate-100 px-3 py-1 text-xs font-bold uppercase text-slate-700 dark:bg-slate-800 dark:text-slate-200">{{ statusLabel(record.status) }}</span>
                     </td>
                   </tr>
                 </tbody>
@@ -404,20 +465,20 @@ const setReferralRewardStatus = (referralCode: string, status: 'approved' | 'rej
 
           <div class="overflow-hidden rounded-lg border border-slate-200 bg-white shadow-soft dark:border-slate-800 dark:bg-slate-900">
             <div class="border-b border-slate-200 p-5 dark:border-slate-800">
-              <h3 class="text-xl font-bold text-slate-950 dark:text-white">Payment Tracking Table</h3>
-              <p class="mt-1 text-sm text-slate-600 dark:text-slate-300">Tracking only. No payment gateway is connected.</p>
+              <h3 class="text-xl font-bold text-slate-950 dark:text-white">{{ ui.management.admin.paymentTrackingTitle }}</h3>
+              <p class="mt-1 text-sm text-slate-600 dark:text-slate-300">{{ ui.management.admin.paymentTrackingDescription }}</p>
             </div>
             <div class="overflow-x-auto">
               <table class="w-full min-w-[820px] text-sm">
                 <thead class="bg-slate-50 text-left text-slate-500 dark:bg-slate-800/60 dark:text-slate-300">
                   <tr>
-                    <th class="px-5 py-3 font-semibold">Student</th>
-                    <th class="px-5 py-3 font-semibold">Parent</th>
-                    <th class="px-5 py-3 font-semibold">Course</th>
-                    <th class="px-5 py-3 font-semibold">Month</th>
-                    <th class="px-5 py-3 font-semibold">Amount</th>
-                    <th class="px-5 py-3 font-semibold">Status</th>
-                    <th class="px-5 py-3 font-semibold">Confirmed</th>
+                    <th class="px-5 py-3 font-semibold">{{ ui.management.labels.student }}</th>
+                    <th class="px-5 py-3 font-semibold">{{ ui.management.labels.parent }}</th>
+                    <th class="px-5 py-3 font-semibold">{{ ui.management.labels.course }}</th>
+                    <th class="px-5 py-3 font-semibold">{{ ui.management.labels.month }}</th>
+                    <th class="px-5 py-3 font-semibold">{{ ui.management.labels.amount }}</th>
+                    <th class="px-5 py-3 font-semibold">{{ ui.management.labels.status }}</th>
+                    <th class="px-5 py-3 font-semibold">{{ ui.management.labels.confirmed }}</th>
                   </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-200 dark:divide-slate-800">
@@ -425,12 +486,12 @@ const setReferralRewardStatus = (referralCode: string, status: 'approved' | 'rej
                     <td class="px-5 py-4 font-semibold text-slate-950 dark:text-white">{{ payment.studentName }}</td>
                     <td class="px-5 py-4">{{ payment.parentName }}</td>
                     <td class="px-5 py-4">{{ payment.courseTitle }}</td>
-                    <td class="px-5 py-4">{{ payment.month }}</td>
+                    <td class="px-5 py-4">{{ localText(payment.month) }}</td>
                     <td class="px-5 py-4">{{ formatCurrency(payment.amount) }}</td>
                     <td class="px-5 py-4">
-                      <span :class="['rounded-full px-3 py-1 text-xs font-bold uppercase', getStatusTone(payment.status)]">{{ payment.status }}</span>
+                      <span :class="['rounded-full px-3 py-1 text-xs font-bold uppercase', getStatusTone(payment.status)]">{{ statusLabel(payment.status) }}</span>
                     </td>
-                    <td class="px-5 py-4">{{ payment.adminConfirmation ? 'Yes' : 'No' }}</td>
+                    <td class="px-5 py-4">{{ booleanLabel(payment.adminConfirmation) }}</td>
                   </tr>
                 </tbody>
               </table>
@@ -440,21 +501,21 @@ const setReferralRewardStatus = (referralCode: string, status: 'approved' | 'rej
 
         <div class="overflow-hidden rounded-lg border border-slate-200 bg-white shadow-soft dark:border-slate-800 dark:bg-slate-900">
           <div class="border-b border-slate-200 p-5 dark:border-slate-800">
-            <h3 class="text-xl font-bold text-slate-950 dark:text-white">Referral Management</h3>
+            <h3 class="text-xl font-bold text-slate-950 dark:text-white">{{ ui.management.admin.referralManagementTitle }}</h3>
             <p class="mt-1 text-sm leading-6 text-slate-600 dark:text-slate-300">
-              Referrals count only after completed registration, two attended trial classes, paid first invoice, admin payment confirmation, and family approval. Same-family referrals stay in review until admin approves them.
+              {{ ui.management.admin.referralManagementDescription }}
             </p>
           </div>
           <div class="overflow-x-auto">
             <table class="w-full min-w-[980px] text-sm">
               <thead class="bg-slate-50 text-left text-slate-500 dark:bg-slate-800/60 dark:text-slate-300">
                 <tr>
-                  <th class="px-5 py-3 font-semibold">Referral Code</th>
-                  <th class="px-5 py-3 font-semibold">Referrer</th>
-                  <th class="px-5 py-3 font-semibold">Total Registrations</th>
-                  <th class="px-5 py-3 font-semibold">Verified Paid</th>
-                  <th class="px-5 py-3 font-semibold">Reward Status</th>
-                  <th class="px-5 py-3 font-semibold">Admin Review</th>
+                  <th class="px-5 py-3 font-semibold">{{ ui.management.labels.referralCode }}</th>
+                  <th class="px-5 py-3 font-semibold">{{ ui.management.labels.referrer }}</th>
+                  <th class="px-5 py-3 font-semibold">{{ ui.management.labels.totalRegistrations }}</th>
+                  <th class="px-5 py-3 font-semibold">{{ ui.management.labels.verifiedPaid }}</th>
+                  <th class="px-5 py-3 font-semibold">{{ ui.management.labels.rewardStatus }}</th>
+                  <th class="px-5 py-3 font-semibold">{{ ui.management.labels.adminReview }}</th>
                 </tr>
               </thead>
               <tbody class="divide-y divide-slate-200 dark:divide-slate-800">
@@ -464,9 +525,9 @@ const setReferralRewardStatus = (referralCode: string, status: 'approved' | 'rej
                   <td class="px-5 py-4">{{ row.totalRegistrations }}</td>
                   <td class="px-5 py-4">{{ row.verifiedPaidReferrals }} / {{ referralGoalCount }}</td>
                   <td class="px-5 py-4">
-                    <span :class="['rounded-full px-3 py-1 text-xs font-bold uppercase', getStatusTone(row.rewardStatus)]">{{ row.rewardStatus }}</span>
+                    <span :class="['rounded-full px-3 py-1 text-xs font-bold uppercase', getStatusTone(row.rewardStatus)]">{{ statusLabel(row.rewardStatus) }}</span>
                     <p v-if="row.rewardStatus === 'available' || row.rewardStatus === 'eligible' || row.rewardStatus === 'approved'" class="mt-2 text-xs font-semibold text-emerald-600 dark:text-emerald-300">
-                      Congratulations! You earned one month free tuition.
+                      {{ ui.common.congratulations }}
                     </p>
                   </td>
                   <td class="px-5 py-4">
@@ -477,7 +538,7 @@ const setReferralRewardStatus = (referralCode: string, status: 'approved' | 'rej
                         :disabled="row.verifiedPaidReferrals < referralGoalCount"
                         @click="setReferralRewardStatus(row.referralCode, 'approved')"
                       >
-                        Approve reward
+                        {{ ui.management.actions.approveReward }}
                       </button>
                       <button
                         type="button"
@@ -485,10 +546,10 @@ const setReferralRewardStatus = (referralCode: string, status: 'approved' | 'rej
                         :disabled="row.totalRegistrations === 0"
                         @click="setReferralRewardStatus(row.referralCode, 'rejected')"
                       >
-                        Reject
+                        {{ ui.management.actions.reject }}
                       </button>
                     </div>
-                    <p class="mt-2 text-xs leading-5 text-slate-500 dark:text-slate-400">{{ row.rewardNote }}</p>
+                    <p class="mt-2 text-xs leading-5 text-slate-500 dark:text-slate-400">{{ rewardNote(row.rewardNote) }}</p>
                   </td>
                 </tr>
               </tbody>
@@ -503,28 +564,28 @@ const setReferralRewardStatus = (referralCode: string, status: 'approved' | 'rej
         <div class="rounded-lg border border-slate-200 bg-white p-6 shadow-soft dark:border-slate-800 dark:bg-slate-900">
           <div class="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
             <div>
-              <p class="eyebrow">Parent Dashboard</p>
-              <h2 class="mt-2 text-2xl font-bold text-slate-950 dark:text-white">Basic parent view</h2>
+              <p class="eyebrow">{{ ui.management.parent.eyebrow }}</p>
+              <h2 class="mt-2 text-2xl font-bold text-slate-950 dark:text-white">{{ ui.management.parent.title }}</h2>
             </div>
             <select v-model="selectedParentId" class="focus-ring rounded-md border border-slate-300 px-4 py-3 text-sm dark:border-slate-700 dark:bg-slate-950">
               <option v-for="parent in managementParents" :key="parent.id" :value="parent.id">{{ parent.name }}</option>
             </select>
           </div>
 
-          <p class="mt-4 text-sm text-slate-600 dark:text-slate-300">Viewing as {{ selectedParent?.name }}.</p>
+          <p class="mt-4 text-sm text-slate-600 dark:text-slate-300">{{ parentViewingAs(selectedParent?.name) }}</p>
           <div class="mt-5 grid gap-4">
             <article v-for="card in parentReferralCards" :key="card.student.id" class="rounded-lg border border-purple-100 bg-purple-50 p-4 dark:border-purple-900/50 dark:bg-purple-950/30">
               <div class="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                 <div>
-                  <p class="text-xs font-bold uppercase tracking-[0.16em] text-brand-purple dark:text-brand-gold">Referral Card</p>
-                  <h3 class="mt-2 font-bold text-slate-950 dark:text-white">{{ card.student.name }} referral code</h3>
+                  <p class="text-xs font-bold uppercase tracking-[0.16em] text-brand-purple dark:text-brand-gold">{{ ui.management.labels.referralCard }}</p>
+                  <h3 class="mt-2 font-bold text-slate-950 dark:text-white">{{ referralCodeTitle(card.student.name) }}</h3>
                   <p class="mt-2 text-2xl font-black text-brand-purple dark:text-brand-gold">{{ card.summary.referralCode }}</p>
                 </div>
-                <span :class="['rounded-full px-3 py-1 text-xs font-bold uppercase', getStatusTone(card.summary.rewardStatus)]">{{ card.summary.rewardStatus }}</span>
+                <span :class="['rounded-full px-3 py-1 text-xs font-bold uppercase', getStatusTone(card.summary.rewardStatus)]">{{ statusLabel(card.summary.rewardStatus) }}</span>
               </div>
               <div class="mt-4">
                 <div class="flex items-center justify-between text-sm font-semibold text-slate-700 dark:text-slate-200">
-                  <span>{{ card.summary.progressLabel }}</span>
+                  <span>{{ card.summary.verifiedCount }}/{{ referralGoalCount }} {{ ui.dashboard.verifiedReferrals }}</span>
                   <span>{{ card.summary.verifiedCount }} / {{ referralGoalCount }}</span>
                 </div>
                 <div class="mt-2 h-2 rounded-full bg-white dark:bg-slate-800">
@@ -532,17 +593,17 @@ const setReferralRewardStatus = (referralCode: string, status: 'approved' | 'rej
                 </div>
               </div>
               <p v-if="card.summary.rewardStatus === 'available' || card.summary.rewardStatus === 'eligible' || card.summary.rewardStatus === 'approved'" class="mt-4 rounded-md bg-white p-3 text-sm font-semibold text-emerald-600 dark:bg-slate-900 dark:text-emerald-300">
-                Congratulations! You earned one month free tuition.
+                {{ ui.common.congratulations }}
               </p>
-              <p v-else class="mt-4 text-sm leading-6 text-slate-600 dark:text-slate-300">{{ card.summary.rewardNote }}</p>
+              <p v-else class="mt-4 text-sm leading-6 text-slate-600 dark:text-slate-300">{{ rewardNote(card.summary.rewardNote) }}</p>
               <div class="mt-4 flex flex-wrap gap-2">
                 <button type="button" class="focus-ring rounded-md bg-brand-purple px-4 py-2 text-sm font-semibold text-white dark:bg-brand-gold dark:text-slate-950" @click="copyReferralCode(card.summary.referralCode)">
-                  Copy code
+                  {{ ui.common.copyCode }}
                 </button>
                 <button type="button" class="focus-ring rounded-md border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-700 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200" @click="shareReferralCode(card.summary.referralCode)">
-                  Share message
+                  {{ ui.common.shareMessage }}
                 </button>
-                <span v-if="copiedReferralCode === card.summary.referralCode" class="inline-flex items-center text-sm font-semibold text-emerald-600 dark:text-emerald-300">Copied</span>
+                <span v-if="copiedReferralCode === card.summary.referralCode" class="inline-flex items-center text-sm font-semibold text-emerald-600 dark:text-emerald-300">{{ ui.common.copied }}</span>
               </div>
             </article>
           </div>
@@ -553,20 +614,20 @@ const setReferralRewardStatus = (referralCode: string, status: 'approved' | 'rej
                   <p class="font-bold text-slate-950 dark:text-white">{{ row.student.name }}</p>
                   <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">{{ row.courseTitle }}</p>
                 </div>
-                <span :class="['rounded-full px-3 py-1 text-xs font-bold', getStatusTone(row.student.status)]">{{ row.student.status }}</span>
+                <span :class="['rounded-full px-3 py-1 text-xs font-bold', getStatusTone(row.student.status)]">{{ statusLabel(row.student.status) }}</span>
               </div>
               <div class="mt-4 grid gap-3 sm:grid-cols-3">
                 <div class="rounded-md bg-slate-50 p-3 dark:bg-slate-800">
-                  <p class="text-xs font-bold uppercase text-slate-500 dark:text-slate-400">Payment</p>
-                  <p class="mt-1 font-semibold">{{ row.payment?.status ?? 'unpaid' }}</p>
+                  <p class="text-xs font-bold uppercase text-slate-500 dark:text-slate-400">{{ ui.management.labels.payment }}</p>
+                  <p class="mt-1 font-semibold">{{ statusLabel(row.payment?.status ?? 'unpaid') }}</p>
                 </div>
                 <div class="rounded-md bg-slate-50 p-3 dark:bg-slate-800">
-                  <p class="text-xs font-bold uppercase text-slate-500 dark:text-slate-400">Attendance</p>
-                  <p class="mt-1 font-semibold">{{ row.attendance.length }} records</p>
+                  <p class="text-xs font-bold uppercase text-slate-500 dark:text-slate-400">{{ ui.management.labels.attendance }}</p>
+                  <p class="mt-1 font-semibold">{{ row.attendance.length }} {{ ui.management.labels.attendance }}</p>
                 </div>
                 <div class="rounded-md bg-slate-50 p-3 dark:bg-slate-800">
-                  <p class="text-xs font-bold uppercase text-slate-500 dark:text-slate-400">Next Class</p>
-                  <p class="mt-1 font-semibold">{{ row.schedule ? `${row.schedule.day}, ${row.schedule.time}` : 'Not scheduled' }}</p>
+                  <p class="text-xs font-bold uppercase text-slate-500 dark:text-slate-400">{{ ui.management.labels.nextClass }}</p>
+                  <p class="mt-1 font-semibold">{{ row.schedule ? scheduleLabel(row.schedule.day, row.schedule.time) : ui.management.parent.notScheduled }}</p>
                 </div>
               </div>
               <div v-if="row.classrooms.length" class="mt-4 flex flex-wrap gap-2">
@@ -576,7 +637,7 @@ const setReferralRewardStatus = (referralCode: string, status: 'approved' | 'rej
                   :to="`/classrooms/${classroom.id}`"
                   class="focus-ring rounded-md bg-purple-50 px-3 py-2 text-xs font-bold text-brand-purple dark:bg-purple-950/40 dark:text-brand-gold"
                 >
-                  Open {{ classroom.className }}
+                  {{ ui.management.parent.openClassroomPrefix }} {{ localText(classroom.className) }}
                 </NuxtLink>
               </div>
             </article>
@@ -586,8 +647,8 @@ const setReferralRewardStatus = (referralCode: string, status: 'approved' | 'rej
         <div class="rounded-lg border border-slate-200 bg-white p-6 shadow-soft dark:border-slate-800 dark:bg-slate-900">
           <div class="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
             <div>
-              <p class="eyebrow">Teacher Dashboard</p>
-              <h2 class="mt-2 text-2xl font-bold text-slate-950 dark:text-white">Basic teacher view</h2>
+              <p class="eyebrow">{{ ui.management.teacher.eyebrow }}</p>
+              <h2 class="mt-2 text-2xl font-bold text-slate-950 dark:text-white">{{ ui.management.teacher.title }}</h2>
             </div>
             <select v-model="selectedTeacherId" class="focus-ring rounded-md border border-slate-300 px-4 py-3 text-sm dark:border-slate-700 dark:bg-slate-950">
               <option v-for="teacher in managementTeachers" :key="teacher.id" :value="teacher.id">{{ teacher.name }}</option>
@@ -595,19 +656,19 @@ const setReferralRewardStatus = (referralCode: string, status: 'approved' | 'rej
           </div>
 
           <p class="mt-4 text-sm text-slate-600 dark:text-slate-300">
-            Viewing as {{ selectedTeacher?.name }}. Parent phone numbers and payment details are not shown. Export is {{ teacherCanExportStudentLists ? 'enabled' : 'disabled' }}.
+            {{ teacherViewingAs(selectedTeacher?.name) }}
           </p>
 
           <div class="mt-5 grid gap-4">
             <article v-for="classroom in teacherClassrooms" :key="classroom.id" class="rounded-lg border border-purple-100 bg-purple-50 p-4 dark:border-purple-900/50 dark:bg-purple-950/30">
               <div class="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                 <div>
-                  <p class="text-xs font-bold uppercase tracking-[0.16em] text-brand-purple dark:text-brand-gold">Assigned Classroom</p>
-                  <h3 class="mt-2 font-bold text-slate-950 dark:text-white">{{ classroom.className }}</h3>
-                  <p class="mt-1 text-sm text-slate-600 dark:text-slate-300">{{ getCourseTitle(classroom.courseId) }}</p>
+                  <p class="text-xs font-bold uppercase tracking-[0.16em] text-brand-purple dark:text-brand-gold">{{ ui.management.labels.assignedClassroom }}</p>
+                  <h3 class="mt-2 font-bold text-slate-950 dark:text-white">{{ localText(classroom.className) }}</h3>
+                  <p class="mt-1 text-sm text-slate-600 dark:text-slate-300">{{ courseTitleById(classroom.courseId) }}</p>
                 </div>
                 <NuxtLink :to="`/classrooms/${classroom.id}`" class="focus-ring rounded-md bg-brand-purple px-3 py-2 text-xs font-bold text-white dark:bg-brand-gold dark:text-slate-950">
-                  Open classroom
+                  {{ ui.common.openClassroom }}
                 </NuxtLink>
               </div>
             </article>
@@ -615,9 +676,9 @@ const setReferralRewardStatus = (referralCode: string, status: 'approved' | 'rej
 
           <div class="mt-5 grid gap-4">
             <article v-for="schedule in teacherSchedules" :key="schedule.id" class="rounded-lg border border-slate-200 p-4 dark:border-slate-800">
-              <p class="font-bold text-slate-950 dark:text-white">{{ getCourseTitle(schedule.courseId) }}</p>
-              <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">{{ schedule.day }} | {{ schedule.time }} {{ schedule.timezone }}</p>
-              <p class="mt-2 text-sm text-slate-600 dark:text-slate-300">{{ schedule.enrolledStudentIds.length }} / {{ schedule.capacity }} students</p>
+              <p class="font-bold text-slate-950 dark:text-white">{{ courseTitleById(schedule.courseId) }}</p>
+              <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">{{ scheduleLabel(schedule.day, schedule.time, schedule.timezone) }}</p>
+              <p class="mt-2 text-sm text-slate-600 dark:text-slate-300">{{ schedule.enrolledStudentIds.length }} / {{ schedule.capacity }} {{ ui.management.teacher.students }}</p>
             </article>
           </div>
 
@@ -625,11 +686,11 @@ const setReferralRewardStatus = (referralCode: string, status: 'approved' | 'rej
             <table class="w-full min-w-[640px] text-sm">
               <thead class="bg-slate-50 text-left text-slate-500 dark:bg-slate-800/60 dark:text-slate-300">
                 <tr>
-                  <th class="px-4 py-3 font-semibold">Student</th>
-                  <th class="px-4 py-3 font-semibold">Course</th>
-                  <th class="px-4 py-3 font-semibold">Level</th>
-                  <th class="px-4 py-3 font-semibold">Status</th>
-                  <th class="px-4 py-3 font-semibold">Access</th>
+                  <th class="px-4 py-3 font-semibold">{{ ui.management.labels.student }}</th>
+                  <th class="px-4 py-3 font-semibold">{{ ui.management.labels.course }}</th>
+                  <th class="px-4 py-3 font-semibold">{{ ui.management.labels.level }}</th>
+                  <th class="px-4 py-3 font-semibold">{{ ui.management.labels.status }}</th>
+                  <th class="px-4 py-3 font-semibold">{{ ui.management.labels.access }}</th>
                 </tr>
               </thead>
               <tbody class="divide-y divide-slate-200 dark:divide-slate-800">
@@ -638,9 +699,9 @@ const setReferralRewardStatus = (referralCode: string, status: 'approved' | 'rej
                   <td class="px-4 py-3">{{ student.course }}</td>
                   <td class="px-4 py-3">{{ student.currentLevel }}</td>
                   <td class="px-4 py-3">
-                    <span :class="['rounded-full px-3 py-1 text-xs font-bold', getStatusTone(student.status)]">{{ student.status }}</span>
+                    <span :class="['rounded-full px-3 py-1 text-xs font-bold', getStatusTone(student.status)]">{{ statusLabel(student.status) }}</span>
                   </td>
-                  <td class="px-4 py-3">{{ student.classAccess }}</td>
+                  <td class="px-4 py-3">{{ statusLabel(student.classAccess) }}</td>
                 </tr>
               </tbody>
             </table>
