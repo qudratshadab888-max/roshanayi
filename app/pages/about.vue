@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { pageBackgrounds } from '~/data/pageBackgrounds'
+
 const { t, tm } = useI18n()
 
 useSeoMeta({
@@ -13,15 +15,13 @@ const heritagePoints = computed(() => tm<Array<{ title: string; text: string }>>
 
 <template>
   <div>
-    <section class="bg-slate-950 py-20 text-white">
-      <div class="container-wide max-w-4xl">
-        <p class="text-sm font-semibold uppercase tracking-[0.16em] text-brand-gold">{{ t('about.eyebrow') }}</p>
-        <h1 class="mt-4 text-4xl font-black tracking-tight sm:text-5xl">{{ t('about.title') }}</h1>
-        <p class="mt-6 text-lg leading-8 text-slate-200">
-          {{ t('about.description') }}
-        </p>
-      </div>
-    </section>
+    <PageHero
+      :image="pageBackgrounds.about"
+      :eyebrow="t('about.eyebrow')"
+      :title="t('about.title')"
+      :description="t('about.description')"
+      height="tall"
+    />
 
     <section class="section-padding bg-white dark:bg-slate-950">
       <div class="container-wide grid gap-6 lg:grid-cols-3">

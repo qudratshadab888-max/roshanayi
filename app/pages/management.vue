@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { pageBackgrounds } from '~/data/pageBackgrounds'
 import {
   attendanceRecords,
   classrooms,
@@ -234,15 +235,13 @@ const teacherViewingAs = (name = '') =>
 
 <template>
   <div>
-    <section class="bg-slate-950 py-14 text-white">
-      <div class="container-wide">
-        <p class="text-sm font-semibold uppercase tracking-[0.16em] text-brand-gold">{{ ui.management.heroEyebrow }}</p>
-        <h1 class="mt-4 max-w-4xl text-4xl font-black tracking-tight sm:text-5xl">{{ ui.management.heroTitle }}</h1>
-        <p class="mt-5 max-w-3xl text-lg leading-8 text-slate-200">
-          {{ ui.management.heroDescription }}
-        </p>
-      </div>
-    </section>
+    <PageHero
+      :image="pageBackgrounds.management"
+      :eyebrow="ui.management.heroEyebrow"
+      :title="ui.management.heroTitle"
+      :description="ui.management.heroDescription"
+      height="compact"
+    />
 
     <section class="bg-white py-8 dark:bg-slate-950">
       <div class="container-wide grid gap-4 sm:grid-cols-2 xl:grid-cols-4">

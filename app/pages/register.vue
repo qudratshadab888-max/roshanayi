@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { pageBackgrounds } from '~/data/pageBackgrounds'
 import { generateReferralCode } from '~/data/management'
 import { getUiCopy } from '~/data/uiCopy'
 
@@ -38,25 +39,27 @@ const submitRegistration = () => {
 </script>
 
 <template>
-  <section class="section-padding bg-slate-50 dark:bg-slate-950">
+  <PageBackdrop :image="pageBackgrounds.register" class="section-padding">
     <div class="container-wide grid gap-10 lg:grid-cols-[0.85fr_1.15fr] lg:items-start">
       <div>
-        <p class="eyebrow">{{ t('register.eyebrow') }}</p>
-        <h1 class="mt-3 text-4xl font-black tracking-tight text-slate-950 dark:text-white">{{ t('register.title') }}</h1>
-        <p class="mt-5 text-lg leading-8 text-slate-600 dark:text-slate-300">
+        <p class="inline-flex rounded-full border border-white/20 bg-white/10 px-4 py-2 text-sm font-semibold text-brand-gold backdrop-blur">
+          {{ t('register.eyebrow') }}
+        </p>
+        <h1 class="mt-6 text-4xl font-black tracking-tight text-white sm:text-5xl">{{ t('register.title') }}</h1>
+        <p class="mt-5 text-lg leading-8 text-slate-200">
           {{ t('register.description') }}
         </p>
-        <div class="mt-8 rounded-lg border border-slate-200 bg-white p-6 dark:border-slate-800 dark:bg-slate-900">
-          <h2 class="text-xl font-bold text-slate-950 dark:text-white">{{ t('register.nextTitle') }}</h2>
-          <ol class="mt-5 space-y-4 text-sm leading-6 text-slate-600 dark:text-slate-300">
+        <div class="mt-8 rounded-lg border border-white/15 bg-white/10 p-6 backdrop-blur">
+          <h2 class="text-xl font-bold text-white">{{ t('register.nextTitle') }}</h2>
+          <ol class="mt-5 space-y-4 text-sm leading-6 text-slate-200">
             <li v-for="(step, index) in registrationSteps" :key="step">
-              <span class="font-bold text-brand-purple dark:text-brand-gold">{{ index + 1 }}.</span> {{ step }}
+              <span class="font-bold text-brand-gold">{{ index + 1 }}.</span> {{ step }}
             </li>
           </ol>
         </div>
       </div>
 
-      <form class="rounded-lg border border-slate-200 bg-white p-6 shadow-soft dark:border-slate-800 dark:bg-slate-900" :aria-label="t('register.formAria')" @submit.prevent="submitRegistration">
+      <form class="rounded-lg border border-slate-200 bg-white p-6 text-brand-ink shadow-soft dark:border-slate-800 dark:bg-slate-900 dark:text-slate-100" :aria-label="t('register.formAria')" @submit.prevent="submitRegistration">
         <div class="grid gap-5 sm:grid-cols-2">
           <div>
             <label class="text-sm font-semibold text-slate-700 dark:text-slate-200" for="parent-name">{{ t('common.labels.parentName') }}</label>
@@ -124,5 +127,5 @@ const submitRegistration = () => {
         </div>
       </form>
     </div>
-  </section>
+  </PageBackdrop>
 </template>

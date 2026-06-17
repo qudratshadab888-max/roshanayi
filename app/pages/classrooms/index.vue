@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { pageBackgrounds } from '~/data/pageBackgrounds'
 import {
   getClassroomCardRows,
   getClassroomSchedule,
@@ -61,25 +62,22 @@ const classroomScheduleLabel = (classroomId: string) => {
 
 <template>
   <div>
-    <section class="bg-slate-950 py-16 text-white">
-      <div class="container-wide grid gap-8 lg:grid-cols-[1.1fr_0.9fr] lg:items-end">
-        <div>
-          <p class="text-sm font-semibold uppercase tracking-[0.16em] text-brand-gold">{{ ui.classrooms.heroEyebrow }}</p>
-          <h1 class="mt-4 max-w-4xl text-4xl font-black tracking-tight sm:text-5xl">
-            {{ ui.classrooms.title }}
-          </h1>
-          <p class="mt-5 max-w-3xl text-lg leading-8 text-slate-200">
-            {{ ui.classrooms.description }}
-          </p>
-        </div>
-        <div class="rounded-lg border border-white/10 bg-white/10 p-5">
+    <PageHero
+      :image="pageBackgrounds.classrooms"
+      :eyebrow="ui.classrooms.heroEyebrow"
+      :title="ui.classrooms.title"
+      :description="ui.classrooms.description"
+      height="compact"
+    >
+      <template #aside>
+        <div class="rounded-lg border border-white/10 bg-white/10 p-5 backdrop-blur">
           <h2 class="text-xl font-bold">{{ ui.classrooms.accessRuleTitle }}</h2>
           <p class="mt-3 text-sm leading-6 text-slate-200">
             {{ ui.classrooms.accessRuleText }}
           </p>
         </div>
-      </div>
-    </section>
+      </template>
+    </PageHero>
 
     <section class="bg-white py-8 dark:bg-slate-950">
       <div class="container-wide grid gap-4 sm:grid-cols-2 xl:grid-cols-4">

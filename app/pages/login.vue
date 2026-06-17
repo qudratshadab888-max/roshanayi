@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { pageBackgrounds } from '~/data/pageBackgrounds'
+
 const { t } = useI18n()
 
 useSeoMeta({
@@ -21,9 +23,9 @@ const login = () => {
 </script>
 
 <template>
-  <section class="section-padding bg-slate-50 dark:bg-slate-950">
+  <PageBackdrop :image="pageBackgrounds.login" class="section-padding">
     <div class="container-wide flex justify-center">
-      <div class="w-full max-w-md rounded-lg border border-slate-200 bg-white p-6 shadow-soft dark:border-slate-800 dark:bg-slate-900">
+      <div class="w-full max-w-md rounded-lg border border-slate-200 bg-white/95 p-6 text-brand-ink shadow-soft backdrop-blur dark:border-slate-800 dark:bg-slate-900/95 dark:text-slate-100">
         <p class="eyebrow">{{ t('login.eyebrow') }}</p>
         <h1 class="mt-3 text-3xl font-black text-slate-950 dark:text-white">{{ t('login.title') }}</h1>
         <p class="mt-3 text-sm leading-6 text-slate-600 dark:text-slate-300">
@@ -60,5 +62,5 @@ const login = () => {
         </p>
       </div>
     </div>
-  </section>
+  </PageBackdrop>
 </template>

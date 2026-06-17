@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { pageBackgrounds } from '~/data/pageBackgrounds'
+
 const { t, tm } = useI18n()
 const { teachers } = useAcademyData()
 
@@ -12,15 +14,12 @@ const standards = computed(() => tm<string[]>('teachersPage.standards.items'))
 
 <template>
   <div>
-    <section class="bg-slate-950 py-20 text-white">
-      <div class="container-wide max-w-4xl">
-        <p class="text-sm font-semibold uppercase tracking-[0.16em] text-brand-gold">{{ t('teachersPage.eyebrow') }}</p>
-        <h1 class="mt-4 text-4xl font-black tracking-tight sm:text-5xl">{{ t('teachersPage.title') }}</h1>
-        <p class="mt-6 text-lg leading-8 text-slate-200">
-          {{ t('teachersPage.description') }}
-        </p>
-      </div>
-    </section>
+    <PageHero
+      :image="pageBackgrounds.teachers"
+      :eyebrow="t('teachersPage.eyebrow')"
+      :title="t('teachersPage.title')"
+      :description="t('teachersPage.description')"
+    />
 
     <section class="section-padding bg-white dark:bg-slate-950">
       <div class="container-wide grid gap-6 md:grid-cols-2">

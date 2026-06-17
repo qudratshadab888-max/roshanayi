@@ -4,13 +4,22 @@ const isOpen = ref(false)
 const { isDark, initTheme, toggleTheme } = useDarkMode()
 const { locale, locales, setLocale, t } = useI18n()
 
+const libraryLabel = computed(
+  () =>
+    ({
+      en: 'Library',
+      fa: 'کتابخانه',
+      ps: 'کتابتون'
+    })[locale.value] ?? 'Library'
+)
+
 const navItems = computed(() => [
   { label: t('common.nav.home'), to: '/' },
   { label: t('common.nav.about'), to: '/about' },
   { label: t('common.nav.courses'), to: '/courses' },
   { label: t('common.nav.classrooms'), to: '/classrooms' },
   { label: t('common.nav.teachers'), to: '/teachers' },
-  { label: t('common.nav.pricing'), to: '/pricing' },
+  { label: libraryLabel.value, to: '/pricing' },
   { label: t('common.nav.contact'), to: '/contact' },
   { label: t('common.nav.management'), to: '/management' }
 ])

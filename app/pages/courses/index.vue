@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { pageBackgrounds } from '~/data/pageBackgrounds'
+
 const { t } = useI18n()
 const { courseCategories, courses } = useAcademyData()
 
@@ -36,17 +38,12 @@ const filteredCourses = computed(() => {
 
 <template>
   <div>
-    <section class="bg-slate-950 py-20 text-white">
-      <div class="container-wide">
-        <div class="max-w-3xl">
-          <p class="text-sm font-semibold uppercase tracking-[0.16em] text-brand-gold">{{ t('coursesPage.eyebrow') }}</p>
-          <h1 class="mt-4 text-4xl font-black tracking-tight sm:text-5xl">{{ t('coursesPage.title') }}</h1>
-          <p class="mt-6 text-lg leading-8 text-slate-200">
-            {{ t('coursesPage.description') }}
-          </p>
-        </div>
-      </div>
-    </section>
+    <PageHero
+      :image="pageBackgrounds.courses"
+      :eyebrow="t('coursesPage.eyebrow')"
+      :title="t('coursesPage.title')"
+      :description="t('coursesPage.description')"
+    />
 
     <section class="section-padding bg-white dark:bg-slate-950">
       <div class="container-wide">

@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { pageBackgrounds } from '~/data/pageBackgrounds'
+
 const { t } = useI18n()
 const { courseCategories } = useAcademyData()
 
@@ -27,15 +29,12 @@ const submitForm = () => {
 
 <template>
   <div>
-    <section class="bg-slate-950 py-20 text-white">
-      <div class="container-wide max-w-4xl">
-        <p class="text-sm font-semibold uppercase tracking-[0.16em] text-brand-gold">{{ t('contact.eyebrow') }}</p>
-        <h1 class="mt-4 text-4xl font-black tracking-tight sm:text-5xl">{{ t('contact.title') }}</h1>
-        <p class="mt-6 text-lg leading-8 text-slate-200">
-          {{ t('contact.description') }}
-        </p>
-      </div>
-    </section>
+    <PageHero
+      :image="pageBackgrounds.contact"
+      :eyebrow="t('contact.eyebrow')"
+      :title="t('contact.title')"
+      :description="t('contact.description')"
+    />
 
     <section class="section-padding bg-white dark:bg-slate-950">
       <div class="container-wide grid gap-10 lg:grid-cols-[0.8fr_1.2fr]">

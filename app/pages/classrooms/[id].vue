@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { pageBackgrounds } from '~/data/pageBackgrounds'
 import {
   assignmentStatuses,
   attendanceStatuses,
@@ -240,43 +241,46 @@ const videoFeatureLabel = (feature: string) => getVideoFeatureLabel(locale.value
 
 <template>
   <div v-if="classroom">
-    <section class="bg-slate-950 py-14 text-white">
-      <div class="container-wide">
+    <PageHero
+      :image="pageBackgrounds.classroomDetail"
+      :eyebrow="ui.classroomDetail.labels.virtualClassroom"
+      :title="localText(classroom.className)"
+      height="compact"
+    >
+      <template #before>
         <NuxtLink to="/classrooms" class="focus-ring inline-flex rounded-md text-sm font-semibold text-brand-gold">
           {{ ui.classroomDetail.actions.backToClassrooms }}
         </NuxtLink>
-        <div class="mt-6 grid gap-8 lg:grid-cols-[1.1fr_0.9fr] lg:items-end">
-          <div>
-            <p class="text-sm font-semibold uppercase tracking-[0.16em] text-brand-gold">{{ ui.classroomDetail.labels.virtualClassroom }}</p>
-            <h1 class="mt-4 max-w-4xl text-4xl font-black tracking-tight sm:text-5xl">{{ localText(classroom.className) }}</h1>
-            <p class="mt-4 text-lg font-semibold text-slate-200">{{ courseTitle }}</p>
-            <p class="mt-4 max-w-3xl leading-8 text-slate-300">{{ localText(classroom.description) }}</p>
+      </template>
+
+      <p class="mt-4 text-lg font-semibold text-slate-200">{{ courseTitle }}</p>
+      <p class="mt-4 max-w-3xl leading-8 text-slate-300">{{ localText(classroom.description) }}</p>
+
+      <template #aside>
+        <div class="rounded-lg border border-white/10 bg-white/10 p-5 backdrop-blur">
+          <div class="flex flex-wrap gap-2">
+            <span :class="['rounded-full px-3 py-1 text-xs font-bold uppercase', getStatusTone(classroom.status)]">{{ statusLabel(classroom.status) }}</span>
+            <span class="rounded-full bg-brand-gold px-3 py-1 text-xs font-bold text-slate-950">{{ classroom.meetingProvider }}</span>
           </div>
-          <div class="rounded-lg border border-white/10 bg-white/10 p-5">
-            <div class="flex flex-wrap gap-2">
-              <span :class="['rounded-full px-3 py-1 text-xs font-bold uppercase', getStatusTone(classroom.status)]">{{ statusLabel(classroom.status) }}</span>
-              <span class="rounded-full bg-brand-gold px-3 py-1 text-xs font-bold text-slate-950">{{ classroom.meetingProvider }}</span>
+          <dl class="mt-5 grid gap-3 text-sm text-slate-200">
+            <div>
+              <dt class="font-bold text-white">{{ ui.classroomDetail.labels.teacher }}</dt>
+              <dd class="mt-1">{{ teacherName }}</dd>
             </div>
-            <dl class="mt-5 grid gap-3 text-sm text-slate-200">
-              <div>
-                <dt class="font-bold text-white">{{ ui.classroomDetail.labels.teacher }}</dt>
-                <dd class="mt-1">{{ teacherName }}</dd>
-              </div>
-              <div>
-                <dt class="font-bold text-white">{{ ui.classroomDetail.labels.schedule }}</dt>
-                <dd class="mt-1">
-                  {{ schedule ? scheduleLabel(schedule.day, schedule.time, schedule.timezone) : ui.common.schedulePending }}
-                </dd>
-              </div>
-              <div>
-                <dt class="font-bold text-white">{{ ui.classroomDetail.labels.classLevel }}</dt>
-                <dd class="mt-1">{{ localText(classroom.level) }}</dd>
-              </div>
-            </dl>
-          </div>
+            <div>
+              <dt class="font-bold text-white">{{ ui.classroomDetail.labels.schedule }}</dt>
+              <dd class="mt-1">
+                {{ schedule ? scheduleLabel(schedule.day, schedule.time, schedule.timezone) : ui.common.schedulePending }}
+              </dd>
+            </div>
+            <div>
+              <dt class="font-bold text-white">{{ ui.classroomDetail.labels.classLevel }}</dt>
+              <dd class="mt-1">{{ localText(classroom.level) }}</dd>
+            </div>
+          </dl>
         </div>
-      </div>
-    </section>
+      </template>
+    </PageHero>
 
     <section class="bg-white py-5 dark:bg-slate-950">
       <div class="container-wide">
@@ -759,14 +763,14 @@ const videoFeatureLabel = (feature: string) => getVideoFeatureLabel(locale.value
     </section>
   </div>
 
-  <section v-else class="section-padding bg-slate-50 dark:bg-slate-950">
+  <PageBackdrop v-else :image="pageBackgrounds.classrooms" class="section-padding">
     <div class="container-wide">
-      <div class="rounded-lg border border-slate-200 bg-white p-8 shadow-soft dark:border-slate-800 dark:bg-slate-900">
+      <div class="rounded-lg border border-slate-200 bg-white/95 p-8 text-brand-ink shadow-soft backdrop-blur dark:border-slate-800 dark:bg-slate-900/95 dark:text-slate-100">
         <p class="eyebrow">{{ ui.classroomDetail.labels.notFoundEyebrow }}</p>
         <h1 class="mt-3 text-3xl font-bold text-slate-950 dark:text-white">{{ ui.classroomDetail.labels.notFoundTitle }}</h1>
         <p class="mt-4 text-slate-600 dark:text-slate-300">{{ ui.classroomDetail.descriptions.notFound }}</p>
         <BaseButton to="/classrooms" class="mt-6">{{ ui.classroomDetail.actions.viewClassrooms }}</BaseButton>
       </div>
     </div>
-  </section>
+  </PageBackdrop>
 </template>

@@ -1,12 +1,21 @@
 <script setup lang="ts">
-const { t, tm } = useI18n()
+const { locale, t, tm } = useI18n()
 const { courses } = useAcademyData()
+
+const libraryLabel = computed(
+  () =>
+    ({
+      en: 'Library',
+      fa: 'کتابخانه',
+      ps: 'کتابتون'
+    })[locale.value] ?? 'Library'
+)
 
 const quickLinks = computed(() => [
   { label: t('common.nav.about'), to: '/about' },
   { label: t('common.nav.courses'), to: '/courses' },
   { label: t('common.nav.teachers'), to: '/teachers' },
-  { label: t('common.nav.pricing'), to: '/pricing' }
+  { label: libraryLabel.value, to: '/pricing' }
 ])
 
 const contactItems = computed(() => tm<string[]>('layout.footer.contactItems'))

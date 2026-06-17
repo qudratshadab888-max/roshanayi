@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { pageBackgrounds } from '~/data/pageBackgrounds'
 import {
   getClassroomSchedule,
   getCourseTitle,
@@ -112,18 +113,19 @@ const referralNote = (note: string) => getReferralNoteLabel(locale.value, note)
 
 <template>
   <div>
-    <section class="bg-slate-950 py-16 text-white">
-      <div class="container-wide flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
-        <div>
-          <p class="text-sm font-semibold uppercase tracking-[0.16em] text-brand-gold">{{ t('dashboard.eyebrow') }}</p>
-          <h1 class="mt-4 text-4xl font-black tracking-tight">{{ t('dashboard.title') }}</h1>
-          <p class="mt-4 max-w-2xl text-slate-200">
-            {{ t('dashboard.description') }}
-          </p>
+    <PageHero
+      :image="pageBackgrounds.dashboard"
+      :eyebrow="t('dashboard.eyebrow')"
+      :title="t('dashboard.title')"
+      :description="t('dashboard.description')"
+      height="compact"
+    >
+      <template #aside>
+        <div class="flex justify-start lg:justify-end">
+          <BaseButton to="/courses" variant="secondary">{{ t('common.actions.browseCourses') }}</BaseButton>
         </div>
-        <BaseButton to="/courses" variant="secondary">{{ t('common.actions.browseCourses') }}</BaseButton>
-      </div>
-    </section>
+      </template>
+    </PageHero>
 
     <section class="section-padding bg-slate-50 dark:bg-slate-950">
       <div class="container-wide">

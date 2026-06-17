@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { courseBackgrounds, pageBackgrounds } from '~/data/pageBackgrounds'
+
 const route = useRoute()
 const { t } = useI18n()
 const { courses, teachers } = useAcademyData()
@@ -25,6 +27,7 @@ const course = computed(() => {
 })
 
 const teacher = computed(() => teachers.value.find((item) => item.slug === course.value.teacherSlug))
+const heroImage = computed(() => courseBackgrounds[course.value.slug] ?? pageBackgrounds.courses)
 const relatedCourses = computed(() =>
   courses.value
     .filter((item) => item.slug !== course.value.slug)
@@ -41,18 +44,13 @@ useSeoMeta({
 
 <template>
   <div>
-    <section class="bg-slate-950 py-20 text-white">
-      <div class="container-wide grid gap-10 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
-        <div>
-          <p class="text-sm font-semibold uppercase tracking-[0.16em] text-brand-gold">{{ course.category }}</p>
-          <h1 class="mt-4 text-4xl font-black tracking-tight sm:text-5xl">{{ course.title }}</h1>
-          <p class="mt-6 text-lg leading-8 text-slate-200">{{ course.description }}</p>
-          <div class="mt-8 flex flex-col gap-3 sm:flex-row">
-            <BaseButton to="/register" variant="secondary" size="lg">{{ t('courseDetails.register') }}</BaseButton>
-            <BaseButton to="/contact" variant="light" size="lg">{{ t('courseDetails.askPlacement') }}</BaseButton>
-          </div>
-        </div>
+    <PageHero :image="heroImage" :eyebrow="course.category" :title="course.title" :description="course.description">
+      <div class="mt-8 flex flex-col gap-3 sm:flex-row">
+        <BaseButton to="/register" variant="secondary" size="lg">{{ t('courseDetails.register') }}</BaseButton>
+        <BaseButton to="/contact" variant="light" size="lg">{{ t('courseDetails.askPlacement') }}</BaseButton>
+      </div>
 
+      <template #aside>
         <aside class="rounded-lg border border-white/10 bg-white/10 p-6 backdrop-blur">
           <dl class="grid grid-cols-2 gap-5 text-sm">
             <div>
@@ -81,8 +79,8 @@ useSeoMeta({
             </div>
           </dl>
         </aside>
-      </div>
-    </section>
+      </template>
+    </PageHero>
 
     <section class="section-padding bg-white dark:bg-slate-950">
       <div class="container-wide grid gap-10 lg:grid-cols-[0.75fr_1.25fr]">
