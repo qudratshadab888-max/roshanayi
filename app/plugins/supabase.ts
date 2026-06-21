@@ -6,17 +6,15 @@ export default defineNuxtPlugin(() => {
   const supabaseUrl = config.public.supabaseUrl
   const supabasePublishableKey = config.public.supabasePublishableKey
 
-  if (!supabaseUrl || !supabasePublishableKey) {
-    throw new Error('Missing Supabase configuration. Set NUXT_PUBLIC_SUPABASE_URL and NUXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY.')
-  }
-
-  const supabase = createClient(supabaseUrl, supabasePublishableKey, {
-    auth: {
-      autoRefreshToken: import.meta.client,
-      detectSessionInUrl: import.meta.client,
-      persistSession: import.meta.client
-    }
-  })
+  const supabase: SupabaseClient | null = supabaseUrl && supabasePublishableKey
+    ? createClient(supabaseUrl, supabasePublishableKey, {
+        auth: {
+          autoRefreshToken: import.meta.client,
+          detectSessionInUrl: import.meta.client,
+          persistSession: import.meta.client
+        }
+      })
+    : null
 
   return {
     provide: {
@@ -27,12 +25,12 @@ export default defineNuxtPlugin(() => {
 
 declare module '#app' {
   interface NuxtApp {
-    $supabase: SupabaseClient
+    $supabase: SupabaseClient | null
   }
 }
 
 declare module 'vue' {
   interface ComponentCustomProperties {
-    $supabase: SupabaseClient
+    $supabase: SupabaseClient | null
   }
 }

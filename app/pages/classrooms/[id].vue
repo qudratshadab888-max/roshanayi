@@ -220,6 +220,7 @@ const announcementTypes: AnnouncementType[] = [
 const selectedFile = (event: Event) => (event.target as HTMLInputElement).files?.[0]
 
 const selectAssignmentFile = (event: Event) => {
+  if (!import.meta.client) return
   const file = selectedFile(event)
   if (!file) return
   assignmentDraft.fileAttachmentLabel = file.name
@@ -227,6 +228,7 @@ const selectAssignmentFile = (event: Event) => {
 }
 
 const selectHomeworkFile = (event: Event) => {
+  if (!import.meta.client) return
   const file = selectedFile(event)
   if (!file) return
   homeworkDraft.fileUploadLabel = file.name
@@ -234,6 +236,7 @@ const selectHomeworkFile = (event: Event) => {
 }
 
 const selectMaterialFile = (event: Event) => {
+  if (!import.meta.client) return
   const file = selectedFile(event)
   if (!file) return
   resourceDraft.fileLabel = file.name

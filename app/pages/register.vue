@@ -252,7 +252,7 @@ const submitRegistration = async () => {
   submitted.value = false
   notice.value = ''
 
-  await new Promise((resolve) => window.setTimeout(resolve, 700))
+  await new Promise((resolve) => globalThis.setTimeout(resolve, 700))
 
   generatedReferralCodes.value = children.value.map((child) => ({
     name: childFullName(child),

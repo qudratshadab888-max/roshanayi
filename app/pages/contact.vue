@@ -20,7 +20,7 @@ const submitForm = () => {
   isSubmitting.value = true
   submitted.value = false
 
-  window.setTimeout(() => {
+  globalThis.setTimeout(() => {
     isSubmitting.value = false
     submitted.value = true
   }, 700)

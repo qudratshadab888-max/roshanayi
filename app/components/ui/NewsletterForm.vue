@@ -8,7 +8,7 @@ const subscribe = () => {
   isSubmitting.value = true
   submitted.value = false
 
-  window.setTimeout(() => {
+  globalThis.setTimeout(() => {
     submitted.value = true
     isSubmitting.value = false
     email.value = ''

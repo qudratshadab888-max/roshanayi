@@ -54,7 +54,7 @@ const login = async () => {
   isSubmitting.value = true
   submitted.value = false
 
-  await new Promise((resolve) => window.setTimeout(resolve, 450))
+  await new Promise((resolve) => globalThis.setTimeout(resolve, 450))
 
   const user = loginAsRole(selectedRole.value, email.value, rememberMe.value)
 

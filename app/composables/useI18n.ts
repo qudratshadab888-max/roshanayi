@@ -42,6 +42,8 @@ export const useI18n = () => {
   const tm = <T>(path: string) => getMessage(locale.value, path) as T
 
   onMounted(() => {
+    if (!import.meta.client) return
+
     const storedLocale = window.localStorage.getItem(storageKey)
 
     if (storedLocale && isLocaleCode(storedLocale)) {
