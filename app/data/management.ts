@@ -5,6 +5,7 @@ import type {
   Classroom,
   ClassroomAnnouncement,
   ClassroomAssignment,
+  ClassroomLiveSession,
   ClassroomProgress,
   ClassroomResource,
   HomeworkSubmission,
@@ -13,6 +14,7 @@ import type {
   ManagementParent,
   ManagementStudent,
   ManagementTeacher,
+  MonthlyStudentReport,
   PaymentRecord,
   ReferralRecord,
   ReferralReward,
@@ -21,15 +23,19 @@ import type {
   StudentClassroomAccess,
   StudentStatus
 } from '~/types'
+import type { RoleSessionUser } from '~/data/roles'
 
 export const studentStatuses: StudentStatus[] = ['Trial', 'Payment Required', 'Active', 'Inactive']
 
 export const attendanceStatuses: AttendanceStatus[] = ['present', 'absent', 'late', 'excused']
+export const classroomAttendanceStatuses: AttendanceStatus[] = ['present', 'absent', 'late']
 
 export const assignmentStatuses: AssignmentStatus[] = ['draft', 'published', 'closed']
 
 export const resourceTypes: ResourceType[] = [
   'PDF Lesson',
+  'Document',
+  'Worksheet',
   'Audio File',
   'Video Link',
   'Quran Practice',
@@ -256,7 +262,7 @@ export const managementStudents: ManagementStudent[] = [
     selectedCourseId: 'course-quran-reading',
     currentLevel: 'Letters and vowels',
     preferredClassTime: 'Thursday evenings',
-    notes: 'Completed both trial classes. Payment is now required.',
+    notes: 'The two-day trial has ended. Payment is now required.',
     status: 'Payment Required',
     trialClassesAllowed: 2,
     referralCode: 'ROS-HAMZA-7194'
@@ -271,7 +277,7 @@ export const managementStudents: ManagementStudent[] = [
     selectedCourseId: 'course-tajweed',
     currentLevel: 'Reads short surahs',
     preferredClassTime: 'Weekend mornings AEST',
-    notes: 'Trial student. One attended trial class remains.',
+    notes: 'The student is currently in the two-day trial period.',
     status: 'Trial',
     trialClassesAllowed: 2,
     referralCode: 'ROS-LAILA-3650'
@@ -313,10 +319,18 @@ export const classSchedules: ClassSchedule[] = [
     id: 'schedule-dari-tue-thu',
     courseId: 'course-dari-kids',
     teacherId: 'teacher-maryam',
-    day: 'Tuesday and Thursday',
+    day: 'Monday, Tuesday, Wednesday, Thursday, Friday',
+    daysOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],
     time: '5:00 PM',
+    startTime: '5:00 PM',
+    endTime: '6:00 PM',
+    durationMinutes: 60,
     timezone: 'EST',
+    classType: 'Group',
+    meetingPlatform: 'Zoom',
     meetingLink: 'https://zoom.us/j/8274561234?pwd=roshanayi-dari-demo',
+    meetingId: '827 456 1234',
+    meetingPassword: 'DARI26',
     capacity: 10,
     enrolledStudentIds: ['student-amina']
   },
@@ -324,10 +338,18 @@ export const classSchedules: ClassSchedule[] = [
     id: 'schedule-quran-thu-sun',
     courseId: 'course-quran-reading',
     teacherId: 'teacher-idrees',
-    day: 'Thursday and Sunday',
+    day: 'Monday, Tuesday, Wednesday, Thursday, Friday',
+    daysOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],
     time: '6:30 PM',
+    startTime: '6:30 PM',
+    endTime: '7:30 PM',
+    durationMinutes: 60,
     timezone: 'GMT',
+    classType: 'Group',
+    meetingPlatform: 'Google Meet',
     meetingLink: 'https://meet.google.com/ros-quran-demo',
+    meetingId: 'ros-quran-demo',
+    meetingPassword: '',
     capacity: 8,
     enrolledStudentIds: ['student-hamza']
   },
@@ -336,20 +358,36 @@ export const classSchedules: ClassSchedule[] = [
     courseId: 'course-tajweed',
     teacherId: 'teacher-idrees',
     day: 'Saturday',
+    daysOfWeek: ['Saturday'],
     time: '7:00 PM',
+    startTime: '7:00 PM',
+    endTime: '8:00 PM',
+    durationMinutes: 60,
     timezone: 'GMT',
-    meetingLink: 'https://meet.jit.si/roshanayi-tajweed-demo',
-    capacity: 8,
+    classType: 'Special',
+    meetingPlatform: 'Google Meet',
+    meetingLink: 'https://meet.google.com/ros-tajweed-demo',
+    meetingId: 'ros-tajweed-demo',
+    meetingPassword: '',
+    capacity: 2,
     enrolledStudentIds: ['student-laila']
   },
   {
     id: 'schedule-pashto-mon-wed',
     courseId: 'course-pashto-kids',
     teacherId: 'teacher-ahmad',
-    day: 'Monday and Wednesday',
+    day: 'Monday, Tuesday, Wednesday, Thursday, Friday',
+    daysOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],
     time: '6:00 PM',
+    startTime: '6:00 PM',
+    endTime: '7:00 PM',
+    durationMinutes: 60,
     timezone: 'CET',
+    classType: 'Group',
+    meetingPlatform: 'Zoom',
     meetingLink: 'https://zoom.us/j/8274567890?pwd=roshanayi-pashto-demo',
+    meetingId: '827 456 7890',
+    meetingPassword: 'PASHTO',
     capacity: 10,
     enrolledStudentIds: ['student-omar']
   },
@@ -357,12 +395,96 @@ export const classSchedules: ClassSchedule[] = [
     id: 'schedule-english-sat',
     courseId: 'course-english-all',
     teacherId: 'teacher-sarah',
-    day: 'Saturday',
+    day: 'Monday, Tuesday, Wednesday, Thursday, Friday',
+    daysOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],
     time: '11:00 AM',
+    startTime: '11:00 AM',
+    endTime: '12:00 PM',
+    durationMinutes: 60,
     timezone: 'GMT',
+    classType: 'Group',
+    meetingPlatform: 'Google Meet',
     meetingLink: 'https://meet.google.com/ros-engl-demo',
+    meetingId: 'ros-engl-demo',
+    meetingPassword: '',
     capacity: 12,
     enrolledStudentIds: ['student-samira']
+  },
+  {
+    id: 'schedule-farsi-english-wed-fri',
+    courseId: 'course-farsi-english',
+    teacherId: 'teacher-sarah',
+    day: 'Wednesday and Friday',
+    daysOfWeek: ['Wednesday', 'Friday'],
+    time: '4:00 PM',
+    startTime: '4:00 PM',
+    endTime: '5:00 PM',
+    durationMinutes: 60,
+    timezone: 'EST',
+    classType: 'Special',
+    meetingPlatform: 'Zoom',
+    meetingLink: '',
+    meetingId: '',
+    meetingPassword: '',
+    capacity: 2,
+    enrolledStudentIds: []
+  },
+  {
+    id: 'schedule-fluency-sun',
+    courseId: 'course-fluency-reading',
+    teacherId: 'teacher-maryam',
+    day: 'Monday, Tuesday, Wednesday, Thursday, Friday',
+    daysOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],
+    time: '10:00 AM',
+    startTime: '10:00 AM',
+    endTime: '11:00 AM',
+    durationMinutes: 60,
+    timezone: 'EST',
+    classType: 'Group',
+    meetingPlatform: 'Google Meet',
+    meetingLink: '',
+    meetingId: '',
+    meetingPassword: '',
+    capacity: 8,
+    enrolledStudentIds: []
+  },
+  {
+    id: 'schedule-islamic-sun',
+    courseId: 'course-islamic-basics',
+    teacherId: 'teacher-idrees',
+    day: 'Monday, Tuesday, Wednesday, Thursday, Friday',
+    daysOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],
+    time: '5:00 PM',
+    startTime: '5:00 PM',
+    endTime: '6:00 PM',
+    durationMinutes: 60,
+    timezone: 'GMT',
+    classType: 'Group',
+    meetingPlatform: 'Google Meet',
+    meetingLink: '',
+    meetingId: '',
+    meetingPassword: '',
+    capacity: 10,
+    enrolledStudentIds: []
+  },
+  {
+    id: 'schedule-culture-fri',
+    courseId: 'course-afghan-culture',
+    teacherId: 'teacher-ahmad',
+    day: 'Monday, Tuesday, Wednesday, Thursday, Friday',
+    daysOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],
+    time: '6:00 PM',
+    startTime: '6:00 PM',
+    endTime: '7:00 PM',
+    durationMinutes: 60,
+    timezone: 'CET',
+    classType: 'Group',
+    meetingPlatform: 'Google Meet',
+    meetingLink: '',
+    meetingId: '',
+    meetingPassword: '',
+    capacity: 10,
+    enrolledStudentIds: []
   }
 ]
 
@@ -399,7 +521,7 @@ export const classrooms: Classroom[] = [
     scheduleId: 'schedule-tajweed-sat',
     level: 'Intermediate',
     status: 'Active',
-    meetingProvider: 'Jitsi',
+    meetingProvider: 'Google Meet',
     description: 'A focused tajweed group for pronunciation, makharij, and recitation correction.',
     futureVideoFeatures: ['audio/video', 'screen sharing', 'chat', 'recording', 'whiteboard', 'raise hand']
   },
@@ -425,6 +547,54 @@ export const classrooms: Classroom[] = [
     status: 'Paused',
     meetingProvider: 'Google Meet',
     description: 'A paused English support group that keeps its classroom record ready for reactivation.',
+    futureVideoFeatures: ['audio/video', 'screen sharing', 'chat', 'recording', 'whiteboard', 'raise hand']
+  },
+  {
+    id: 'classroom-farsi-english-speakers',
+    className: 'Dari Bridge Program',
+    courseId: 'course-farsi-english',
+    teacherId: 'teacher-sarah',
+    scheduleId: 'schedule-farsi-english-wed-fri',
+    level: 'Beginner to Intermediate',
+    status: 'Active',
+    meetingProvider: 'Zoom',
+    description: 'Personalized Dari instruction for learners who use English as their main language at home.',
+    futureVideoFeatures: ['audio/video', 'screen sharing', 'chat', 'recording', 'whiteboard', 'raise hand']
+  },
+  {
+    id: 'classroom-dari-fluency',
+    className: 'Dari Reading Fluency Circle',
+    courseId: 'course-fluency-reading',
+    teacherId: 'teacher-maryam',
+    scheduleId: 'schedule-fluency-sun',
+    level: 'Intermediate',
+    status: 'Active',
+    meetingProvider: 'Google Meet',
+    description: 'Guided reading practice for students building pace, pronunciation, and confidence.',
+    futureVideoFeatures: ['audio/video', 'screen sharing', 'chat', 'recording', 'whiteboard', 'raise hand']
+  },
+  {
+    id: 'classroom-islamic-basics',
+    className: 'Islamic Foundations for Children',
+    courseId: 'course-islamic-basics',
+    teacherId: 'teacher-idrees',
+    scheduleId: 'schedule-islamic-sun',
+    level: 'All Levels',
+    status: 'Active',
+    meetingProvider: 'Google Meet',
+    description: 'Age-aware lessons in duas, manners, stories, and practical Islamic foundations.',
+    futureVideoFeatures: ['audio/video', 'screen sharing', 'chat', 'recording', 'whiteboard', 'raise hand']
+  },
+  {
+    id: 'classroom-afghan-culture',
+    className: 'Afghan Heritage Project Studio',
+    courseId: 'course-afghan-culture',
+    teacherId: 'teacher-ahmad',
+    scheduleId: 'schedule-culture-fri',
+    level: 'All Levels',
+    status: 'Active',
+    meetingProvider: 'Google Meet',
+    description: 'A project-based classroom for Afghan history, geography, poetry, family stories, and cultural identity.',
     futureVideoFeatures: ['audio/video', 'screen sharing', 'chat', 'recording', 'whiteboard', 'raise hand']
   }
 ]
@@ -475,6 +645,7 @@ export const homeworkSubmissions: HomeworkSubmission[] = [
     assignmentId: 'assignment-dari-family-words',
     studentId: 'student-amina',
     textAnswer: 'I read the family words with my mother and wrote five sentences.',
+    studentComment: 'I practiced the longer words twice before uploading my work.',
     fileUploadLabel: 'amina-family-words.pdf',
     submittedAt: '2026-06-14',
     status: 'reviewed',
@@ -487,6 +658,7 @@ export const homeworkSubmissions: HomeworkSubmission[] = [
     assignmentId: 'assignment-tajweed-makharij',
     studentId: 'student-laila',
     textAnswer: 'I want to practice qaf, ayn, and ha.',
+    studentComment: 'The audio example helped me hear the difference between the letters.',
     fileUploadLabel: 'laila-makharij-notes.jpg',
     submittedAt: '2026-06-17',
     status: 'submitted',
@@ -499,6 +671,7 @@ export const homeworkSubmissions: HomeworkSubmission[] = [
     assignmentId: 'assignment-pashto-greetings',
     studentId: 'student-omar',
     textAnswer: 'I used staray mashay with my father.',
+    studentComment: 'I would like more examples for greeting older family members.',
     fileUploadLabel: 'omar-pashto-practice.txt',
     submittedAt: '2026-06-20',
     status: 'late',
@@ -562,6 +735,7 @@ export const classroomProgressRecords: ClassroomProgress[] = [
     attendancePercentage: 96,
     homeworkCompletion: 88,
     quizAverage: 91,
+    teacherEvaluation: 'Strong and steadily improving',
     teacherNotes: 'Amina is speaking more confidently and should keep reading aloud at home.',
     learningProgress: 74
   },
@@ -572,6 +746,7 @@ export const classroomProgressRecords: ClassroomProgress[] = [
     attendancePercentage: 100,
     homeworkCompletion: 60,
     quizAverage: 72,
+    teacherEvaluation: 'Promising start during the trial period',
     teacherNotes: 'Trial classes are complete. Access should continue after first payment confirmation.',
     learningProgress: 45
   },
@@ -582,6 +757,7 @@ export const classroomProgressRecords: ClassroomProgress[] = [
     attendancePercentage: 90,
     homeworkCompletion: 75,
     quizAverage: 80,
+    teacherEvaluation: 'Careful recitation with good focus',
     teacherNotes: 'Laila has careful recitation and needs more practice with makharij.',
     learningProgress: 58
   },
@@ -592,6 +768,7 @@ export const classroomProgressRecords: ClassroomProgress[] = [
     attendancePercentage: 80,
     homeworkCompletion: 67,
     quizAverage: 70,
+    teacherEvaluation: 'Participates well with short prompts',
     teacherNotes: 'Omar participates well when prompts are short and repeated.',
     learningProgress: 39
   },
@@ -602,6 +779,7 @@ export const classroomProgressRecords: ClassroomProgress[] = [
     attendancePercentage: 42,
     homeworkCompletion: 30,
     quizAverage: 65,
+    teacherEvaluation: 'Progress paused with the current enrollment hold',
     teacherNotes: 'Student is currently inactive while the family pauses classes.',
     learningProgress: 28
   }
@@ -643,6 +821,100 @@ export const classroomAnnouncements: ClassroomAnnouncement[] = [
     type: 'homework reminder',
     message: 'Students should practice three Pashto greetings with family before the next class.',
     postedAt: '2026-06-13'
+  }
+]
+
+export const classroomLiveSessions: ClassroomLiveSession[] = [
+  {
+    id: 'live-dari-foundations',
+    classroomId: 'classroom-dari-foundations',
+    meetingPlatform: 'Zoom',
+    meetingLink: 'https://zoom.us/j/8274561234?pwd=roshanayi-dari-demo',
+    meetingId: '827 456 1234',
+    meetingPassword: 'DARI26',
+    classDate: '2026-06-23',
+    classNotes: 'Bring the family vocabulary worksheet and be ready for paired reading practice.',
+    updatedBy: 'teacher-maryam',
+    updatedAt: '2026-06-20'
+  },
+  {
+    id: 'live-quran-beginners',
+    classroomId: 'classroom-quran-beginners',
+    meetingPlatform: 'Google Meet',
+    meetingLink: 'https://meet.google.com/ros-quran-demo',
+    meetingId: 'ros-quran-demo',
+    meetingPassword: '',
+    classDate: '2026-06-23',
+    classNotes: 'Keep Noorani Qaida pages 8-10 nearby for guided vowel practice.',
+    updatedBy: 'teacher-idrees',
+    updatedAt: '2026-06-20'
+  },
+  {
+    id: 'live-tajweed-essentials',
+    classroomId: 'classroom-tajweed-essentials',
+    meetingPlatform: 'Google Meet',
+    meetingLink: 'https://meet.google.com/ros-tajweed-demo',
+    meetingId: 'ros-tajweed-demo',
+    meetingPassword: '',
+    classDate: '2026-06-27',
+    classNotes: 'This session focuses on makharij review and individual recitation feedback.',
+    updatedBy: 'teacher-idrees',
+    updatedAt: '2026-06-20'
+  },
+  {
+    id: 'live-pashto-kids',
+    classroomId: 'classroom-pashto-kids',
+    meetingPlatform: 'Zoom',
+    meetingLink: 'https://zoom.us/j/8274567890?pwd=roshanayi-pashto-demo',
+    meetingId: '827 456 7890',
+    meetingPassword: 'PASHTO',
+    classDate: '2026-06-22',
+    classNotes: 'Students will practice greetings through short family role-play activities.',
+    updatedBy: 'teacher-ahmad',
+    updatedAt: '2026-06-20'
+  },
+  {
+    id: 'live-english-confidence',
+    classroomId: 'classroom-english-confidence',
+    meetingPlatform: 'Google Meet',
+    meetingLink: 'https://meet.google.com/ros-engl-demo',
+    meetingId: 'ros-engl-demo',
+    meetingPassword: '',
+    classDate: '',
+    classNotes: 'The next session will be scheduled after enrollment is reactivated.',
+    updatedBy: 'teacher-sarah',
+    updatedAt: '2026-06-15'
+  }
+]
+
+export const monthlyStudentReports: MonthlyStudentReport[] = [
+  {
+    id: 'report-amina-2026-06',
+    classroomId: 'classroom-dari-foundations',
+    studentId: 'student-amina',
+    teacherId: 'teacher-maryam',
+    month: 'June 2026',
+    attendanceSummary: 'Amina attended 7 of 8 scheduled classes and arrived on time consistently.',
+    academicProgress: 'She now reads short family sentences independently and speaks with greater confidence.',
+    strengths: 'Vocabulary recall, participation, and willingness to read aloud.',
+    areasForImprovement: 'Long vowel pronunciation and more consistent written sentence practice.',
+    teacherNotes: 'Ten minutes of reading aloud three times a week will support steady progress.',
+    status: 'completed',
+    completedAt: '2026-06-20'
+  },
+  {
+    id: 'report-laila-2026-06',
+    classroomId: 'classroom-tajweed-essentials',
+    studentId: 'student-laila',
+    teacherId: 'teacher-idrees',
+    month: 'June 2026',
+    attendanceSummary: 'Laila attended 9 of 10 classes and completed most recitation practice.',
+    academicProgress: 'Her recitation is more measured and she recognizes the main makharij groups.',
+    strengths: 'Careful listening, respectful participation, and steady pacing.',
+    areasForImprovement: 'Distinguishing qaf, ayn, and ha during connected recitation.',
+    teacherNotes: 'Continue using the short teacher-recorded audio exercises between classes.',
+    status: 'completed',
+    completedAt: '2026-06-19'
   }
 ]
 
@@ -1072,6 +1344,48 @@ export const getClassroomProgress = (classroomId: string) =>
 export const getClassroomAnnouncements = (classroomId: string) =>
   classroomAnnouncements.filter((announcement) => announcement.classroomId === classroomId)
 
+export const getClassroomLiveSession = (classroomId: string) =>
+  classroomLiveSessions.find((session) => session.classroomId === classroomId)
+
+export const getClassroomMonthlyReports = (classroomId: string) =>
+  monthlyStudentReports.filter((report) => report.classroomId === classroomId)
+
+export const getStudentMonthlyReports = (studentId: string) =>
+  monthlyStudentReports.filter((report) => report.studentId === studentId)
+
+export const canUserAccessClassroom = (user: RoleSessionUser, classroomId: string) => {
+  const classroom = getClassroomById(classroomId)
+  const schedule = getClassroomSchedule(classroomId)
+
+  if (!classroom || !schedule) {
+    return false
+  }
+
+  if (user.role === 'super-admin' || user.role === 'manager') {
+    return true
+  }
+
+  if (user.role === 'teacher') {
+    return Boolean(user.profileId && classroom.teacherId === user.profileId)
+  }
+
+  if (user.role === 'student') {
+    return Boolean(user.profileId && schedule.enrolledStudentIds.includes(user.profileId))
+  }
+
+  if (user.role === 'parent') {
+    return managementStudents.some(
+      (student) =>
+        student.parentId === user.profileId && schedule.enrolledStudentIds.includes(student.id)
+    )
+  }
+
+  return false
+}
+
+export const getAccessibleClassroomsForUser = (user: RoleSessionUser) =>
+  classrooms.filter((classroom) => canUserAccessClassroom(user, classroom.id))
+
 export const getClassroomAttendance = (classroomId: string) => {
   const schedule = getClassroomSchedule(classroomId)
 
@@ -1226,7 +1540,7 @@ export const getReferralManagementRows = () =>
   })
 
 export const getReferralShareMessage = (referralCode: string) =>
-  `Join Roshanayi Academy with my referral code ${referralCode}. New students can start with two trial classes before payment.`
+  `Join Roshanayi Academy with my referral code ${referralCode}. New students begin with a two-day trial before payment.`
 
 export const getAllReferralCodes = () =>
   Array.from(

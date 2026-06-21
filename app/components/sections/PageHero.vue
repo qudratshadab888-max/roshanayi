@@ -21,9 +21,9 @@ const { isRtl } = useI18n()
 const heightClass = computed(
   () =>
     ({
-      compact: 'min-h-[380px]',
-      normal: 'min-h-[460px]',
-      tall: 'min-h-[560px]'
+      compact: 'min-h-[340px] sm:min-h-[380px]',
+      normal: 'min-h-[400px] sm:min-h-[460px]',
+      tall: 'min-h-[460px] sm:min-h-[520px]'
     })[props.height]
 )
 
@@ -61,10 +61,13 @@ const heroStyle = computed(() => ({
             >
               {{ eyebrow }}
             </p>
-            <h1 class="mt-6 max-w-5xl text-4xl font-black tracking-tight sm:text-5xl lg:text-6xl">
+            <h1 class="mt-6 max-w-5xl break-words text-4xl font-black leading-tight tracking-normal sm:text-5xl lg:text-6xl">
               {{ title }}
             </h1>
-            <p v-if="description" class="mt-6 max-w-3xl text-lg leading-8 text-slate-200 sm:text-xl">
+            <p
+              v-if="description"
+              :class="['mt-6 max-w-3xl text-lg leading-8 text-slate-200 sm:text-xl', align === 'center' ? 'mx-auto' : '']"
+            >
               {{ description }}
             </p>
             <slot />

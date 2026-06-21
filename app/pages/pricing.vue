@@ -105,8 +105,8 @@ const partnerCards = [
     <PageHero
       :image="pageBackgrounds.pricing"
       eyebrow="Library"
-      title="Digital Library & Resource Center"
-      description="A professional learning hub for audio books, PDF books, parent support, and marketplace resources connected to Roshanayi Academy."
+      title="Digital Library and Family Resource Center"
+      description="A carefully organized home for audiobooks, printable learning materials, parent guidance, and trusted resources that support every live class."
       height="tall"
     >
       <div class="mt-8 flex flex-col gap-3 sm:flex-row">
@@ -116,7 +116,7 @@ const partnerCards = [
 
       <template #aside>
         <div class="rounded-lg border border-white/10 bg-white/10 p-5 backdrop-blur">
-          <p class="text-sm font-semibold uppercase tracking-[0.16em] text-brand-gold">Resource Tracks</p>
+          <p class="text-sm font-semibold uppercase text-brand-gold">Resource collections</p>
           <div class="mt-5 grid gap-3">
             <a
               v-for="item in ['Library', 'Parent Resource Center', 'Learning Marketplace']"
@@ -131,6 +131,7 @@ const partnerCards = [
             <div v-for="stat in libraryStats" :key="stat.label">
               <p class="text-2xl font-black text-brand-gold">{{ stat.value }}</p>
               <p class="text-sm font-semibold text-slate-100">{{ stat.label }}</p>
+              <p class="mt-1 text-xs leading-5 text-slate-300">{{ stat.detail }}</p>
             </div>
           </div>
         </div>
@@ -141,8 +142,8 @@ const partnerCards = [
       <div class="container-wide">
         <SectionHeading
           eyebrow="Library"
-          title="Audio books and PDF books in one organized learning shelf."
-          description="Students can listen, review, and print practice material that supports live classes without overwhelming families."
+          title="Thoughtful practice materials for the days between live classes."
+          description="Students can listen, review, and print focused resources that reinforce each lesson without adding unnecessary pressure at home."
           align="center"
         />
 
@@ -173,7 +174,7 @@ const partnerCards = [
               </div>
               <div class="mt-5 flex flex-wrap items-center gap-3">
                 <span class="rounded-full bg-slate-100 px-3 py-1 text-xs font-bold text-slate-700 dark:bg-slate-800 dark:text-slate-200">{{ book.level }}</span>
-                <BaseButton variant="outline" size="sm">Listen preview</BaseButton>
+                <BaseButton to="/login" variant="outline" size="sm">Open audio library</BaseButton>
               </div>
             </article>
           </div>
@@ -194,7 +195,7 @@ const partnerCards = [
                   <p class="mt-3 text-sm leading-6 text-slate-600 dark:text-slate-300">{{ book.description }}</p>
                   <div class="mt-4 flex flex-wrap items-center gap-3">
                     <span class="rounded-full bg-slate-100 px-3 py-1 text-xs font-bold text-slate-700 dark:bg-slate-800 dark:text-slate-200">{{ book.pages }}</span>
-                    <BaseButton variant="outline" size="sm">Download PDF</BaseButton>
+                    <BaseButton to="/login" variant="outline" size="sm">Open PDF library</BaseButton>
                   </div>
                 </div>
               </div>
@@ -232,8 +233,8 @@ const partnerCards = [
           <div>
             <SectionHeading
               eyebrow="Learning Marketplace"
-              title="Recommended courses, books, and student resources."
-              description="Academy partners can share useful learning items with families while Roshanayi keeps the recommendations organized and student-focused."
+              title="Trusted recommendations beyond the classroom."
+              description="Roshanayi reviews partner resources before presenting them to families, keeping every recommendation relevant, age-aware, and connected to student learning."
             />
             <ol class="mt-8 grid gap-4">
               <li
@@ -260,10 +261,10 @@ const partnerCards = [
               <p class="mt-2 text-sm leading-6 text-slate-600 dark:text-slate-300">{{ card.detail }}</p>
             </article>
             <div class="rounded-lg bg-slate-950 p-6 text-white">
-              <p class="text-sm font-semibold uppercase tracking-[0.16em] text-brand-gold">Partner Code Preview</p>
+              <p class="text-sm font-semibold uppercase text-brand-gold">Partner referral code</p>
               <p class="mt-4 rounded-md bg-white/10 p-4 text-2xl font-black tracking-[0.18em] text-brand-gold">ROSHANAYI-PARTNER</p>
               <p class="mt-4 text-sm leading-6 text-slate-200">
-                Marketplace resources can include approved messages, resource links, campaign notes, and monthly reporting.
+                Approved partners receive a clear referral code and a monthly summary of verified registrations, resource activity, and reward status.
               </p>
               <div class="mt-5 flex flex-col gap-3 sm:flex-row">
                 <BaseButton to="/contact" variant="secondary">Apply as partner</BaseButton>

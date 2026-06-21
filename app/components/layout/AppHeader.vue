@@ -1,8 +1,11 @@
 <script setup lang="ts">
+import { getRoleDefinition } from '~/data/roles'
+
 const route = useRoute()
 const isOpen = ref(false)
 const { isDark, initTheme, toggleTheme } = useDarkMode()
 const { locale, locales, setLocale, t } = useI18n()
+const { currentUser, dashboardPath, logout, syncUser } = useRoleAuth()
 
 const libraryLabel = computed(
   () =>
@@ -29,6 +32,10 @@ const selectedLocale = computed({
   set: (value: string) => setLocale(value)
 })
 
+const currentRoleLabel = computed(() =>
+  currentUser.value ? getRoleDefinition(currentUser.value.role).shortLabel : ''
+)
+
 const isActive = (path: string) => route.path === path || (path !== '/' && route.path.startsWith(path))
 
 watch(
@@ -40,7 +47,14 @@ watch(
 
 onMounted(() => {
   initTheme()
+  syncUser()
 })
+
+const logoutAndReturn = async () => {
+  logout()
+  isOpen.value = false
+  await navigateTo('/login')
+}
 </script>
 
 <template>
@@ -95,8 +109,20 @@ onMounted(() => {
             {{ item.label }}
           </option>
         </select>
-        <BaseButton to="/login" variant="ghost" size="sm">{{ t('common.actions.login') }}</BaseButton>
-        <BaseButton to="/register" size="sm">{{ t('common.actions.register') }}</BaseButton>
+        <template v-if="currentUser">
+          <BaseButton :to="dashboardPath" variant="ghost" size="sm">{{ currentRoleLabel }} Dashboard</BaseButton>
+          <button
+            type="button"
+            class="focus-ring rounded-md border border-slate-200 px-3 py-2 text-sm font-semibold text-slate-700 hover:border-brand-purple hover:text-brand-purple dark:border-slate-800 dark:text-slate-200 dark:hover:border-brand-gold dark:hover:text-brand-gold"
+            @click="logoutAndReturn"
+          >
+            Logout
+          </button>
+        </template>
+        <template v-else>
+          <BaseButton to="/login" variant="ghost" size="sm">{{ t('common.actions.login') }}</BaseButton>
+          <BaseButton to="/register" size="sm">{{ t('common.actions.register') }}</BaseButton>
+        </template>
       </div>
 
       <button
@@ -131,7 +157,17 @@ onMounted(() => {
             {{ item.label }}
           </NuxtLink>
         </div>
-        <div class="mt-4 grid grid-cols-2 gap-3">
+        <div v-if="currentUser" class="mt-4 grid grid-cols-2 gap-3">
+          <BaseButton :to="dashboardPath" variant="outline" block>{{ currentRoleLabel }} Dashboard</BaseButton>
+          <button
+            type="button"
+            class="focus-ring rounded-md border border-slate-200 px-4 py-3 text-sm font-semibold text-slate-700 dark:border-slate-800 dark:text-slate-200"
+            @click="logoutAndReturn"
+          >
+            Logout
+          </button>
+        </div>
+        <div v-else class="mt-4 grid grid-cols-2 gap-3">
           <BaseButton to="/login" variant="outline" block>{{ t('common.actions.login') }}</BaseButton>
           <BaseButton to="/register" block>{{ t('common.actions.register') }}</BaseButton>
         </div>

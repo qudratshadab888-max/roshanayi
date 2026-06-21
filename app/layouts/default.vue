@@ -15,7 +15,7 @@ useHead(() => ({
 <template>
   <div class="min-h-screen bg-white text-brand-ink dark:bg-slate-950 dark:text-slate-100">
     <AppHeader />
-    <main>
+    <main class="min-w-0 overflow-x-clip">
       <slot />
     </main>
     <AppFooter />

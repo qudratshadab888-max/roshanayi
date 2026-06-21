@@ -72,7 +72,7 @@ const homeLandingCopy: Record<LocaleCode, HomeLandingCopy> = {
       description:
         'Live online Dari, Pashto, Quran, Tajweed, Islamic Basics, English, and Afghan heritage classes for Afghan children worldwide with trial classes and parent progress reports.',
       ogDescription:
-        'Register your child for live online classes with two trial classes before payment, safe communication, and parent progress tracking.'
+        'Register your child for live online classes with a two-day trial before payment, safe communication, and parent progress tracking.'
     },
     whatsappMessage:
       'Hello Roshanayi Academy, I want to ask about classes for my child.',
@@ -80,11 +80,11 @@ const homeLandingCopy: Record<LocaleCode, HomeLandingCopy> = {
       eyebrow: 'Trusted online learning for Afghan families abroad',
       title: 'Dari, Pashto, Quran & English Classes for Afghan Children Worldwide',
       description:
-        'Live online classes with structured learning, parent progress reports, and two trial classes before payment.',
+        'Live online classes with structured learning, parent progress reports, and a two-day trial before payment.',
       primaryAction: 'Register Your Child',
       secondaryAction: 'Contact on WhatsApp',
       badges: [
-        'Two Trial Classes',
+        'Two-Day Trial',
         'Parent Reports',
         'Safe Communication',
         'Qualified Teachers',
@@ -98,7 +98,7 @@ const homeLandingCopy: Record<LocaleCode, HomeLandingCopy> = {
         'Parents abroad need more than a tutor. They need a safe, organized academy system that protects communication, payments, and student progress.',
       reasons: [
         {
-          title: 'Two trial classes before payment',
+          title: 'A two-day trial before payment',
           text:
             'Families can see the teacher, schedule, and learning style before confirming enrollment.'
         },
@@ -137,7 +137,7 @@ const homeLandingCopy: Record<LocaleCode, HomeLandingCopy> = {
       steps: [
         'Parent submits registration form',
         'Academy reviews student level and schedule',
-        'Student joins two trial classes',
+        'Student begins the two-day trial',
         'Parent confirms enrollment and payment',
         'Student continues with progress tracking'
       ]
@@ -205,11 +205,11 @@ const homeLandingCopy: Record<LocaleCode, HomeLandingCopy> = {
       ]
     },
     dashboard: {
-      eyebrow: 'Parent Dashboard Preview',
+      eyebrow: 'Family Learning Overview',
       title: 'Parents can understand what is happening without chasing updates.',
       description:
-        'The Phase 1 academy system is designed around simple parent visibility: class attendance, payment clarity, upcoming schedule, progress, and teacher notes.',
-      profileLabel: 'Sample child profile',
+        'Attendance, payment status, upcoming classes, learning progress, and teacher notes come together in one calm, practical family view.',
+      profileLabel: 'Learner profile',
       profileName: 'Amina, age 9',
       activeLabel: 'Active',
       cards: [
@@ -244,13 +244,13 @@ const homeLandingCopy: Record<LocaleCode, HomeLandingCopy> = {
       eyebrow: 'Testimonials',
       title: 'What Afghan parents abroad say about Roshanayi.',
       description:
-        'These placeholder stories reflect the experience Roshanayi Academy is designed to provide: trust, structure, and steady progress.',
+        'Families value clear communication, thoughtful teaching, and the steady progress that grows from a dependable learning routine.',
       items: [
         {
           name: 'Farzana Amini',
           location: 'California, United States',
           quote:
-            'The two trial classes helped us feel comfortable before paying. My daughter now reads short Dari sentences and we receive clear progress notes.',
+            'The two-day trial helped us feel comfortable before paying. My daughter now reads short Dari sentences and we receive clear progress notes.',
           result: 'Parent of a Dari student'
         },
         {
@@ -278,7 +278,7 @@ const homeLandingCopy: Record<LocaleCode, HomeLandingCopy> = {
         {
           question: 'Do you offer trial classes?',
           answer:
-            'Yes. New students can attend two trial classes before payment, so parents can review the teacher, class style, and schedule first.'
+            'Yes. Every new student receives a two-day trial before payment, giving the family time to review the teacher, class style, and schedule.'
         },
         {
           question: 'How do parents pay?',
@@ -314,7 +314,7 @@ const homeLandingCopy: Record<LocaleCode, HomeLandingCopy> = {
     },
     cta: {
       eyebrow: 'Ready to begin?',
-      title: 'Start with two trial classes before payment.',
+      title: 'Start with a two-day trial before payment.',
       description:
         'Register your child today, or ask our team on WhatsApp about the right course, level, and time zone.',
       primaryAction: 'Register Now',
@@ -328,7 +328,7 @@ const homeLandingCopy: Record<LocaleCode, HomeLandingCopy> = {
       description:
         'صنف‌های آنلاین زنده دری، پشتو، قرآن، تجوید، مبانی اسلامی، انگلیسی و میراث افغان برای کودکان افغان در سراسر جهان، همراه با صنف‌های آزمایشی و گزارش پیشرفت والدین.',
       ogDescription:
-        'کودک خود را برای صنف‌های آنلاین زنده ثبت‌نام کنید؛ با دو صنف آزمایشی پیش از پرداخت، ارتباط امن و پیگیری پیشرفت برای والدین.'
+        'کودک خود را برای صنف‌های آنلاین زنده ثبت‌نام کنید؛ با دوره آزمایشی دو روزه پیش از پرداخت، ارتباط امن و پیگیری پیشرفت برای والدین.'
     },
     whatsappMessage:
       'سلام آکادمی روشنایی، می‌خواهم درباره صنف‌های کودک خود معلومات بگیرم.',
@@ -336,11 +336,11 @@ const homeLandingCopy: Record<LocaleCode, HomeLandingCopy> = {
       eyebrow: 'آموزش آنلاین قابل اعتماد برای خانواده‌های افغان بیرون از کشور',
       title: 'صنف‌های دری، پشتو، قرآن و انگلیسی برای کودکان افغان در سراسر جهان',
       description:
-        'صنف‌های آنلاین زنده با آموزش منظم، گزارش پیشرفت برای والدین و دو صنف آزمایشی پیش از پرداخت.',
+        'صنف‌های آنلاین زنده با آموزش منظم، گزارش پیشرفت برای والدین و دوره آزمایشی دو روزه پیش از پرداخت.',
       primaryAction: 'ثبت‌نام کودک',
       secondaryAction: 'تماس در واتساپ',
       badges: [
-        'دو صنف آزمایشی',
+        'دوره آزمایشی دو روزه',
         'گزارش والدین',
         'ارتباط امن',
         'استادان واجد شرایط',
@@ -354,7 +354,7 @@ const homeLandingCopy: Record<LocaleCode, HomeLandingCopy> = {
         'والدین بیرون از کشور به چیزی بیشتر از یک معلم خصوصی نیاز دارند؛ یک سیستم امن و منظم که ارتباط، پرداخت‌ها و پیشرفت شاگرد را محافظت کند.',
       reasons: [
         {
-          title: 'دو صنف آزمایشی پیش از پرداخت',
+          title: 'دوره آزمایشی دو روزه پیش از پرداخت',
           text:
             'خانواده‌ها می‌توانند استاد، برنامه و روش آموزش را پیش از تایید ثبت‌نام ببینند.'
         },
@@ -393,7 +393,7 @@ const homeLandingCopy: Record<LocaleCode, HomeLandingCopy> = {
       steps: [
         'والد فرم ثبت‌نام را می‌فرستد',
         'آکادمی سطح و برنامه شاگرد را بررسی می‌کند',
-        'شاگرد در دو صنف آزمایشی شرکت می‌کند',
+        'شاگرد دوره آزمایشی دو روزه را آغاز می‌کند',
         'والد ثبت‌نام و پرداخت را تایید می‌کند',
         'شاگرد با پیگیری پیشرفت ادامه می‌دهد'
       ]
@@ -461,11 +461,11 @@ const homeLandingCopy: Record<LocaleCode, HomeLandingCopy> = {
       ]
     },
     dashboard: {
-      eyebrow: 'نمایش داشبورد والدین',
+      eyebrow: 'نمای یادگیری خانواده',
       title: 'والدین بدون دنبال‌کردن پیام‌های پراکنده می‌فهمند چه جریان دارد.',
       description:
-        'سیستم مرحله اول آکادمی برای دید ساده والدین ساخته شده است: حاضری صنف، وضاحت پرداخت، برنامه آینده، پیشرفت و یادداشت استاد.',
-      profileLabel: 'نمونه پروفایل کودک',
+        'حاضری، وضعیت پرداخت، صنف آینده، پیشرفت آموزشی و یادداشت استاد در یک نمای آرام و کاربردی برای خانواده گردآوری شده است.',
+      profileLabel: 'پروفایل شاگرد',
       profileName: 'آمینه، ۹ ساله',
       activeLabel: 'فعال',
       cards: [
@@ -500,13 +500,13 @@ const homeLandingCopy: Record<LocaleCode, HomeLandingCopy> = {
       eyebrow: 'نظر والدین',
       title: 'والدین افغان بیرون از کشور درباره روشنایی چه می‌گویند.',
       description:
-        'این داستان‌های نمونه تجربه‌ای را نشان می‌دهد که روشنایی برای آن طراحی شده است: اعتماد، نظم و پیشرفت پایدار.',
+        'خانواده‌ها ارتباط روشن، تدریس سنجیده و پیشرفت پایداری را ارزش می‌دهند که از یک برنامه منظم یادگیری شکل می‌گیرد.',
       items: [
         {
           name: 'فرزانه امینی',
           location: 'کالیفرنیا، ایالات متحده',
           quote:
-            'دو صنف آزمایشی باعث شد پیش از پرداخت آرامش خاطر داشته باشیم. دخترم حالا جمله‌های کوتاه دری می‌خواند و ما یادداشت‌های روشن پیشرفت دریافت می‌کنیم.',
+            'دوره آزمایشی دو روزه باعث شد پیش از پرداخت آرامش خاطر داشته باشیم. دخترم حالا جمله‌های کوتاه دری می‌خواند و ما یادداشت‌های روشن پیشرفت دریافت می‌کنیم.',
           result: 'والد شاگرد دری'
         },
         {
@@ -534,7 +534,7 @@ const homeLandingCopy: Record<LocaleCode, HomeLandingCopy> = {
         {
           question: 'آیا صنف آزمایشی دارید؟',
           answer:
-            'بله. شاگردان تازه می‌توانند پیش از پرداخت در دو صنف آزمایشی شرکت کنند تا والدین اول استاد، روش صنف و برنامه را بررسی کنند.'
+            'بله. هر شاگرد تازه پیش از پرداخت یک دوره آزمایشی دو روزه دارد تا خانواده استاد، روش صنف و برنامه را با آرامش بررسی کند.'
         },
         {
           question: 'والدین چگونه پرداخت می‌کنند؟',
@@ -570,7 +570,7 @@ const homeLandingCopy: Record<LocaleCode, HomeLandingCopy> = {
     },
     cta: {
       eyebrow: 'آماده آغاز هستید؟',
-      title: 'با دو صنف آزمایشی پیش از پرداخت شروع کنید.',
+      title: 'با دوره آزمایشی دو روزه پیش از پرداخت آغاز کنید.',
       description:
         'امروز کودک خود را ثبت‌نام کنید، یا از تیم ما در واتساپ درباره دوره، سطح و منطقه زمانی مناسب بپرسید.',
       primaryAction: 'ثبت‌نام اکنون',
@@ -584,7 +584,7 @@ const homeLandingCopy: Record<LocaleCode, HomeLandingCopy> = {
       description:
         'دري، پښتو، قرآن، تجوید، اسلامي بنسټونه، انګلیسي او افغان میراث لپاره ژوندۍ آنلاین صنفونه، له آزمایښتي صنفونو او د والدینو پرمختګ راپورونو سره.',
       ogDescription:
-        'خپل ماشوم ژوندیو آنلاین صنفونو ته ثبت کړئ؛ له تادیې مخکې دوه آزمایښتي صنفونه، خوندي اړیکه او د والدینو لپاره د پرمختګ تعقیب.'
+        'خپل ماشوم ژوندیو آنلاین صنفونو ته ثبت کړئ؛ له تادیې مخکې دوه ورځنی آزمایښتي پړاو، خوندي اړیکه او د والدینو لپاره د پرمختګ تعقیب.'
     },
     whatsappMessage:
       'سلام روښنايي اکاډمي، زه غواړم د خپل ماشوم د صنفونو په اړه پوښتنه وکړم.',
@@ -592,11 +592,11 @@ const homeLandingCopy: Record<LocaleCode, HomeLandingCopy> = {
       eyebrow: 'له هېواده بهر افغان کورنیو لپاره باوري آنلاین زده کړه',
       title: 'په ټوله نړۍ کې د افغان ماشومانو لپاره دري، پښتو، قرآن او انګلیسي صنفونه',
       description:
-        'ژوندي آنلاین صنفونه له منظمې زده کړې، د والدینو پرمختګ راپورونو او له تادیې مخکې دوه آزمایښتي صنفونو سره.',
+        'ژوندي آنلاین صنفونه له منظمې زده کړې، د والدینو پرمختګ راپورونو او له تادیې مخکې دوه ورځني آزمایښتي پړاو سره.',
       primaryAction: 'د ماشوم نوملیکنه',
       secondaryAction: 'په واتساپ اړیکه',
       badges: [
-        'دوه آزمایښتي صنفونه',
+        'دوه ورځنی آزمایښتي پړاو',
         'د والدینو راپورونه',
         'خوندي اړیکه',
         'وړ استادان',
@@ -610,7 +610,7 @@ const homeLandingCopy: Record<LocaleCode, HomeLandingCopy> = {
         'له هېواده بهر والدین له یو خصوصي ښوونکي څخه زیات څه غواړي؛ یو خوندي او منظم اکاډمي سیستم چې اړیکه، تادیات او د زده کوونکي پرمختګ وساتي.',
       reasons: [
         {
-          title: 'له تادیې مخکې دوه آزمایښتي صنفونه',
+          title: 'له تادیې مخکې دوه ورځنی آزمایښتي پړاو',
           text:
             'کورنۍ د نوملیکنې له تایید مخکې استاد، مهالویش او د زده کړې طریقه لیدلی شي.'
         },
@@ -649,7 +649,7 @@ const homeLandingCopy: Record<LocaleCode, HomeLandingCopy> = {
       steps: [
         'والد د نوملیکنې فارم استوي',
         'اکاډمي د زده کوونکي کچه او مهالویش ارزوي',
-        'زده کوونکی دوه آزمایښتي صنفونو ته ځي',
+        'زده کوونکی دوه ورځنی آزمایښتي پړاو پیلوي',
         'والد نوملیکنه او تادیه تاییدوي',
         'زده کوونکی د پرمختګ له تعقیب سره دوام ورکوي'
       ]
@@ -717,11 +717,11 @@ const homeLandingCopy: Record<LocaleCode, HomeLandingCopy> = {
       ]
     },
     dashboard: {
-      eyebrow: 'د والدینو ډشبورډ نمونه',
+      eyebrow: 'د کورنۍ د زده کړې لید',
       title: 'والدین بې له پرله‌پسې پوښتنو پوهېږي چې څه روان دي.',
       description:
-        'د اکاډمي د لومړي پړاو سیستم د والدینو د ساده لید لپاره جوړ شوی: د صنف حاضري، د تادیې روښانتیا، راتلونکی مهالویش، پرمختګ او د استاد یادښتونه.',
-      profileLabel: 'د ماشوم نمونه پروفایل',
+        'حاضري، د تادیې حالت، راتلونکی صنف، زده‌کړیز پرمختګ او د استاد یادښتونه د کورنۍ لپاره په یوه ارام او عملي لید کې راټول شوي دي.',
+      profileLabel: 'د زده کوونکي پروفایل',
       profileName: 'امینه، ۹ کلنه',
       activeLabel: 'فعال',
       cards: [
@@ -756,13 +756,13 @@ const homeLandingCopy: Record<LocaleCode, HomeLandingCopy> = {
       eyebrow: 'د والدینو نظرونه',
       title: 'له هېواده بهر افغان والدین د روښنايي په اړه څه وایي.',
       description:
-        'دا نمونه کیسې هغه تجربه ښيي چې روښنايي اکاډمي یې د ورکولو لپاره جوړه شوې ده: باور، نظم او دوامداره پرمختګ.',
+        'کورنۍ روښانه اړیکه، سنجول شوی تدریس او هغه دوامدار پرمختګ ارزښتمن بولي چې له منظمې زده کړې څخه رامنځته کېږي.',
       items: [
         {
           name: 'فرزانه امیني',
           location: 'کالیفورنیا، متحده ایالات',
           quote:
-            'دوو آزمایښتي صنفونو له تادیې مخکې موږ ته ډاډ راکړ. زما لور اوس لنډې دري جملې لولي او موږ روښانه پرمختګ یادښتونه ترلاسه کوو.',
+            'دوه ورځني آزمایښتي پړاو له تادیې مخکې موږ ته ډاډ راکړ. زما لور اوس لنډې دري جملې لولي او موږ روښانه پرمختګ یادښتونه ترلاسه کوو.',
           result: 'د دري زده کوونکي والد'
         },
         {
@@ -790,7 +790,7 @@ const homeLandingCopy: Record<LocaleCode, HomeLandingCopy> = {
         {
           question: 'آیا آزمایښتي صنفونه لرئ؟',
           answer:
-            'هو. نوي زده کوونکي له تادیې مخکې دوه آزمایښتي صنفونو ته تللی شي، څو والدین لومړی استاد، د صنف طریقه او مهالویش وګوري.'
+            'هو. هر نوی زده کوونکی له تادیې مخکې دوه ورځنی آزمایښتي پړاو لري، څو کورنۍ استاد، د صنف طریقه او مهالویش په ډاډه زړه وارزوي.'
         },
         {
           question: 'والدین څنګه تادیه کوي؟',
@@ -826,7 +826,7 @@ const homeLandingCopy: Record<LocaleCode, HomeLandingCopy> = {
     },
     cta: {
       eyebrow: 'پیل ته چمتو یاست؟',
-      title: 'له تادیې مخکې له دوو آزمایښتي صنفونو سره پیل وکړئ.',
+      title: 'له تادیې مخکې له دوه ورځني آزمایښتي پړاو څخه پیل وکړئ.',
       description:
         'نن خپل ماشوم ثبت کړئ، یا زموږ له ټیم څخه په واتساپ کې د مناسب کورس، کچې او وخت زون په اړه پوښتنه وکړئ.',
       primaryAction: 'همدا اوس نوملیکنه',

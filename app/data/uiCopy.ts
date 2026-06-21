@@ -49,11 +49,13 @@ type UiCopy = {
     seoDescription: string
     tabs: {
       overview: string
+      schedule: string
       liveClass: string
       assignments: string
       homework: string
       attendance: string
       resources: string
+      materials: string
       progress: string
       announcements: string
     }
@@ -64,6 +66,11 @@ type UiCopy = {
       submitHomework: string
       saveAttendance: string
       postAnnouncement: string
+      saveSchedule: string
+      saveLiveClass: string
+      addMaterial: string
+      saveReview: string
+      saveReport: string
       viewClassrooms: string
     }
     labels: {
@@ -75,6 +82,9 @@ type UiCopy = {
       classroomDetails: string
       course: string
       timezone: string
+      startTime: string
+      endTime: string
+      classType: string
       capacity: string
       meetingLink: string
       enrolledStudents: string
@@ -86,6 +96,9 @@ type UiCopy = {
       paymentStatusParent: string
       liveClass: string
       meetingUrl: string
+      meetingPassword: string
+      classDate: string
+      classNotes: string
       futureVideo: string
       teacherTool: string
       studentTool: string
@@ -103,11 +116,19 @@ type UiCopy = {
       student: string
       assignment: string
       textAnswer: string
+      studentComment: string
       fileUploadPlaceholder: string
       teacherReviewQueue: string
       submitted: string
       score: string
       feedback: string
+      monthlyReports: string
+      reportMonth: string
+      attendanceSummary: string
+      academicProgress: string
+      strengths: string
+      areasForImprovement: string
+      teacherNotes: string
       markAttendance: string
       attendanceHistory: string
       date: string
@@ -122,13 +143,17 @@ type UiCopy = {
       learningProgress: string
       announcements: string
       classUpdates: string
+      announcementType: string
+      message: string
       notFoundEyebrow: string
       notFoundTitle: string
     }
     descriptions: {
       liveClass: string
+      schedule: string
       createAssignment: string
       teacherReviewQueue: string
+      monthlyReports: string
       attendanceHistory: string
       addResource: string
       notFound: string
@@ -161,6 +186,12 @@ type UiCopy = {
       selectStudentAndAssignment: string
       homeworkSubmitted: string
       attendanceSaved: string
+      scheduleSaved: string
+      liveClassSaved: string
+      materialAdded: string
+      reviewSaved: string
+      reportSaved: string
+      announcementPosted: string
     }
     rolePermissions: Array<{ role: string; text: string }>
     teacherRestrictions: string[]
@@ -303,20 +334,20 @@ const uiCopy: Record<LocaleCode, UiCopy> = {
       heroEyebrow: 'Roshanayi Classrooms',
       title: 'Virtual classroom pages for every class group.',
       description:
-        'Phase 1 uses secure meeting links for Zoom, Google Meet, or Jitsi while keeping the structure ready for built-in video, chat, recordings, screen sharing, whiteboard, and raise hand.',
+        'Each class has one organized home for live meeting access, assignments, attendance, learning resources, progress, and family updates.',
       accessRuleTitle: 'Access rule',
       accessRuleText:
-        'Students can join only when they are enrolled and their status is Trial or Active. Trial students are locked after the trial period until payment is confirmed by admin.',
+        'Students can join while their enrollment is active or during the trial period. When payment is due, access is paused without removing the student or their learning record.',
       stats: {
         classrooms: 'Classrooms',
         virtualClassGroups: 'Virtual class groups',
         activeOrTrial: 'Active or Trial',
         readyForLiveSessions: 'Ready for live sessions',
         enrolledStudents: 'Enrolled Students',
-        mockLearnerRecords: 'Mock learner records',
-        videoPhase: 'Video Phase',
+        mockLearnerRecords: 'Learner records',
+        videoPhase: 'Live class access',
         links: 'Links',
-        videoPhaseDetail: 'Zoom, Meet, or Jitsi for now'
+        videoPhaseDetail: 'Secure Zoom or Google Meet links'
       },
       classGroupsEyebrow: 'Class Groups',
       classGroupsTitle: 'Classroom list',
@@ -338,21 +369,28 @@ const uiCopy: Record<LocaleCode, UiCopy> = {
         'Roshanayi Academy classroom page with live class access, assignments, homework submissions, attendance, resources, progress, and announcements.',
       tabs: {
         overview: 'Overview',
+        schedule: 'Schedule',
         liveClass: 'Live Class',
         assignments: 'Assignments',
         homework: 'Homework Submissions',
         attendance: 'Attendance',
         resources: 'Resources',
+        materials: 'Materials',
         progress: 'Progress',
         announcements: 'Announcements'
       },
       actions: {
         backToClassrooms: 'Back to classrooms',
-        refreshPreview: 'Refresh preview',
+        refreshPreview: 'Refresh access',
         addAssignment: 'Add assignment',
         submitHomework: 'Submit homework',
         saveAttendance: 'Save attendance',
         postAnnouncement: 'Post announcement',
+        saveSchedule: 'Save schedule',
+        saveLiveClass: 'Save live class',
+        addMaterial: 'Add material',
+        saveReview: 'Save review',
+        saveReport: 'Save monthly report',
         viewClassrooms: 'View classrooms'
       },
       labels: {
@@ -364,18 +402,24 @@ const uiCopy: Record<LocaleCode, UiCopy> = {
         classroomDetails: 'Classroom details',
         course: 'Course',
         timezone: 'Timezone',
+        startTime: 'Start time',
+        endTime: 'End time',
+        classType: 'Class type',
         capacity: 'Capacity',
         meetingLink: 'Meeting Link',
         enrolledStudents: 'Enrolled students',
         rolePermissions: 'Role permissions',
         teacherRestrictions: 'Teacher restrictions',
-        accessPreview: 'Access Preview',
-        joinClassRuleCheck: 'Join class rule check',
+        accessPreview: 'Student access',
+        joinClassRuleCheck: 'Class access check',
         viewAsStudent: 'View as student',
         paymentStatusParent: 'Payment status for parent view',
         liveClass: 'Live Class',
         meetingUrl: 'Meeting URL',
-        futureVideo: 'Future built-in video structure',
+        meetingPassword: 'Meeting password (optional)',
+        classDate: 'Class date',
+        classNotes: 'Class notes',
+        futureVideo: 'Live session features',
         teacherTool: 'Teacher Tool',
         studentTool: 'Student Tool',
         createAssignment: 'Create assignment',
@@ -383,7 +427,7 @@ const uiCopy: Record<LocaleCode, UiCopy> = {
         instructions: 'Instructions',
         dueDate: 'Due date',
         status: 'Status',
-        fileAttachmentPlaceholder: 'File attachment placeholder',
+        fileAttachmentPlaceholder: 'Lesson attachment',
         assignments: 'Assignments',
         due: 'Due',
         file: 'File',
@@ -392,18 +436,26 @@ const uiCopy: Record<LocaleCode, UiCopy> = {
         student: 'Student',
         assignment: 'Assignment',
         textAnswer: 'Text answer',
-        fileUploadPlaceholder: 'File upload placeholder',
+        studentComment: 'Student comment',
+        fileUploadPlaceholder: 'Homework file',
         teacherReviewQueue: 'Teacher review queue',
         submitted: 'Submitted',
         score: 'Score',
         feedback: 'Feedback',
+        monthlyReports: 'Monthly reports',
+        reportMonth: 'Report month',
+        attendanceSummary: 'Attendance summary',
+        academicProgress: 'Academic progress',
+        strengths: 'Strengths',
+        areasForImprovement: 'Areas for improvement',
+        teacherNotes: 'Teacher notes',
         markAttendance: 'Mark attendance',
         attendanceHistory: 'Attendance history',
         date: 'Date',
         trial: 'Trial',
-        addResourcePlaceholder: 'Add resource placeholder',
+        addResourcePlaceholder: 'Add a learning resource',
         type: 'Type',
-        fileOrLinkPlaceholder: 'File or link placeholder',
+        fileOrLinkPlaceholder: 'File or resource link',
         classResources: 'Class resources',
         progress: 'Progress',
         homeworkCompletion: 'Homework completion',
@@ -411,18 +463,22 @@ const uiCopy: Record<LocaleCode, UiCopy> = {
         learningProgress: 'Learning progress',
         announcements: 'Announcements',
         classUpdates: 'Class updates',
+        announcementType: 'Announcement type',
+        message: 'Message',
         notFoundEyebrow: 'Classroom not found',
         notFoundTitle: 'This classroom does not exist.'
       },
       descriptions: {
         liveClass:
-          'Phase 1 opens an external meeting link. Built-in video calling can be added later without changing the classroom model.',
-        createAssignment: 'Mock only. Later this can save to a backend and attach real files.',
+          'Open the secure meeting link at class time. Access remains available only to enrolled students with an active or trial status.',
+        schedule: 'Managers can update the teacher, class days, start and end times, time zone, and class format.',
+        createAssignment: 'Create a clear assignment, add instructions and a due date, and share the supporting lesson file.',
         teacherReviewQueue: 'Teachers can review homework, add scores, feedback, and mark reviewed.',
+        monthlyReports: 'Create a clear monthly record that parents and managers can review.',
         attendanceHistory:
           'Parents can view summaries. Admin can review history across all classrooms.',
         addResource:
-          'This is a mock upload structure for PDFs, audio, video links, Quran materials, vocabulary sheets, and class notes.',
+          'Share PDFs, audio, video links, Quran materials, vocabulary sheets, and class notes in one organized library.',
         notFound: 'Please return to the classroom list and choose an active class group.'
       },
       placeholders: {
@@ -431,7 +487,7 @@ const uiCopy: Record<LocaleCode, UiCopy> = {
         resourceFile: 'lesson.pdf or video link'
       },
       fallbacks: {
-        selectStudentAccess: 'Select an enrolled student to preview live class access.',
+        selectStudentAccess: 'Select an enrolled student to review live class access.',
         unknownCourse: 'Unknown course',
         unassignedTeacher: 'Unassigned teacher',
         unknownAssignment: 'Unknown assignment',
@@ -442,17 +498,23 @@ const uiCopy: Record<LocaleCode, UiCopy> = {
         awaitingReview: 'Awaiting review',
         teacherInstructions: 'Teacher instructions will be added.',
         noAttachment: 'No attachment yet',
-        studentAnswer: 'Student text answer placeholder.',
+        studentAnswer: 'The student has not added a written answer yet.',
         noFileUploaded: 'No file uploaded yet',
         yes: 'Yes',
         no: 'No'
       },
       notices: {
         addAssignmentTitle: 'Add an assignment title first.',
-        assignmentAdded: 'Mock assignment added for this page preview.',
+        assignmentAdded: 'The assignment has been added to this classroom.',
         selectStudentAndAssignment: 'Select a student and assignment first.',
-        homeworkSubmitted: 'Mock homework submitted for review.',
-        attendanceSaved: 'Mock attendance saved for this preview.'
+        homeworkSubmitted: 'Homework has been submitted for teacher review.',
+        attendanceSaved: 'Attendance has been saved for this class.',
+        scheduleSaved: 'The classroom schedule has been updated.',
+        liveClassSaved: 'Live class information has been updated.',
+        materialAdded: 'The learning material has been added.',
+        reviewSaved: 'The homework review has been saved.',
+        reportSaved: 'The monthly report has been saved.',
+        announcementPosted: 'The announcement is now visible to this classroom.'
       },
       rolePermissions: [
         {
@@ -484,16 +546,16 @@ const uiCopy: Record<LocaleCode, UiCopy> = {
       ]
     },
     management: {
-      seoTitle: 'Management System Phase 1',
+      seoTitle: 'Academy Management',
       seoDescription:
-        'Phase 1 mock student management dashboard for Roshanayi Academy with students, courses, teachers, schedules, attendance, payments, and role views.',
+        'Roshanayi Academy management workspace for students, courses, teachers, schedules, attendance, payments, and role-based operations.',
       heroEyebrow: 'Roshanayi Academy',
-      heroTitle: 'Management System Phase 1',
+      heroTitle: 'Academy management, clearly organized.',
       heroDescription:
-        'A clean mock-data foundation for admin, parent, and teacher workflows. No backend, no payment gateway, and no complex features yet.',
+        'Review enrollment, classrooms, schedules, attendance, payments, and family follow-up from one focused operations workspace.',
       stats: {
         students: 'Students',
-        mockRegistrations: 'Mock registrations',
+        mockRegistrations: 'Enrollment records',
         active: 'Active',
         canAttendPaidClasses: 'Can attend paid classes',
         paymentRequired: 'Payment required',
@@ -505,13 +567,13 @@ const uiCopy: Record<LocaleCode, UiCopy> = {
       },
       admin: {
         eyebrow: 'Admin Dashboard',
-        title: 'Overview for Phase 1 operations',
+        title: 'Daily operations overview',
         description:
           'Admin can review student registrations, class status, schedules, attendance, and payments from one simple page.',
         studentsSmall: 'students',
         studentListTitle: 'Student Registration List',
         studentListDescription:
-          'Mock records only. Statuses are Trial, Payment Required, Active, and Inactive.',
+          'Review each student’s enrollment stage, selected course, schedule preference, and current access status.',
         coursesListTitle: 'Courses List',
         teachersListTitle: 'Teachers List',
         classScheduleTitle: 'Class Schedule List',
@@ -520,10 +582,10 @@ const uiCopy: Record<LocaleCode, UiCopy> = {
           'Admin can review class groups, meeting providers, enrolled students, schedules, and classroom pages.',
         attendanceTableTitle: 'Attendance Table',
         paymentTrackingTitle: 'Payment Tracking Table',
-        paymentTrackingDescription: 'Tracking only. No payment gateway is connected.',
+        paymentTrackingDescription: 'Review monthly status, academy confirmation, and accounts that need follow-up.',
         referralManagementTitle: 'Referral Management',
         referralManagementDescription:
-          'Referrals count only after completed registration, two attended trial classes, paid first invoice, admin payment confirmation, and family approval. Same-family referrals stay in review until admin approves them.'
+          'Referrals count only after completed registration, the two-day trial, the first paid invoice, academy payment confirmation, and family approval. Same-family referrals remain under review until management approves them.'
       },
       labels: {
         student: 'Student',
@@ -602,7 +664,7 @@ const uiCopy: Record<LocaleCode, UiCopy> = {
       referralDescription:
         'Share this code with another family. The reward counts only after their trial classes and first admin-confirmed payment.',
       referralShareMessage:
-        'Join Roshanayi Academy with my referral code {code}. New students can start with two trial classes before payment.',
+        'Join Roshanayi Academy with my referral code {code}. New students begin with a two-day trial before payment.',
       verifiedReferrals: 'verified referrals'
     },
     statusLabels: {
@@ -662,6 +724,8 @@ const uiCopy: Record<LocaleCode, UiCopy> = {
     },
     resourceTypeLabels: {
       'PDF Lesson': 'PDF Lesson',
+      Document: 'Document',
+      Worksheet: 'Worksheet',
       'Audio File': 'Audio File',
       'Video Link': 'Video Link',
       'Quran Practice': 'Quran Practice',
@@ -696,20 +760,20 @@ const uiCopy: Record<LocaleCode, UiCopy> = {
       heroEyebrow: 'صنف‌های روشنایی',
       title: 'صفحه صنف مجازی برای هر گروه درسی.',
       description:
-        'مرحله اول از لینک‌های امن Zoom، Google Meet یا Jitsi استفاده می‌کند و ساختار برای ویدیو داخلی، چت، ضبط، شریک‌سازی صفحه، تخته سفید و بلند کردن دست آماده می‌ماند.',
+        'هر صنف یک فضای منظم برای ورود به جلسه زنده، وظایف، حاضری، منابع آموزشی، پیشرفت و اطلاع‌رسانی خانواده دارد.',
       accessRuleTitle: 'قانون دسترسی',
       accessRuleText:
-        'شاگردان فقط زمانی می‌توانند وارد شوند که ثبت‌نام شده باشند و وضعیت‌شان آزمایشی یا فعال باشد. شاگردان آزمایشی پس از پایان دوره آزمایشی تا تایید پرداخت توسط مدیریت قفل می‌شوند.',
+        'شاگردان در دوره آزمایشی یا هنگام فعال‌بودن ثبت‌نام می‌توانند وارد صنف شوند. اگر پرداخت سررسید شود، دسترسی بدون حذف شاگرد یا پرونده آموزشی او موقتاً متوقف می‌گردد.',
       stats: {
         classrooms: 'صنف‌ها',
         virtualClassGroups: 'گروه‌های صنف مجازی',
         activeOrTrial: 'فعال یا آزمایشی',
         readyForLiveSessions: 'آماده برای جلسه زنده',
         enrolledStudents: 'شاگردان ثبت‌نام‌شده',
-        mockLearnerRecords: 'رکوردهای نمونه شاگردان',
-        videoPhase: 'مرحله ویدیو',
+        mockLearnerRecords: 'پرونده‌های شاگردان',
+        videoPhase: 'دسترسی به صنف زنده',
         links: 'لینک‌ها',
-        videoPhaseDetail: 'فعلاً Zoom، Meet یا Jitsi'
+        videoPhaseDetail: 'لینک امن Zoom یا Google Meet'
       },
       classGroupsEyebrow: 'گروه‌های صنف',
       classGroupsTitle: 'فهرست صنف‌ها',
@@ -731,21 +795,28 @@ const uiCopy: Record<LocaleCode, UiCopy> = {
         'صفحه صنف آکادمی روشنایی با دسترسی صنف زنده، وظایف، سپردن کارخانگی، حاضری، منابع، پیشرفت و اعلان‌ها.',
       tabs: {
         overview: 'نمای کلی',
+        schedule: 'برنامه صنف',
         liveClass: 'صنف زنده',
         assignments: 'وظایف',
         homework: 'کارخانگی‌های سپرده‌شده',
         attendance: 'حاضری',
         resources: 'منابع',
+        materials: 'مواد آموزشی',
         progress: 'پیشرفت',
         announcements: 'اعلان‌ها'
       },
       actions: {
         backToClassrooms: 'بازگشت به صنف‌ها',
-        refreshPreview: 'تازه‌سازی پیش‌نمایش',
+        refreshPreview: 'تازه‌سازی دسترسی',
         addAssignment: 'افزودن وظیفه',
         submitHomework: 'سپردن کارخانگی',
         saveAttendance: 'ذخیره حاضری',
         postAnnouncement: 'نشر اعلان',
+        saveSchedule: 'ذخیره برنامه',
+        saveLiveClass: 'ذخیره اطلاعات صنف زنده',
+        addMaterial: 'افزودن مواد آموزشی',
+        saveReview: 'ذخیره بازبینی',
+        saveReport: 'ذخیره گزارش ماهانه',
         viewClassrooms: 'دیدن صنف‌ها'
       },
       labels: {
@@ -757,18 +828,24 @@ const uiCopy: Record<LocaleCode, UiCopy> = {
         classroomDetails: 'جزئیات صنف',
         course: 'دوره',
         timezone: 'منطقه زمانی',
+        startTime: 'وقت آغاز',
+        endTime: 'وقت پایان',
+        classType: 'نوع صنف',
         capacity: 'ظرفیت',
         meetingLink: 'لینک جلسه',
         enrolledStudents: 'شاگردان ثبت‌نام‌شده',
         rolePermissions: 'صلاحیت‌های نقش‌ها',
         teacherRestrictions: 'محدودیت‌های استاد',
-        accessPreview: 'پیش‌نمایش دسترسی',
-        joinClassRuleCheck: 'بررسی قانون ورود به صنف',
+        accessPreview: 'دسترسی شاگرد',
+        joinClassRuleCheck: 'بررسی دسترسی به صنف',
         viewAsStudent: 'دیدن به حیث شاگرد',
         paymentStatusParent: 'وضعیت پرداخت برای دید والد',
         liveClass: 'صنف زنده',
         meetingUrl: 'آدرس جلسه',
-        futureVideo: 'ساختار آینده ویدیوی داخلی',
+        meetingPassword: 'رمز جلسه (اختیاری)',
+        classDate: 'تاریخ صنف',
+        classNotes: 'یادداشت صنف',
+        futureVideo: 'امکانات جلسه زنده',
         teacherTool: 'ابزار استاد',
         studentTool: 'ابزار شاگرد',
         createAssignment: 'ساخت وظیفه',
@@ -776,7 +853,7 @@ const uiCopy: Record<LocaleCode, UiCopy> = {
         instructions: 'رهنمودها',
         dueDate: 'تاریخ تحویل',
         status: 'وضعیت',
-        fileAttachmentPlaceholder: 'نمونه پیوست فایل',
+        fileAttachmentPlaceholder: 'پیوست درس',
         assignments: 'وظایف',
         due: 'تحویل',
         file: 'فایل',
@@ -785,18 +862,26 @@ const uiCopy: Record<LocaleCode, UiCopy> = {
         student: 'شاگرد',
         assignment: 'وظیفه',
         textAnswer: 'پاسخ متنی',
-        fileUploadPlaceholder: 'نمونه آپلود فایل',
+        studentComment: 'نظر شاگرد',
+        fileUploadPlaceholder: 'فایل کارخانگی',
         teacherReviewQueue: 'صف بررسی استاد',
         submitted: 'سپرده شده',
         score: 'نمره',
         feedback: 'بازخورد',
+        monthlyReports: 'گزارش‌های ماهانه',
+        reportMonth: 'ماه گزارش',
+        attendanceSummary: 'خلاصه حاضری',
+        academicProgress: 'پیشرفت آموزشی',
+        strengths: 'توانایی‌ها',
+        areasForImprovement: 'بخش‌های نیازمند بهبود',
+        teacherNotes: 'یادداشت استاد',
         markAttendance: 'ثبت حاضری',
         attendanceHistory: 'تاریخچه حاضری',
         date: 'تاریخ',
         trial: 'آزمایشی',
-        addResourcePlaceholder: 'افزودن نمونه منبع',
+        addResourcePlaceholder: 'افزودن منبع آموزشی',
         type: 'نوع',
-        fileOrLinkPlaceholder: 'نمونه فایل یا لینک',
+        fileOrLinkPlaceholder: 'فایل یا لینک منبع',
         classResources: 'منابع صنف',
         progress: 'پیشرفت',
         homeworkCompletion: 'تکمیل کارخانگی',
@@ -804,18 +889,22 @@ const uiCopy: Record<LocaleCode, UiCopy> = {
         learningProgress: 'پیشرفت یادگیری',
         announcements: 'اعلان‌ها',
         classUpdates: 'تازه‌سازی‌های صنف',
+        announcementType: 'نوع اعلان',
+        message: 'پیام',
         notFoundEyebrow: 'صنف پیدا نشد',
         notFoundTitle: 'این صنف وجود ندارد.'
       },
       descriptions: {
         liveClass:
-          'مرحله اول لینک جلسه بیرونی را باز می‌کند. تماس ویدیویی داخلی بعداً بدون تغییر مدل صنف اضافه شده می‌تواند.',
-        createAssignment: 'فعلاً نمونه است. بعداً می‌تواند در backend ذخیره شود و فایل واقعی پیوست کند.',
+          'در وقت صنف، لینک امن جلسه را باز کنید. دسترسی تنها برای شاگردان ثبت‌نام‌شده با وضعیت فعال یا آزمایشی فراهم است.',
+        schedule: 'مدیر می‌تواند استاد، روزهای صنف، وقت آغاز و پایان، منطقه زمانی و نوع صنف را تنظیم کند.',
+        createAssignment: 'وظیفه را با عنوان روشن، رهنمود، تاریخ تحویل و فایل پشتیبان درس آماده و نشر کنید.',
         teacherReviewQueue: 'استادان می‌توانند کارخانگی را بررسی کنند، نمره و بازخورد بدهند و آن را بررسی‌شده بسازند.',
+        monthlyReports: 'گزارش روشن ماهانه‌ای بسازید که والدین و مدیر بتوانند آن را بررسی کنند.',
         attendanceHistory:
           'والدین می‌توانند خلاصه‌ها را ببینند. مدیریت می‌تواند تاریخچه را در همه صنف‌ها بررسی کند.',
         addResource:
-          'این ساختار نمونه برای آپلود PDF، صدا، لینک ویدیو، مواد قرآن، ورق واژگان و یادداشت‌های صنف است.',
+          'فایل PDF، صدا، لینک ویدیو، مواد قرآن، ورق واژگان و یادداشت صنف را در یک کتابخانه منظم شریک بسازید.',
         notFound: 'لطفاً به فهرست صنف‌ها برگردید و یک گروه فعال را انتخاب کنید.'
       },
       placeholders: {
@@ -824,7 +913,7 @@ const uiCopy: Record<LocaleCode, UiCopy> = {
         resourceFile: 'lesson.pdf یا لینک ویدیو'
       },
       fallbacks: {
-        selectStudentAccess: 'یک شاگرد ثبت‌نام‌شده را برای دیدن دسترسی صنف زنده انتخاب کنید.',
+        selectStudentAccess: 'یک شاگرد ثبت‌نام‌شده را برای بررسی دسترسی صنف زنده انتخاب کنید.',
         unknownCourse: 'دوره نامعلوم',
         unassignedTeacher: 'استاد تعیین نشده',
         unknownAssignment: 'وظیفه نامعلوم',
@@ -835,17 +924,23 @@ const uiCopy: Record<LocaleCode, UiCopy> = {
         awaitingReview: 'در انتظار بررسی',
         teacherInstructions: 'رهنمود استاد اضافه خواهد شد.',
         noAttachment: 'هنوز پیوستی نیست',
-        studentAnswer: 'نمونه پاسخ متنی شاگرد.',
+        studentAnswer: 'شاگرد هنوز پاسخ نوشتاری اضافه نکرده است.',
         noFileUploaded: 'هنوز فایلی آپلود نشده',
         yes: 'بلی',
         no: 'نخیر'
       },
       notices: {
         addAssignmentTitle: 'اول عنوان وظیفه را اضافه کنید.',
-        assignmentAdded: 'وظیفه نمونه برای پیش‌نمایش این صفحه اضافه شد.',
+        assignmentAdded: 'وظیفه به این صنف اضافه شد.',
         selectStudentAndAssignment: 'اول شاگرد و وظیفه را انتخاب کنید.',
-        homeworkSubmitted: 'کارخانگی نمونه برای بررسی فرستاده شد.',
-        attendanceSaved: 'حاضری نمونه برای این پیش‌نمایش ذخیره شد.'
+        homeworkSubmitted: 'کارخانگی برای بررسی استاد فرستاده شد.',
+        attendanceSaved: 'حاضری این صنف ذخیره شد.',
+        scheduleSaved: 'برنامه صنف به‌روز شد.',
+        liveClassSaved: 'اطلاعات صنف زنده به‌روز شد.',
+        materialAdded: 'مواد آموزشی به صنف اضافه شد.',
+        reviewSaved: 'بازبینی کارخانگی ذخیره شد.',
+        reportSaved: 'گزارش ماهانه ذخیره شد.',
+        announcementPosted: 'اعلان اکنون برای اعضای این صنف قابل دید است.'
       },
       rolePermissions: [
         {
@@ -877,16 +972,16 @@ const uiCopy: Record<LocaleCode, UiCopy> = {
       ]
     },
     management: {
-      seoTitle: 'سیستم مدیریت مرحله اول',
+      seoTitle: 'مدیریت آکادمی',
       seoDescription:
-        'داشبورد نمونه مدیریت شاگردان برای آکادمی روشنایی با شاگردان، دوره‌ها، استادان، برنامه‌ها، حاضری، پرداخت‌ها و دید نقش‌ها.',
+        'فضای مدیریت آکادمی روشنایی برای شاگردان، دوره‌ها، استادان، برنامه‌ها، حاضری، پرداخت‌ها و عملیات مبتنی بر نقش.',
       heroEyebrow: 'آکادمی روشنایی',
-      heroTitle: 'سیستم مدیریت مرحله اول',
+      heroTitle: 'مدیریت روشن و منظم آکادمی.',
       heroDescription:
-        'یک بنیاد پاک با داده‌های نمونه برای روندهای مدیریت، والد و استاد. فعلاً backend، درگاه پرداخت و ویژگی‌های پیچیده وصل نیست.',
+        'ثبت‌نام، صنف‌ها، برنامه‌ها، حاضری، پرداخت و پیگیری خانواده‌ها را در یک فضای کاری متمرکز بررسی کنید.',
       stats: {
         students: 'شاگردان',
-        mockRegistrations: 'ثبت‌نام‌های نمونه',
+        mockRegistrations: 'پرونده‌های ثبت‌نام',
         active: 'فعال',
         canAttendPaidClasses: 'می‌تواند در صنف‌های پرداخت‌شده شرکت کند',
         paymentRequired: 'پرداخت لازم است',
@@ -898,13 +993,13 @@ const uiCopy: Record<LocaleCode, UiCopy> = {
       },
       admin: {
         eyebrow: 'داشبورد مدیریت',
-        title: 'نمای کلی عملیات مرحله اول',
+        title: 'نمای کلی عملیات روزانه',
         description:
           'مدیریت می‌تواند ثبت‌نام شاگردان، وضعیت صنف، برنامه‌ها، حاضری و پرداخت‌ها را از یک صفحه ساده بررسی کند.',
         studentsSmall: 'شاگرد',
         studentListTitle: 'فهرست ثبت‌نام شاگردان',
         studentListDescription:
-          'فقط رکوردهای نمونه. وضعیت‌ها شامل آزمایشی، پرداخت لازم، فعال و غیرفعال است.',
+          'مرحله ثبت‌نام، دوره انتخاب‌شده، وقت دلخواه و وضعیت دسترسی هر شاگرد را یک‌جا بررسی کنید.',
         coursesListTitle: 'فهرست دوره‌ها',
         teachersListTitle: 'فهرست استادان',
         classScheduleTitle: 'فهرست برنامه صنف‌ها',
@@ -913,10 +1008,10 @@ const uiCopy: Record<LocaleCode, UiCopy> = {
           'مدیریت می‌تواند گروه‌های صنف، فراهم‌کنندگان جلسه، شاگردان ثبت‌نام‌شده، برنامه‌ها و صفحه‌های صنف را بررسی کند.',
         attendanceTableTitle: 'جدول حاضری',
         paymentTrackingTitle: 'جدول پیگیری پرداخت',
-        paymentTrackingDescription: 'فقط برای پیگیری است. هیچ درگاه پرداخت وصل نیست.',
+        paymentTrackingDescription: 'وضعیت ماهانه، تایید آکادمی و حساب‌های نیازمند پیگیری را بررسی کنید.',
         referralManagementTitle: 'مدیریت معرفی‌ها',
         referralManagementDescription:
-          'معرفی‌ها فقط پس از تکمیل ثبت‌نام، دو صنف آزمایشی حاضر، پرداخت نخستین فاکتور، تایید پرداخت توسط مدیریت و تایید خانواده حساب می‌شود. معرفی‌های از همان خانواده تا تایید مدیریت در بررسی می‌ماند.'
+          'معرفی‌ها پس از تکمیل ثبت‌نام، دوره آزمایشی دو روزه، پرداخت نخستین فاکتور، تایید پرداخت توسط آکادمی و تایید خانواده حساب می‌شود. معرفی‌های یک خانواده تا تایید مدیریت در حال بررسی می‌ماند.'
       },
       labels: {
         student: 'شاگرد',
@@ -995,7 +1090,7 @@ const uiCopy: Record<LocaleCode, UiCopy> = {
       referralDescription:
         'این کود را با یک خانواده دیگر شریک بسازید. جایزه فقط پس از صنف‌های آزمایشی و نخستین پرداخت تاییدشده توسط مدیریت حساب می‌شود.',
       referralShareMessage:
-        'با کود معرفی {code} به آکادمی روشنایی بپیوندید. شاگردان تازه می‌توانند با دو صنف آزمایشی پیش از پرداخت آغاز کنند.',
+        'با کود معرفی {code} به آکادمی روشنایی بپیوندید. شاگردان تازه پیش از پرداخت با یک دوره آزمایشی دو روزه آغاز می‌کنند.',
       verifiedReferrals: 'معرفی تاییدشده'
     },
     statusLabels: {
@@ -1055,6 +1150,8 @@ const uiCopy: Record<LocaleCode, UiCopy> = {
     },
     resourceTypeLabels: {
       'PDF Lesson': 'درس PDF',
+      Document: 'سند',
+      Worksheet: 'ورق تمرین',
       'Audio File': 'فایل صوتی',
       'Video Link': 'لینک ویدیو',
       'Quran Practice': 'تمرین قرآن',
@@ -1089,20 +1186,20 @@ const uiCopy: Record<LocaleCode, UiCopy> = {
       heroEyebrow: 'د روښنايي صنفونه',
       title: 'د هر صنفي ګروپ لپاره مجازي صنف پاڼې.',
       description:
-        'لومړی پړاو د Zoom، Google Meet یا Jitsi خوندي لینکونه کاروي او جوړښت د داخلي ویدیو، چټ، ثبت، د پردې شریکولو، سپینې تختې او لاس پورته کولو لپاره چمتو ساتي.',
+        'هر صنف د ژوندۍ غونډې، دندو، حاضري، زده‌کړیزو سرچینو، پرمختګ او کورنۍ خبرتیاوو لپاره یو منظم ځای لري.',
       accessRuleTitle: 'د لاسرسي قانون',
       accessRuleText:
-        'زده کوونکي یوازې هغه وخت ننوتلی شي چې نوملیکنه ولري او حالت یې آزمایښتي یا فعال وي. آزمایښتي زده کوونکي د آزمایښتي مودې وروسته تر هغه قفل کېږي چې تادیه د مدیریت له خوا تایید شي.',
+        'زده کوونکي د آزمایښتي پړاو یا فعالې نوملیکنې پر مهال صنف ته ننوتلی شي. که تادیه ورسېږي، لاسرسی د زده کوونکي او زده‌کړیز ریکارډ له حذف پرته موقتاً درول کېږي.',
       stats: {
         classrooms: 'صنفونه',
         virtualClassGroups: 'مجازي صنفي ګروپونه',
         activeOrTrial: 'فعال یا آزمایښتي',
         readyForLiveSessions: 'ژوندیو غونډو ته چمتو',
         enrolledStudents: 'نوملیکل شوي زده کوونکي',
-        mockLearnerRecords: 'د زده کوونکو نمونه ریکارډونه',
-        videoPhase: 'د ویدیو پړاو',
+        mockLearnerRecords: 'د زده کوونکو ریکارډونه',
+        videoPhase: 'ژوندي صنف ته لاسرسی',
         links: 'لینکونه',
-        videoPhaseDetail: 'اوس لپاره Zoom، Meet یا Jitsi'
+        videoPhaseDetail: 'خوندي Zoom یا Google Meet لینکونه'
       },
       classGroupsEyebrow: 'صنفي ګروپونه',
       classGroupsTitle: 'د صنفونو لست',
@@ -1124,21 +1221,28 @@ const uiCopy: Record<LocaleCode, UiCopy> = {
         'د روښنايي اکاډمي صنف پاڼه له ژوندي صنف لاسرسي، دندو، کورنۍ دندې سپارلو، حاضري، سرچینو، پرمختګ او اعلانونو سره.',
       tabs: {
         overview: 'لنډیز',
+        schedule: 'مهالویش',
         liveClass: 'ژوندی صنف',
         assignments: 'دندې',
         homework: 'سپارل شوې کورنۍ دندې',
         attendance: 'حاضري',
         resources: 'سرچینې',
+        materials: 'زده‌کړیز مواد',
         progress: 'پرمختګ',
         announcements: 'اعلانونه'
       },
       actions: {
         backToClassrooms: 'صنفونو ته ستنېدل',
-        refreshPreview: 'مخکتنه تازه کړئ',
+        refreshPreview: 'لاسرسی تازه کړئ',
         addAssignment: 'دنده زیاته کړئ',
         submitHomework: 'کورنۍ دنده وسپارئ',
         saveAttendance: 'حاضري خوندي کړئ',
         postAnnouncement: 'اعلان خپور کړئ',
+        saveSchedule: 'مهالویش خوندي کړئ',
+        saveLiveClass: 'د ژوندي صنف معلومات خوندي کړئ',
+        addMaterial: 'زده‌کړیز مواد زیات کړئ',
+        saveReview: 'بیاکتنه خوندي کړئ',
+        saveReport: 'میاشتنی راپور خوندي کړئ',
         viewClassrooms: 'صنفونه وګورئ'
       },
       labels: {
@@ -1150,18 +1254,24 @@ const uiCopy: Record<LocaleCode, UiCopy> = {
         classroomDetails: 'د صنف جزئیات',
         course: 'کورس',
         timezone: 'وخت زون',
+        startTime: 'د پیل وخت',
+        endTime: 'د پای وخت',
+        classType: 'د صنف ډول',
         capacity: 'ظرفیت',
         meetingLink: 'د غونډې لینک',
         enrolledStudents: 'نوملیکل شوي زده کوونکي',
         rolePermissions: 'د رولونو اجازه',
         teacherRestrictions: 'د استاد محدودیتونه',
-        accessPreview: 'د لاسرسي مخکتنه',
-        joinClassRuleCheck: 'صنف ته د ننوتلو قانون کتل',
+        accessPreview: 'د زده کوونکي لاسرسی',
+        joinClassRuleCheck: 'صنف ته د لاسرسي کتنه',
         viewAsStudent: 'د زده کوونکي په توګه وګورئ',
         paymentStatusParent: 'د والد لید لپاره د تادیې حالت',
         liveClass: 'ژوندی صنف',
         meetingUrl: 'د غونډې پته',
-        futureVideo: 'د راتلونکي داخلي ویدیو جوړښت',
+        meetingPassword: 'د غونډې پټنوم (اختیاري)',
+        classDate: 'د صنف نېټه',
+        classNotes: 'د صنف یادښتونه',
+        futureVideo: 'د ژوندۍ غونډې اسانتیاوې',
         teacherTool: 'د استاد وسیله',
         studentTool: 'د زده کوونکي وسیله',
         createAssignment: 'دنده جوړه کړئ',
@@ -1169,7 +1279,7 @@ const uiCopy: Record<LocaleCode, UiCopy> = {
         instructions: 'لارښوونې',
         dueDate: 'د سپارلو نېټه',
         status: 'حالت',
-        fileAttachmentPlaceholder: 'د فایل ضمیمې نمونه',
+        fileAttachmentPlaceholder: 'د درس ضمیمه',
         assignments: 'دندې',
         due: 'سپارل',
         file: 'فایل',
@@ -1178,18 +1288,26 @@ const uiCopy: Record<LocaleCode, UiCopy> = {
         student: 'زده کوونکی',
         assignment: 'دنده',
         textAnswer: 'متني ځواب',
-        fileUploadPlaceholder: 'د فایل پورته کولو نمونه',
+        studentComment: 'د زده کوونکي تبصره',
+        fileUploadPlaceholder: 'د کورنۍ دندې فایل',
         teacherReviewQueue: 'د استاد د بیاکتنې کتار',
         submitted: 'سپارل شوی',
         score: 'نمره',
         feedback: 'نظر',
+        monthlyReports: 'میاشتني راپورونه',
+        reportMonth: 'د راپور میاشت',
+        attendanceSummary: 'د حاضري لنډیز',
+        academicProgress: 'زده‌کړیز پرمختګ',
+        strengths: 'ځواکمن ټکي',
+        areasForImprovement: 'د ښه والي برخې',
+        teacherNotes: 'د استاد یادښتونه',
         markAttendance: 'حاضري نښه کړئ',
         attendanceHistory: 'د حاضري تاریخچه',
         date: 'نېټه',
         trial: 'آزمایښتي',
-        addResourcePlaceholder: 'د سرچینې نمونه زیاته کړئ',
+        addResourcePlaceholder: 'زده‌کړیزه سرچینه زیاته کړئ',
         type: 'ډول',
-        fileOrLinkPlaceholder: 'د فایل یا لینک نمونه',
+        fileOrLinkPlaceholder: 'د سرچینې فایل یا لینک',
         classResources: 'د صنف سرچینې',
         progress: 'پرمختګ',
         homeworkCompletion: 'د کورنۍ دندې بشپړول',
@@ -1197,18 +1315,22 @@ const uiCopy: Record<LocaleCode, UiCopy> = {
         learningProgress: 'د زده کړې پرمختګ',
         announcements: 'اعلانونه',
         classUpdates: 'د صنف تازه معلومات',
+        announcementType: 'د اعلان ډول',
+        message: 'پیغام',
         notFoundEyebrow: 'صنف ونه موندل شو',
         notFoundTitle: 'دا صنف نشته.'
       },
       descriptions: {
         liveClass:
-          'لومړی پړاو بهرنی غونډې لینک پرانیزي. داخلي ویدیو اړیکه وروسته د صنف د ماډل له بدلولو پرته زیاتېدای شي.',
-        createAssignment: 'اوس یوازې نمونه ده. وروسته backend ته خوندي کېدای شي او ریښتیني فایلونه ورسره تړل کېدای شي.',
+          'د صنف پر وخت خوندي غونډې لینک پرانیزئ. لاسرسی یوازې نوملیکل شوو زده کوونکو ته د فعال یا آزمایښتي حالت پر مهال شته.',
+        schedule: 'مدیر کولی شي استاد، د صنف ورځې، د پیل او پای وخت، وخت زون او د صنف ډول تنظیم کړي.',
+        createAssignment: 'دنده له روښانه عنوان، لارښوونو، سپارلو نېټې او د درس له ملاتړي فایل سره خپره کړئ.',
         teacherReviewQueue: 'استادان کورنۍ دنده کتلی شي، نمره او نظر ورکولی شي او بیاکتل شوی یې نښه کولی شي.',
+        monthlyReports: 'یو روښانه میاشتنی ریکارډ جوړ کړئ چې والدین او مدیران یې کتلی شي.',
         attendanceHistory:
           'والدین لنډیزونه لیدلی شي. مدیریت د ټولو صنفونو تاریخچه کتلی شي.',
         addResource:
-          'دا د PDF، غږ، ویدیو لینک، قرآن موادو، لغت پاڼو او صنفي یادښتونو لپاره د پورته کولو نمونه جوړښت دی.',
+          'PDF، غږ، ویدیو لینک، د قرآن مواد، لغت پاڼې او صنفي یادښتونه په یوه منظم کتابتون کې شریک کړئ.',
         notFound: 'مهرباني وکړئ د صنفونو لست ته ستانه شئ او یو فعال صنفي ګروپ وټاکئ.'
       },
       placeholders: {
@@ -1217,7 +1339,7 @@ const uiCopy: Record<LocaleCode, UiCopy> = {
         resourceFile: 'lesson.pdf یا video link'
       },
       fallbacks: {
-        selectStudentAccess: 'د ژوندي صنف د لاسرسي کتلو لپاره یو نوملیکل شوی زده کوونکی وټاکئ.',
+        selectStudentAccess: 'د ژوندي صنف لاسرسي د ارزولو لپاره یو نوملیکل شوی زده کوونکی وټاکئ.',
         unknownCourse: 'نامعلوم کورس',
         unassignedTeacher: 'استاد نه دی ټاکل شوی',
         unknownAssignment: 'نامعلومه دنده',
@@ -1228,17 +1350,23 @@ const uiCopy: Record<LocaleCode, UiCopy> = {
         awaitingReview: 'بیاکتنې ته په تمه',
         teacherInstructions: 'د استاد لارښوونې به زیاتې شي.',
         noAttachment: 'لا ضمیمه نشته',
-        studentAnswer: 'د زده کوونکي د متني ځواب نمونه.',
+        studentAnswer: 'زده کوونکي لا لیکلی ځواب نه دی زیات کړی.',
         noFileUploaded: 'لا فایل نه دی پورته شوی',
         yes: 'هو',
         no: 'نه'
       },
       notices: {
         addAssignmentTitle: 'لومړی د دندې عنوان زیات کړئ.',
-        assignmentAdded: 'د دې پاڼې مخکتنې لپاره نمونه دنده زیاته شوه.',
+        assignmentAdded: 'دنده دې صنف ته زیاته شوه.',
         selectStudentAndAssignment: 'لومړی زده کوونکی او دنده وټاکئ.',
-        homeworkSubmitted: 'نمونه کورنۍ دنده د بیاکتنې لپاره وسپارل شوه.',
-        attendanceSaved: 'د دې مخکتنې نمونه حاضري خوندي شوه.'
+        homeworkSubmitted: 'کورنۍ دنده د استاد بیاکتنې ته وسپارل شوه.',
+        attendanceSaved: 'د دې صنف حاضري خوندي شوه.',
+        scheduleSaved: 'د صنف مهالویش تازه شو.',
+        liveClassSaved: 'د ژوندي صنف معلومات تازه شول.',
+        materialAdded: 'زده‌کړیز مواد صنف ته زیات شول.',
+        reviewSaved: 'د کورنۍ دندې بیاکتنه خوندي شوه.',
+        reportSaved: 'میاشتنی راپور خوندي شو.',
+        announcementPosted: 'اعلان اوس د دې صنف غړو ته ښکاري.'
       },
       rolePermissions: [
         {
@@ -1270,16 +1398,16 @@ const uiCopy: Record<LocaleCode, UiCopy> = {
       ]
     },
     management: {
-      seoTitle: 'د مدیریت سیستم لومړی پړاو',
+      seoTitle: 'د اکاډمۍ مدیریت',
       seoDescription:
-        'د روښنايي اکاډمي د زده کوونکو د مدیریت نمونه ډشبورډ له زده کوونکو، کورسونو، استادانو، مهالویشونو، حاضري، تادیاتو او رول لیدونو سره.',
+        'د روښنايي اکاډمۍ مدیریت ځای د زده کوونکو، کورسونو، استادانو، مهالویشونو، حاضري، تادیاتو او رول‌محوره عملیاتو لپاره.',
       heroEyebrow: 'روښنايي اکاډمي',
-      heroTitle: 'د مدیریت سیستم لومړی پړاو',
+      heroTitle: 'د اکاډمۍ روښانه او منظم مدیریت.',
       heroDescription:
-        'د مدیریت، والد او استاد کار بهیرونو لپاره پاکه نمونه بنسټ. اوس backend، د تادیې دروازه او پېچلې ځانګړنې نه لري.',
+        'نوملیکنه، صنفونه، مهالویش، حاضري، تادیات او د کورنیو تعقیب له یوه متمرکز کاري ځایه اداره کړئ.',
       stats: {
         students: 'زده کوونکي',
-        mockRegistrations: 'نمونه نوملیکنې',
+        mockRegistrations: 'د نوملیکنې ریکارډونه',
         active: 'فعال',
         canAttendPaidClasses: 'تادیه شوو صنفونو ته تللی شي',
         paymentRequired: 'تادیه اړینه ده',
@@ -1291,13 +1419,13 @@ const uiCopy: Record<LocaleCode, UiCopy> = {
       },
       admin: {
         eyebrow: 'د مدیریت ډشبورډ',
-        title: 'د لومړي پړاو عملیاتو لنډیز',
+        title: 'د ورځنیو عملیاتو لنډیز',
         description:
           'مدیریت کولی شي د زده کوونکو نوملیکنې، د صنف حالت، مهالویشونه، حاضري او تادیات له یوې ساده پاڼې وګوري.',
         studentsSmall: 'زده کوونکي',
         studentListTitle: 'د زده کوونکو د نوملیکنې لست',
         studentListDescription:
-          'یوازې نمونه ریکارډونه. حالتونه آزمایښتي، تادیه اړینه، فعال او غیرفعال دي.',
+          'د هر زده کوونکي د نوملیکنې پړاو، ټاکل شوی کورس، غوره وخت او د لاسرسي حالت په یوه ځای کې وګورئ.',
         coursesListTitle: 'د کورسونو لست',
         teachersListTitle: 'د استادانو لست',
         classScheduleTitle: 'د صنف مهالویش لست',
@@ -1306,7 +1434,7 @@ const uiCopy: Record<LocaleCode, UiCopy> = {
           'مدیریت کولی شي صنفي ګروپونه، د غونډې برابرونکي، نوملیکل شوي زده کوونکي، مهالویشونه او صنفي پاڼې وګوري.',
         attendanceTableTitle: 'د حاضري جدول',
         paymentTrackingTitle: 'د تادیې تعقیب جدول',
-        paymentTrackingDescription: 'یوازې د تعقیب لپاره دی. د تادیې دروازه نه ده تړل شوې.',
+        paymentTrackingDescription: 'میاشتنی حالت، د اکاډمۍ تایید او تعقیب ته اړتیا لرونکي حسابونه وګورئ.',
         referralManagementTitle: 'د معرفي مدیریت',
         referralManagementDescription:
           'معرفۍ یوازې د بشپړې نوملیکنې، دوو حاضرو آزمایښتي صنفونو، لومړۍ فاکتور تادیې، د مدیریت د تادیې تایید او د کورنۍ تایید وروسته حسابېږي. د همدې کورنۍ معرفۍ تر اداري تایید پورې په بیاکتنه کې پاتې کېږي.'
@@ -1388,7 +1516,7 @@ const uiCopy: Record<LocaleCode, UiCopy> = {
       referralDescription:
         'دا کوډ له بلې کورنۍ سره شریک کړئ. جایزه یوازې د هغوی له آزمایښتي صنفونو او د مدیریت له تایید شوې لومړۍ تادیې وروسته حسابېږي.',
       referralShareMessage:
-        'زما د معرفي کوډ {code} سره روښنايي اکاډمي ته راشئ. نوي زده کوونکي له تادیې مخکې له دوو آزمایښتي صنفونو پیل کولی شي.',
+        'زما د معرفي کوډ {code} سره روښنايي اکاډمي ته راشئ. نوي زده کوونکي له تادیې مخکې دوه ورځنی آزمایښتي پړاو پیلوي.',
       verifiedReferrals: 'تایید شوې معرفۍ'
     },
     statusLabels: {
@@ -1448,6 +1576,8 @@ const uiCopy: Record<LocaleCode, UiCopy> = {
     },
     resourceTypeLabels: {
       'PDF Lesson': 'PDF درس',
+      Document: 'سند',
+      Worksheet: 'د تمرین پاڼه',
       'Audio File': 'غږیز فایل',
       'Video Link': 'ویدیو لینک',
       'Quran Practice': 'د قرآن تمرین',
@@ -1530,10 +1660,10 @@ const localizedValues: Record<LocaleCode, Record<string, string>> = {
     'Saturday morning': 'صبح شنبه',
     'Understands Dari but answers in English.':
       'دری را می‌فهمد اما به انگلیسی پاسخ می‌دهد.',
-    'Completed both trial classes. Payment is now required.':
-      'هر دو صنف آزمایشی را تکمیل کرده است. اکنون پرداخت لازم است.',
-    'Trial student. One attended trial class remains.':
-      'شاگرد آزمایشی است. یک صنف آزمایشی حاضرشده باقی مانده است.',
+    'The two-day trial has ended. Payment is now required.':
+      'دوره آزمایشی دو روزه پایان یافته است. اکنون پرداخت لازم است.',
+    'The student is currently in the two-day trial period.':
+      'شاگرد اکنون در دوره آزمایشی دو روزه قرار دارد.',
     'Trial class scheduled this week.': 'صنف آزمایشی این هفته برنامه‌ریزی شده است.',
     'Paused by parent for summer travel.':
       'به دلیل سفر تابستانی از سوی والد موقتاً متوقف شده است.',
@@ -1604,6 +1734,8 @@ const localizedValues: Record<LocaleCode, Record<string, string>> = {
     'Schedule stays the same': 'برنامه همان می‌ماند',
     'Practice greetings': 'سلام‌واحوالپرسی را تمرین کنید',
     'homework reminder': 'یادآوری کارخانگی',
+    'holiday notice': 'اطلاعیه رخصتی',
+    'exam announcement': 'اعلان آزمون',
     'parent meeting': 'جلسه والدین',
     'schedule change': 'تغییر برنامه',
     'class cancellation': 'لغو صنف',
@@ -1687,10 +1819,10 @@ const localizedValues: Record<LocaleCode, Record<string, string>> = {
     'Saturday morning': 'د شنبې سهار',
     'Understands Dari but answers in English.':
       'دري پوهېږي خو په انګلیسي ځواب ورکوي.',
-    'Completed both trial classes. Payment is now required.':
-      'دواړه آزمایښتي صنفونه بشپړ شوي. اوس تادیه اړینه ده.',
-    'Trial student. One attended trial class remains.':
-      'آزمایښتي زده کوونکی دی. یوه حاضره شوې آزمایښتي صنف پاتې دی.',
+    'The two-day trial has ended. Payment is now required.':
+      'دوه ورځنی آزمایښتي پړاو پای ته رسېدلی. اوس تادیه اړینه ده.',
+    'The student is currently in the two-day trial period.':
+      'زده کوونکی اوس په دوه ورځني آزمایښتي پړاو کې دی.',
     'Trial class scheduled this week.': 'آزمایښتي صنف د دې اونۍ لپاره ټاکل شوی.',
     'Paused by parent for summer travel.':
       'د اوړي سفر لپاره د والد له خوا موقتاً درول شوی.',
@@ -1761,6 +1893,8 @@ const localizedValues: Record<LocaleCode, Record<string, string>> = {
     'Schedule stays the same': 'مهال‌وېش هماغسې پاتې دی',
     'Practice greetings': 'سلامونه تمرین کړئ',
     'homework reminder': 'د کورني کار یادونه',
+    'holiday notice': 'د رخصتۍ خبرتیا',
+    'exam announcement': 'د ازموینې اعلان',
     'parent meeting': 'د والدینو ناسته',
     'schedule change': 'د مهال‌وېش بدلون',
     'class cancellation': 'د صنف لغوه کېدل',

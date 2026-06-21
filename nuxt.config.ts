@@ -3,6 +3,12 @@ export default defineNuxtConfig({
   modules: ['@nuxtjs/tailwindcss'],
   css: ['~/assets/css/main.css'],
   devtools: { enabled: false },
+  runtimeConfig: {
+    public: {
+      supabaseUrl: process.env.NUXT_PUBLIC_SUPABASE_URL || '',
+      supabasePublishableKey: process.env.NUXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY || ''
+    }
+  },
   components: [
     {
       path: '~/components',
@@ -21,7 +27,7 @@ export default defineNuxtConfig({
         {
           name: 'description',
           content:
-            'Roshanayi Academy helps Afghan children abroad learn Dari, Pashto, Quran Reading, Tajweed, and Afghan Culture & Heritage through premium online classes.'
+            'Roshanayi Academy helps Afghan children abroad learn Dari, Pashto, English, Islamic Studies, Quran, and Afghan Culture & Heritage through premium online classes.'
         },
         { name: 'theme-color', content: '#6D28D9' },
         { property: 'og:site_name', content: 'Roshanayi Academy' },
@@ -40,10 +46,26 @@ export default defineNuxtConfig({
         '/',
         '/about',
         '/courses',
-        '/courses/dari-language-foundations',
-        '/courses/pashto-for-kids',
-        '/courses/quran-reading-for-beginners',
-        '/courses/tajweed-essentials',
+        '/courses/dari-for-children',
+        '/courses/dari-for-teens',
+        '/courses/dari-reading-writing',
+        '/courses/dari-for-english-speakers-beginner',
+        '/courses/dari-for-english-speakers-intermediate',
+        '/courses/pashto-for-children',
+        '/courses/pashto-for-teens',
+        '/courses/pashto-reading-writing',
+        '/courses/pashto-for-english-speakers-beginner',
+        '/courses/pashto-for-english-speakers-intermediate',
+        '/courses/english-starter',
+        '/courses/english-beginner',
+        '/courses/english-intermediate',
+        '/courses/english-advanced',
+        '/courses/spoken-english',
+        '/courses/quran-reading-basics',
+        '/courses/quran-tajweed',
+        '/courses/islamic-studies-for-children',
+        '/courses/daily-duas-islamic-manners',
+        '/courses/seerah-of-prophet-muhammad',
         '/courses/afghan-culture-heritage',
         '/teachers',
         '/pricing',
@@ -55,7 +77,16 @@ export default defineNuxtConfig({
         '/classrooms/classroom-tajweed-essentials',
         '/classrooms/classroom-pashto-kids',
         '/classrooms/classroom-english-confidence',
+        '/classrooms/classroom-farsi-english-speakers',
+        '/classrooms/classroom-dari-fluency',
+        '/classrooms/classroom-islamic-basics',
+        '/classrooms/classroom-afghan-culture',
         '/dashboard',
+        '/dashboard/admin',
+        '/dashboard/manager',
+        '/dashboard/teacher',
+        '/dashboard/parent',
+        '/dashboard/student',
         '/login',
         '/register'
       ]

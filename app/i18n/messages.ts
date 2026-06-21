@@ -43,6 +43,7 @@ export const messages = {
         browseCourses: 'Browse more courses',
         getPlacementHelp: 'Get placement help',
         createAccount: 'Create an account',
+        startRegistration: 'Start registration',
         returnHome: 'Return home'
       },
       labels: {
@@ -78,15 +79,21 @@ export const messages = {
         message: 'Message',
         learningGoals: 'Learning goals',
         rememberMe: 'Remember me',
+        category: 'Program',
+        instruction: 'Language of instruction',
+        perMonth: 'USD per month',
         progress: 'progress'
       },
       categories: {
         all: 'All',
         dari: 'Dari Language',
         pashto: 'Pashto Language',
+        english: 'English Language',
+        islamic: 'Islamic Studies',
         quran: 'Quran Reading',
         tajweed: 'Tajweed',
         heritage: 'Afghan Culture & Heritage',
+        premium: 'Premium Language Programs',
         notSure: 'Not sure yet'
       },
       theme: {
@@ -105,9 +112,9 @@ export const messages = {
         title: 'Home',
         ogTitle: 'Roshanayi Academy | Online learning for Afghan children abroad',
         description:
-          'Learn Dari, Pashto, Quran Reading, Tajweed, and Afghan Culture & Heritage through live online classes for Afghan families abroad.',
+          'Learn Dari, Pashto, English, Islamic Studies, Quran, and Afghan Culture & Heritage through live online classes for Afghan families abroad.',
         ogDescription:
-          'Premium online classes for Afghan children abroad in Dari, Pashto, Quran Reading, Tajweed, and Afghan Culture & Heritage.'
+          'Premium online classes for Afghan children abroad in Dari, Pashto, English, Islamic Studies, Quran, and Afghan Culture & Heritage.'
       },
       about: {
         title: 'About',
@@ -117,12 +124,12 @@ export const messages = {
       courses: {
         title: 'Courses',
         description:
-          'Browse Roshanayi Academy courses in Dari, Pashto, Quran Reading, Tajweed, and Afghan Culture & Heritage for children abroad.'
+          'Browse Roshanayi Academy courses in Dari, Pashto, English, Islamic Studies, Quran, Afghan Culture & Heritage, and premium Afghan language programs for English speakers.'
       },
       teachers: {
         title: 'Teachers',
         description:
-          'Meet Roshanayi Academy teachers for Dari, Pashto, Quran Reading, Tajweed, and Afghan Culture & Heritage courses.'
+          'Meet Roshanayi Academy teachers for Dari, Pashto, English, Islamic Studies, Quran, and Afghan Culture & Heritage courses.'
       },
       pricing: {
         title: 'Pricing',
@@ -137,7 +144,7 @@ export const messages = {
       register: {
         title: 'Register',
         description:
-          'Register your child for Roshanayi Academy online classes in Dari, Pashto, Quran Reading, Tajweed, and Afghan Culture & Heritage.'
+          'Register your child for Roshanayi Academy online classes in Dari, Pashto, English, Islamic Studies, Quran, and Afghan Culture & Heritage.'
       },
       login: {
         title: 'Login',
@@ -152,7 +159,7 @@ export const messages = {
     layout: {
       footer: {
         description:
-          'Premium online classes for Afghan children abroad, built around Dari, Pashto, Quran Reading, Tajweed, and Afghan Culture & Heritage.',
+          'Premium online classes for Afghan children abroad, built around Dari, Pashto, English, Islamic Studies, Quran, and Afghan Culture & Heritage.',
         quickLinks: 'Quick Links',
         courses: 'Courses',
         contact: 'Contact',
@@ -200,7 +207,7 @@ export const messages = {
       eyebrow: 'Trusted online learning for Afghan families abroad',
       title: 'Help your child stay connected to Afghan language, Quran, and heritage.',
       description:
-        'Roshanayi Academy gives Afghan children in Europe, America, Canada, Australia, and beyond a structured path to learn Dari, Pashto, Quran Reading, Tajweed, and Afghan Culture & Heritage with caring teachers and parent-visible progress.',
+        'Roshanayi Academy gives Afghan children in Europe, America, Canada, Australia, and beyond a structured path to learn Dari, Pashto, English, Islamic Studies, Quran, and Afghan Culture & Heritage with caring teachers and parent-visible progress.',
       note:
         'Placement guidance available for beginners, siblings, and children with mixed language levels.',
       stats: [
@@ -239,7 +246,7 @@ export const messages = {
       eyebrow: 'Featured Courses',
       title: 'Start with the learning track your child needs most.',
       description:
-        'Each course combines live instruction, family practice, and visible outcomes so parents can understand exactly what their child is learning.'
+        'Every course offers Group Class and Special Class enrollment, clear monthly pricing, a 2-day trial, and visible outcomes for parents.'
     },
     benefits: {
       eyebrow: 'Why Families Choose Us',
@@ -276,7 +283,7 @@ export const messages = {
         {
           value: '5',
           label: 'Core subjects',
-          text: 'Dari, Pashto, Quran Reading, Tajweed, and Afghan Culture & Heritage.'
+          text: 'Dari, Pashto, English, Islamic Studies, and Afghan Culture & Heritage.'
         },
         {
           value: '18+',
@@ -300,8 +307,8 @@ export const messages = {
       title: 'A clear weekly rhythm for children and parents.',
       description:
         'Roshanayi Academy is built around small wins: a child reads one more line, speaks one more sentence, recites with more care, and feels one step closer to their roots.',
-      dashboardButton: 'View sample dashboard',
-      sampleLearner: 'Sample learner',
+      dashboardButton: 'Explore the family dashboard',
+      sampleLearner: 'Learner journey',
       learnerName: 'Amina, age 9',
       learnerDescription: 'Family based in Manchester, learning Dari and Quran Reading.',
       progressLabel: 'Term progress',
@@ -336,7 +343,7 @@ export const messages = {
         {
           title: 'Mission',
           text:
-            'Teach Dari, Pashto, Quran Reading, Tajweed, and Afghan Culture & Heritage to Afghan children abroad through live classes, structured curriculum, and caring teacher support.'
+            'Teach Dari, Pashto, English, Islamic Studies, Quran, and Afghan Culture & Heritage to Afghan children abroad through live classes, structured curriculum, and caring teacher support.'
         },
         {
           title: 'Vision',
@@ -394,11 +401,71 @@ export const messages = {
     },
     coursesPage: {
       eyebrow: 'Courses',
-      title: 'Choose the right learning path for your child.',
+      title: 'Live online learning that keeps children close to language, faith, and heritage.',
       description:
-        'Browse live online courses in Dari, Pashto, Quran Reading, Tajweed, and Afghan Culture & Heritage. Every course includes clear outcomes, parent-visible progress, and time-zone aware cohorts.',
+        'Explore carefully structured courses in Dari, Pashto, English, Quran, Islamic Studies, and Afghan heritage. Choose a small group or personalized class, then begin with a two-day trial before committing.',
+      registerNow: 'Start registration',
+      viewCourses: 'Browse courses',
+      enrollmentOptions: 'Enrollment options',
+      catalogEyebrow: 'Course catalog',
+      catalogTitle: 'Find the right learning path for your child.',
+      catalogDescription:
+        'Compare subjects, age groups, class formats, and tuition in one place. Our placement team can help when you are unsure where to begin.',
+      courseCount: '{count} courses',
+      premiumEyebrow: 'Personalized language program',
+      premiumDescription:
+        'Designed for English-speaking learners who need private or semi-private Dari and Pashto instruction with a flexible schedule.',
+      parentTrustEyebrow: 'Built for families',
+      parentTrustTitle: 'A thoughtful academy experience parents can follow.',
+      parentTrustDescription:
+        'Small classes, qualified teachers, clear progress updates, and a respectful online environment help children learn with confidence.',
+      trialPolicy: 'Two-day trial policy',
+      trialTitle: 'Every new student begins with a two-day trial.',
+      trialText:
+        'After the trial, the family can confirm the class format and complete payment to continue without losing the student record.',
+      enrollment: {
+        groupLabel: 'Small-group class',
+        groupDetail: 'Up to 10 students with monthly enrollment',
+        specialLabel: 'Private or semi-private class',
+        specialDetail: 'One or two students with a personalized schedule',
+        premiumLabel: 'Premium language program',
+        premiumDetail: 'Personalized Dari or Pashto for English-speaking learners',
+        trialLabel: 'Two-day trial',
+        trialDetail: 'Experience the class before completing payment'
+      },
+      premiumHighlights: [
+        'Native Dari and Pashto teachers',
+        'Lessons shaped around the learner',
+        'Flexible scheduling',
+        'Focused teacher attention',
+        'Monthly progress updates',
+        'Cultural immersion',
+        'Certificate of completion'
+      ],
+      trustItems: [
+        {
+          title: 'Progress updates parents can use',
+          text: 'Monthly reports explain attendance, participation, practice, strengths, and the next learning priorities.'
+        },
+        {
+          title: 'Small classes with room to participate',
+          text: 'Group classes are limited to 10 students so every child has time to speak, ask, and receive feedback.'
+        },
+        {
+          title: 'Teachers who understand heritage learners',
+          text: 'Students learn with qualified teachers who understand multilingual Afghan families living abroad.'
+        },
+        {
+          title: 'A respectful online classroom',
+          text: 'Lessons are structured, supervised, age-aware, and designed for focused learning from home.'
+        },
+        {
+          title: 'Language, faith, and identity together',
+          text: 'The curriculum strengthens communication while preserving Afghan culture, manners, and Islamic foundations.'
+        }
+      ],
       searchLabel: 'Search courses',
-      searchPlaceholder: 'Search by subject, age group, benefit, or level',
+      searchPlaceholder: 'Search by subject, age group, goal, or level',
       showing: 'Showing {shown} of {total} courses',
       placementHelp: 'Need placement help? Register for guidance',
       emptyTitle: 'No courses match your search',
@@ -409,6 +476,26 @@ export const messages = {
       register: 'Register for this course',
       askPlacement: 'Ask about placement',
       eyebrow: 'Course Details',
+      pathTitle: 'A clear path from the first lesson to lasting progress.',
+      ageTitle: 'Designed for this age group',
+      programFitTitle: 'Who this program serves',
+      instruction: 'Language of instruction',
+      targetStudents: 'Best suited for',
+      trialPolicy: 'Two-day trial policy',
+      overview: 'Course overview',
+      objectives: 'Learning goals',
+      studentLearning: 'What students will learn',
+      teachingMethod: 'How lessons are taught',
+      premiumDescription:
+        'Personalized instruction for one student, or semi-private learning for two students who share similar goals and ability.',
+      specialOnlyTitle: 'Personalized class',
+      groupClassTitle: 'Small-group class',
+      specialClassTitle: 'Private or semi-private class',
+      monthlyTuition: 'Monthly tuition in USD',
+      learningPath: 'Recommended learning sequence',
+      progressReport: 'Monthly progress update for parents',
+      completionCertificate: 'Certificate of completion',
+      trialInformation: 'Trial class details',
       learnTitle: 'What your child will learn',
       parentGuidance: 'Parent guidance',
       teacherPendingTitle: 'Teacher assignment pending',
@@ -543,6 +630,50 @@ export const messages = {
       title: 'Start your child\'s Roshanayi learning journey.',
       description:
         'Share your child\'s age, country, WhatsApp contact, and learning goals. Our placement team will recommend the best course, level, and schedule.',
+      familyEyebrow: 'Family registration',
+      familyTitle: 'Register every child through one family account.',
+      familyDescription:
+        'Create the parent profile once, then add each child’s learning needs, preferred course, class format, and schedule.',
+      formSteps: ['Family contact', 'Student profile', 'Course and schedule', 'Review children', 'Policies and consent'],
+      stepOf: 'Step {current} of {total}',
+      childProfiles: '{count} child profiles',
+      fields: {
+        parentFullName: 'Parent or guardian full name', city: 'City', timezone: 'Time zone', relationship: 'Relationship to the student',
+        firstName: 'First name', lastName: 'Last name', gender: 'Gender', dateOfBirth: 'Date of birth', age: 'Age',
+        nativeLanguage: 'Home language', currentLevel: 'Current learning level', courseCategory: 'Course category',
+        courseName: 'Course', classType: 'Class format', schedulePreference: 'Schedule preference'
+      },
+      selections: {
+        timezone: 'Select a time zone', gender: 'Select gender', language: 'Select a language', level: 'Select a level',
+        category: 'Select a category', course: 'Select a course'
+      },
+      review: {
+        newChild: 'New child', agePending: 'Age not added', levelPending: 'Level not selected', coursePending: 'Course not selected',
+        edit: 'Edit profile', addChild: 'Add another child'
+      },
+      agreements: {
+        trialTitle: 'Two-day trial policy', trialText: 'Each new student receives a two-day trial before payment is required.',
+        paymentTitle: 'Monthly payment policy',
+        paymentText: 'Payment activates 30 days of enrollment. Renewal keeps class access active without interrupting the student record.',
+        rulesTitle: 'Academy learning agreement',
+        rulesText: 'Families agree to respectful attendance, communication, homework routines, and appropriate online classroom conduct.'
+      },
+      actions: { back: 'Back', continue: 'Continue', submitting: 'Submitting', referralCodes: 'Student referral codes' },
+      validation: {
+        parent: 'Please complete the parent or guardian information before continuing.',
+        student: 'Please complete this student profile before continuing.',
+        course: 'Please choose a course, class format, and schedule for this child.',
+        children: 'Please complete every child profile before reviewing the policies.',
+        policies: 'Please read and accept all three academy policies before submitting.'
+      },
+      optionLabels: {
+        father: 'Father', mother: 'Mother', guardian: 'Guardian', female: 'Female', male: 'Male', undisclosed: 'Prefer not to say',
+        dari: 'Dari', pashto: 'Pashto', english: 'English', urdu: 'Urdu', arabic: 'Arabic', other: 'Other',
+        newBeginner: 'New learner', understands: 'Understands the language and needs speaking practice', beginner: 'Beginner',
+        intermediate: 'Intermediate', advanced: 'Advanced', group: 'Group class ($30/month)',
+        special: 'Private or semi-private class ($100/month)', premium: 'Premium language program ($150/month)',
+        weekdays: 'Weekdays', weekends: 'Weekends', flexible: 'Flexible'
+      },
       formAria: 'Register a student',
       nextTitle: 'What happens next?',
       steps: [
@@ -565,11 +696,25 @@ export const messages = {
       title: 'Welcome back to Roshanayi',
       description:
         'Access live class links, student progress, assignments, certificates, and parent notes.',
+      roleAccess: 'Secure role access',
+      roleDescription:
+        'Your account opens only the tools assigned to your role, keeping academy operations and family information clearly separated.',
+      signedIn: 'Signed in',
+      account: '{role} account',
+      openDashboard: 'Open dashboard',
+      switchAccount: 'Switch account',
+      chooseRole: 'Choose your role',
+      rememberRole: 'Remember this account on this device',
+      signingIn: 'Signing in',
+      loginAs: 'Continue as {role}',
+      redirecting: 'Login successful. Opening your dashboard.',
+      newFamily: 'New family?',
+      registerChildren: 'Register your children',
       formAria: 'Login to Roshanayi Academy',
       forgotPassword: 'Forgot password?',
       submitIdle: 'Login',
       submitLoading: 'Checking account',
-      success: 'Demo login submitted. In production this connects to authentication.',
+      success: 'Login successful. Your dashboard is ready.',
       newUser: 'New to Roshanayi?'
     },
     dashboard: {
@@ -672,6 +817,7 @@ export const messages = {
         home: 'خانه',
         about: 'درباره ما',
         courses: 'دوره‌ها',
+        classrooms: 'صنف‌ها',
         teachers: 'استادان',
         pricing: 'قیمت‌ها',
         contact: 'تماس',
@@ -689,6 +835,7 @@ export const messages = {
         browseCourses: 'دیدن دوره‌های بیشتر',
         getPlacementHelp: 'گرفتن راهنمایی تعیین سطح',
         createAccount: 'ساخت حساب',
+        startRegistration: 'آغاز ثبت‌نام',
         returnHome: 'بازگشت به خانه'
       },
       labels: {
@@ -724,15 +871,21 @@ export const messages = {
         message: 'پیام',
         learningGoals: 'هدف‌های یادگیری',
         rememberMe: 'مرا به خاطر بسپار',
+        category: 'برنامه آموزشی',
+        instruction: 'زبان تدریس',
+        perMonth: 'دالر در ماه',
         progress: 'پیشرفت'
       },
       categories: {
         all: 'همه',
         dari: 'زبان دری',
         pashto: 'زبان پشتو',
+        english: 'زبان انگلیسی',
+        islamic: 'آموزه‌های اسلامی',
         quran: 'روخوانی قرآن',
         tajweed: 'تجوید',
         heritage: 'فرهنگ و میراث افغانستان',
+        premium: 'برنامه‌های ممتاز زبان',
         notSure: 'هنوز مطمئن نیستم'
       },
       theme: {
@@ -946,8 +1099,8 @@ export const messages = {
       title: 'یک ریتم هفتگی روشن برای کودکان و والدین.',
       description:
         'آکادمی روشنایی بر پیروزی‌های کوچک ساخته شده است: کودک یک خط بیشتر می‌خواند، یک جمله بیشتر می‌گوید، با دقت بیشتر تلاوت می‌کند و یک قدم به ریشه‌های خود نزدیک‌تر می‌شود.',
-      dashboardButton: 'دیدن داشبورد نمونه',
-      sampleLearner: 'شاگرد نمونه',
+      dashboardButton: 'دیدن داشبورد خانواده',
+      sampleLearner: 'مسیر یادگیری شاگرد',
       learnerName: 'آمینه، ۹ ساله',
       learnerDescription: 'خانواده مقیم منچستر، در حال یادگیری دری و روخوانی قرآن.',
       progressLabel: 'پیشرفت ترم',
@@ -1040,9 +1193,69 @@ export const messages = {
     },
     coursesPage: {
       eyebrow: 'دوره‌ها',
-      title: 'مسیر یادگیری مناسب کودک خود را انتخاب کنید.',
+      title: 'یادگیری زنده‌ای که کودک را با زبان، ایمان و میراث پیوند می‌دهد.',
       description:
-        'دوره‌های آنلاین زنده در دری، پشتو، روخوانی قرآن، تجوید و فرهنگ افغانستان را ببینید. هر دوره نتیجه‌های روشن، پیشرفت قابل دید برای والدین و گروه‌های سازگار با مناطق زمانی دارد.',
+        'دوره‌های منظم دری، پشتو، انگلیسی، قرآن، آموزه‌های اسلامی و میراث افغانستان را ببینید. میان صنف گروهی کوچک و آموزش شخصی انتخاب کنید و پیش از تصمیم نهایی، با دوره آزمایشی دو روزه آغاز نمایید.',
+      registerNow: 'آغاز ثبت‌نام',
+      viewCourses: 'دیدن دوره‌ها',
+      enrollmentOptions: 'گزینه‌های ثبت‌نام',
+      catalogEyebrow: 'فهرست دوره‌ها',
+      catalogTitle: 'مسیر یادگیری مناسب کودک خود را پیدا کنید.',
+      catalogDescription:
+        'مضمون، گروه سنی، شیوه برگزاری و شهریه را در یک جا مقایسه کنید. اگر نقطه آغاز روشن نیست، تیم تعیین سطح در کنار شماست.',
+      courseCount: '{count} دوره',
+      premiumEyebrow: 'برنامه شخصی زبان',
+      premiumDescription:
+        'برای شاگردان انگلیسی‌زبان که به آموزش خصوصی یا نیمه‌خصوصی دری و پشتو با برنامه انعطاف‌پذیر نیاز دارند.',
+      parentTrustEyebrow: 'ساخته‌شده برای خانواده‌ها',
+      parentTrustTitle: 'تجربه‌ای سنجیده که والدین می‌توانند آن را دنبال کنند.',
+      parentTrustDescription:
+        'صنف‌های کوچک، استادان شایسته، گزارش روشن پیشرفت و محیط آنلاین محترمانه به کودک کمک می‌کند با اطمینان بیاموزد.',
+      trialPolicy: 'سیاست دوره آزمایشی دو روزه',
+      trialTitle: 'هر شاگرد تازه با یک دوره آزمایشی دو روزه آغاز می‌کند.',
+      trialText:
+        'پس از دوره آزمایشی، خانواده می‌تواند شیوه صنف را تایید و پرداخت را تکمیل کند؛ پرونده شاگرد در هر حالت محفوظ می‌ماند.',
+      enrollment: {
+        groupLabel: 'صنف گروهی کوچک',
+        groupDetail: 'حداکثر ۱۰ شاگرد با ثبت‌نام ماهانه',
+        specialLabel: 'صنف خصوصی یا نیمه‌خصوصی',
+        specialDetail: 'یک یا دو شاگرد با برنامه شخصی',
+        premiumLabel: 'برنامه ممتاز زبان',
+        premiumDetail: 'آموزش شخصی دری یا پشتو برای شاگردان انگلیسی‌زبان',
+        trialLabel: 'دوره آزمایشی دو روزه',
+        trialDetail: 'پیش از تکمیل پرداخت، فضای صنف را تجربه کنید'
+      },
+      premiumHighlights: [
+        'استادان بومی دری و پشتو',
+        'درس‌های متناسب با نیاز شاگرد',
+        'برنامه زمانی انعطاف‌پذیر',
+        'توجه متمرکز استاد',
+        'گزارش ماهانه پیشرفت',
+        'آشنایی عمیق با فرهنگ',
+        'گواهی پایان دوره'
+      ],
+      trustItems: [
+        {
+          title: 'گزارش پیشرفتی که برای والدین کاربرد دارد',
+          text: 'گزارش ماهانه، حاضری، مشارکت، تمرین، توانایی‌ها و اولویت‌های بعدی یادگیری را روشن می‌سازد.'
+        },
+        {
+          title: 'صنف کوچک با فرصت واقعی برای مشارکت',
+          text: 'صنف گروهی حداکثر ۱۰ شاگرد دارد تا هر کودک فرصت صحبت، پرسش و دریافت بازخورد داشته باشد.'
+        },
+        {
+          title: 'استادانی که شاگردان میراثی را می‌شناسند',
+          text: 'شاگردان با استادان شایسته‌ای می‌آموزند که زندگی خانواده‌های چندزبانه افغان در بیرون از کشور را درک می‌کنند.'
+        },
+        {
+          title: 'محیط آنلاین امن و محترمانه',
+          text: 'درس‌ها منظم، زیر نظر و متناسب با سن‌اند و برای یادگیری متمرکز از خانه طراحی شده‌اند.'
+        },
+        {
+          title: 'زبان، ایمان و هویت در کنار هم',
+          text: 'نصاب در کنار مهارت ارتباطی، فرهنگ افغانستان، آداب و بنیادهای اسلامی را نیز تقویت می‌کند.'
+        }
+      ],
       searchLabel: 'جستجوی دوره‌ها',
       searchPlaceholder: 'جستجو بر اساس مضمون، گروه سنی، فایده یا سطح',
       showing: 'نمایش {shown} از {total} دوره',
@@ -1055,6 +1268,26 @@ export const messages = {
       register: 'ثبت‌نام در این دوره',
       askPlacement: 'پرسش درباره تعیین سطح',
       eyebrow: 'جزئیات دوره',
+      pathTitle: 'مسیری روشن از نخستین درس تا پیشرفت پایدار.',
+      ageTitle: 'طراحی‌شده برای این گروه سنی',
+      programFitTitle: 'این برنامه برای چه کسانی مناسب است',
+      instruction: 'زبان تدریس',
+      targetStudents: 'مناسب برای',
+      trialPolicy: 'سیاست دوره آزمایشی دو روزه',
+      overview: 'معرفی دوره',
+      objectives: 'هدف‌های یادگیری',
+      studentLearning: 'شاگردان چه می‌آموزند',
+      teachingMethod: 'درس‌ها چگونه برگزار می‌شود',
+      premiumDescription:
+        'آموزش شخصی برای یک شاگرد، یا آموزش نیمه‌خصوصی برای دو شاگرد با سطح و هدف‌های نزدیک به هم.',
+      specialOnlyTitle: 'صنف شخصی',
+      groupClassTitle: 'صنف گروهی کوچک',
+      specialClassTitle: 'صنف خصوصی یا نیمه‌خصوصی',
+      monthlyTuition: 'شهریه ماهانه به دالر',
+      learningPath: 'ترتیب پیشنهادی یادگیری',
+      progressReport: 'گزارش ماهانه پیشرفت برای والدین',
+      completionCertificate: 'گواهی پایان دوره',
+      trialInformation: 'جزئیات دوره آزمایشی',
       learnTitle: 'کودک شما چه خواهد آموخت',
       parentGuidance: 'راهنمایی برای والدین',
       teacherPendingTitle: 'تعیین استاد در انتظار است',
@@ -1189,6 +1422,50 @@ export const messages = {
       title: 'مسیر یادگیری کودک خود را با روشنایی آغاز کنید.',
       description:
         'سن کودک، کشور، شماره واتساپ و هدف‌های یادگیری را شریک بسازید. تیم تعیین سطح ما بهترین دوره، سطح و برنامه را پیشنهاد می‌کند.',
+      familyEyebrow: 'ثبت‌نام خانواده',
+      familyTitle: 'همه فرزندان خود را از یک حساب خانوادگی ثبت‌نام کنید.',
+      familyDescription:
+        'پروفایل والد را یک‌بار بسازید، سپس نیاز آموزشی، دوره دلخواه، شیوه صنف و برنامه هر کودک را جداگانه اضافه کنید.',
+      formSteps: ['اطلاعات خانواده', 'پروفایل شاگرد', 'دوره و برنامه', 'بازبینی فرزندان', 'سیاست‌ها و رضایت'],
+      stepOf: 'مرحله {current} از {total}',
+      childProfiles: '{count} پروفایل شاگرد',
+      fields: {
+        parentFullName: 'نام کامل والد یا سرپرست', city: 'شهر', timezone: 'منطقه زمانی', relationship: 'نسبت با شاگرد',
+        firstName: 'نام', lastName: 'نام خانوادگی', gender: 'جنسیت', dateOfBirth: 'تاریخ تولد', age: 'سن',
+        nativeLanguage: 'زبان خانه', currentLevel: 'سطح فعلی یادگیری', courseCategory: 'دسته دوره',
+        courseName: 'دوره', classType: 'شیوه صنف', schedulePreference: 'برنامه زمانی دلخواه'
+      },
+      selections: {
+        timezone: 'منطقه زمانی را انتخاب کنید', gender: 'جنسیت را انتخاب کنید', language: 'زبان را انتخاب کنید',
+        level: 'سطح را انتخاب کنید', category: 'دسته را انتخاب کنید', course: 'دوره را انتخاب کنید'
+      },
+      review: {
+        newChild: 'کودک تازه', agePending: 'سن وارد نشده', levelPending: 'سطح انتخاب نشده', coursePending: 'دوره انتخاب نشده',
+        edit: 'ویرایش پروفایل', addChild: 'افزودن کودک دیگر'
+      },
+      agreements: {
+        trialTitle: 'سیاست دوره آزمایشی دو روزه', trialText: 'هر شاگرد تازه پیش از نیاز به پرداخت، یک دوره آزمایشی دو روزه دریافت می‌کند.',
+        paymentTitle: 'سیاست پرداخت ماهانه',
+        paymentText: 'هر پرداخت، ثبت‌نام را برای ۳۰ روز فعال می‌کند. تمدید به‌موقع، دسترسی به صنف را بدون آسیب به پرونده شاگرد ادامه می‌دهد.',
+        rulesTitle: 'توافق‌نامه آموزشی آکادمی',
+        rulesText: 'خانواده‌ها به حاضری منظم، ارتباط محترمانه، انجام کارخانگی و رفتار مناسب در صنف آنلاین متعهد می‌شوند.'
+      },
+      actions: { back: 'بازگشت', continue: 'ادامه', submitting: 'در حال فرستادن', referralCodes: 'کودهای معرفی شاگردان' },
+      validation: {
+        parent: 'لطفاً پیش از ادامه، اطلاعات والد یا سرپرست را کامل کنید.',
+        student: 'لطفاً پیش از ادامه، پروفایل این شاگرد را کامل کنید.',
+        course: 'لطفاً برای این کودک دوره، شیوه صنف و برنامه زمانی را انتخاب کنید.',
+        children: 'لطفاً پیش از بازبینی سیاست‌ها، پروفایل همه فرزندان را کامل کنید.',
+        policies: 'لطفاً هر سه سیاست آکادمی را بخوانید و بپذیرید.'
+      },
+      optionLabels: {
+        father: 'پدر', mother: 'مادر', guardian: 'سرپرست', female: 'دختر', male: 'پسر', undisclosed: 'ترجیح می‌دهم نگویم',
+        dari: 'دری', pashto: 'پشتو', english: 'انگلیسی', urdu: 'اردو', arabic: 'عربی', other: 'زبان دیگر',
+        newBeginner: 'شاگرد تازه‌کار', understands: 'زبان را می‌فهمد و به تمرین گفتار نیاز دارد', beginner: 'مبتدی',
+        intermediate: 'متوسط', advanced: 'پیشرفته', group: 'صنف گروهی (۳۰ دالر در ماه)',
+        special: 'صنف خصوصی یا نیمه‌خصوصی (۱۰۰ دالر در ماه)', premium: 'برنامه ممتاز زبان (۱۵۰ دالر در ماه)',
+        weekdays: 'روزهای هفته', weekends: 'پایان هفته', flexible: 'انعطاف‌پذیر'
+      },
       formAria: 'ثبت‌نام شاگرد',
       nextTitle: 'بعد چه می‌شود؟',
       steps: [
@@ -1211,11 +1488,25 @@ export const messages = {
       title: 'خوش برگشتید به روشنایی',
       description:
         'به لینک‌های صنف زنده، پیشرفت شاگرد، وظایف، سندها و یادداشت‌های والدین دسترسی پیدا کنید.',
+      roleAccess: 'دسترسی امن بر اساس نقش',
+      roleDescription:
+        'حساب شما فقط ابزارهای مربوط به نقش‌تان را باز می‌کند تا اطلاعات خانواده و عملیات آکادمی روشن، منظم و جدا از هم بماند.',
+      signedIn: 'وارد شده‌اید',
+      account: 'حساب {role}',
+      openDashboard: 'باز کردن داشبورد',
+      switchAccount: 'تغییر حساب',
+      chooseRole: 'نقش خود را انتخاب کنید',
+      rememberRole: 'این حساب را در این دستگاه به خاطر بسپار',
+      signingIn: 'در حال ورود',
+      loginAs: 'ادامه به حیث {role}',
+      redirecting: 'ورود موفق بود. داشبورد شما باز می‌شود.',
+      newFamily: 'خانواده تازه هستید؟',
+      registerChildren: 'ثبت‌نام فرزندان',
       formAria: 'ورود به آکادمی روشنایی',
       forgotPassword: 'رمز عبور را فراموش کرده‌اید؟',
       submitIdle: 'ورود',
       submitLoading: 'در حال بررسی حساب',
-      success: 'ورود آزمایشی فرستاده شد. در نسخه اصلی به سیستم احراز هویت وصل می‌شود.',
+      success: 'ورود موفق بود. داشبورد شما آماده است.',
       newUser: 'تازه به روشنایی آمده‌اید؟'
     },
     dashboard: {
@@ -1318,6 +1609,7 @@ export const messages = {
         home: 'کور',
         about: 'زموږ په اړه',
         courses: 'کورسونه',
+        classrooms: 'صنفونه',
         teachers: 'استادان',
         pricing: 'بیې',
         contact: 'اړیکه',
@@ -1335,6 +1627,7 @@ export const messages = {
         browseCourses: 'نور کورسونه وګورئ',
         getPlacementHelp: 'د کچې ټاکلو مرسته',
         createAccount: 'حساب جوړ کړئ',
+        startRegistration: 'نوملیکنه پیل کړئ',
         returnHome: 'کور ته ستنیدل'
       },
       labels: {
@@ -1370,15 +1663,21 @@ export const messages = {
         message: 'پیغام',
         learningGoals: 'د زده کړې موخې',
         rememberMe: 'ما په یاد وساته',
+        category: 'ښوونیز پروګرام',
+        instruction: 'د تدریس ژبه',
+        perMonth: 'امریکايي ډالر په میاشت کې',
         progress: 'پرمختګ'
       },
       categories: {
         all: 'ټول',
         dari: 'دري ژبه',
         pashto: 'پښتو ژبه',
+        english: 'انګلیسي ژبه',
+        islamic: 'اسلامي زده کړې',
         quran: 'د قرآن لوستل',
         tajweed: 'تجوید',
         heritage: 'افغان کلتور او میراث',
+        premium: 'ځانګړي ژبني پروګرامونه',
         notSure: 'لا ډاډه نه یم'
       },
       theme: {
@@ -1592,8 +1891,8 @@ export const messages = {
       title: 'د ماشومانو او والدینو لپاره روښانه اونیز ریتم.',
       description:
         'روښنايي اکاډمي پر وړو بریاوو ولاړه ده: ماشوم یوه کرښه نوره لولي، یوه جمله نوره وايي، په ډېر پام تلاوت کوي او خپلو ریښو ته یو ګام نږدې کېږي.',
-      dashboardButton: 'نمونه ډشبورډ وګورئ',
-      sampleLearner: 'نمونه زده کوونکی',
+      dashboardButton: 'د کورنۍ ډشبورډ وګورئ',
+      sampleLearner: 'د زده کوونکي سفر',
       learnerName: 'امینه، ۹ کلنه',
       learnerDescription: 'کورنۍ په مانچسټر کې ده، دري او د قرآن لوستل زده کوي.',
       progressLabel: 'د ترم پرمختګ',
@@ -1686,9 +1985,69 @@ export const messages = {
     },
     coursesPage: {
       eyebrow: 'کورسونه',
-      title: 'د خپل ماشوم لپاره مناسب زده کړې مسیر غوره کړئ.',
+      title: 'ژوندۍ زده کړه چې ماشومان له ژبې، ایمان او میراث سره نښلوي.',
       description:
-        'په دري، پښتو، د قرآن لوستلو، تجوید او افغان کلتور کې ژوندي آنلاین کورسونه وګورئ. هر کورس روښانه پایلې، د والدینو لپاره ښکاره پرمختګ او د وخت زون سره برابر ګروپونه لري.',
+        'د دري، پښتو، انګلیسي، قرآن، اسلامي زده کړو او افغان میراث منظم کورسونه وپلټئ. کوچنی ډله‌ییز یا شخصي صنف وټاکئ او له وروستۍ پرېکړې مخکې دوه ورځنی آزمایښتي پړاو تجربه کړئ.',
+      registerNow: 'نوملیکنه پیل کړئ',
+      viewCourses: 'کورسونه وګورئ',
+      enrollmentOptions: 'د نوملیکنې لارې',
+      catalogEyebrow: 'د کورسونو لړ',
+      catalogTitle: 'د خپل ماشوم لپاره سمه زده‌کړیزه لاره ومومئ.',
+      catalogDescription:
+        'مضمون، عمر، د صنف بڼه او فیس په یوه ځای کې پرتله کړئ. که د پیل ځای روښانه نه وي، زموږ د کچې ټاکلو ټیم درسره مرسته کوي.',
+      courseCount: '{count} کورسونه',
+      premiumEyebrow: 'شخصي ژبنی پروګرام',
+      premiumDescription:
+        'د انګلیسي ویونکو زده کوونکو لپاره چې د انعطاف‌منونکي مهالویش سره شخصي یا نیمه‌خصوصي دري او پښتو زده کړې ته اړتیا لري.',
+      parentTrustEyebrow: 'د کورنیو لپاره جوړ شوی',
+      parentTrustTitle: 'یوه سنجول شوې اکاډمیکه تجربه چې والدین یې تعقیبولی شي.',
+      parentTrustDescription:
+        'کوچني صنفونه، وړ استادان، روښانه پرمختګ راپورونه او درناوی لرونکی آنلاین چاپېریال ماشومانو ته د ډاډمنې زده کړې زمینه برابروي.',
+      trialPolicy: 'د دوه ورځني آزمایښتي پړاو تګلاره',
+      trialTitle: 'هر نوی زده کوونکی له دوه ورځني آزمایښتي پړاو څخه پیل کوي.',
+      trialText:
+        'له آزمایښتي پړاو وروسته کورنۍ د صنف بڼه تاییدوي او د دوام لپاره تادیه بشپړوي؛ د زده کوونکي ریکارډ په هر حالت کې خوندي پاتې کېږي.',
+      enrollment: {
+        groupLabel: 'کوچنی ډله‌ییز صنف',
+        groupDetail: 'تر ۱۰ زده کوونکو پورې له میاشتني نوملیکنې سره',
+        specialLabel: 'خصوصي یا نیمه‌خصوصي صنف',
+        specialDetail: 'یو یا دوه زده کوونکي له شخصي مهالویش سره',
+        premiumLabel: 'ځانګړی ژبنی پروګرام',
+        premiumDetail: 'د انګلیسي ویونکو لپاره شخصي دري یا پښتو زده کړه',
+        trialLabel: 'دوه ورځنی آزمایښتي پړاو',
+        trialDetail: 'له تادیې مخکې د صنف تجربه وکړئ'
+      },
+      premiumHighlights: [
+        'دري او پښتو مورنۍ ژبې استادان',
+        'د زده کوونکي له اړتیا سره برابر درسونه',
+        'انعطاف‌منونکی مهالویش',
+        'د استاد متمرکزه پاملرنه',
+        'میاشتني پرمختګ راپورونه',
+        'فرهنګي ژورتیا',
+        'د بشپړولو سند'
+      ],
+      trustItems: [
+        {
+          title: 'د والدینو لپاره ګټور پرمختګ راپور',
+          text: 'میاشتنی راپور حاضري، ګډون، تمرین، ځواکمن ټکي او د زده کړې راتلونکي لومړیتوبونه روښانوي.'
+        },
+        {
+          title: 'کوچنی صنف او د ګډون ریښتینی فرصت',
+          text: 'ډله‌ییز صنف تر ۱۰ زده کوونکو محدود دی، څو هر ماشوم د خبرو، پوښتنو او نظر اخیستلو وخت ولري.'
+        },
+        {
+          title: 'هغه استادان چې میراثي زده کوونکي پېژني',
+          text: 'زده کوونکي له وړ استادانو سره زده کړه کوي چې له هېواده بهر څوژبې افغانې کورنۍ درک کوي.'
+        },
+        {
+          title: 'خوندي او درناوی لرونکی آنلاین صنف',
+          text: 'درسونه منظم، څارل شوي، د عمر سره برابر او له کوره د متمرکزې زده کړې لپاره جوړ شوي دي.'
+        },
+        {
+          title: 'ژبه، ایمان او هویت یوځای',
+          text: 'نصاب د اړیکو مهارتونو ترڅنګ افغان کلتور، آداب او اسلامي بنسټونه هم پیاوړي کوي.'
+        }
+      ],
       searchLabel: 'کورسونه ولټوئ',
       searchPlaceholder: 'د مضمون، عمر ډلې، ګټې یا کچې له مخې لټون',
       showing: '{shown} له {total} کورسونو ښودل کېږي',
@@ -1701,6 +2060,26 @@ export const messages = {
       register: 'دې کورس ته نوملیکنه',
       askPlacement: 'د کچې ټاکلو په اړه پوښتنه',
       eyebrow: 'د کورس جزئیات',
+      pathTitle: 'له لومړي درس څخه تر دوامدار پرمختګ پورې روښانه لاره.',
+      ageTitle: 'د دې عمر ډلې لپاره جوړ شوی',
+      programFitTitle: 'دا پروګرام د چا لپاره مناسب دی',
+      instruction: 'د تدریس ژبه',
+      targetStudents: 'تر ټولو مناسب د',
+      trialPolicy: 'د دوه ورځني آزمایښتي پړاو تګلاره',
+      overview: 'د کورس پېژندنه',
+      objectives: 'د زده کړې موخې',
+      studentLearning: 'زده کوونکي څه زده کوي',
+      teachingMethod: 'درسونه څنګه وړاندې کېږي',
+      premiumDescription:
+        'د یوه زده کوونکي لپاره شخصي تدریس، یا د ورته کچې او موخو لرونکو دوو زده کوونکو لپاره نیمه‌خصوصي زده کړه.',
+      specialOnlyTitle: 'شخصي صنف',
+      groupClassTitle: 'کوچنی ډله‌ییز صنف',
+      specialClassTitle: 'خصوصي یا نیمه‌خصوصي صنف',
+      monthlyTuition: 'میاشتنی فیس په امریکايي ډالر',
+      learningPath: 'د زده کړې وړاندیز شوی ترتیب',
+      progressReport: 'والدینو ته میاشتنی پرمختګ راپور',
+      completionCertificate: 'د بشپړولو سند',
+      trialInformation: 'د آزمایښتي پړاو جزئیات',
       learnTitle: 'ستاسو ماشوم به څه زده کړي',
       parentGuidance: 'د والدینو لارښوونه',
       teacherPendingTitle: 'د استاد ټاکل پاتې دي',
@@ -1835,6 +2214,50 @@ export const messages = {
       title: 'د خپل ماشوم د روښنايي زده کړې سفر پیل کړئ.',
       description:
         'د خپل ماشوم عمر، هېواد، د واتساپ اړیکه او د زده کړې موخې شریکې کړئ. زموږ د کچې ټاکلو ټیم به غوره کورس، کچه او مهالویش وړاندیز کړي.',
+      familyEyebrow: 'د کورنۍ نوملیکنه',
+      familyTitle: 'خپل ټول ماشومان د یوه کورني حساب له لارې ثبت کړئ.',
+      familyDescription:
+        'د والد پروفایل یو ځل جوړ کړئ، بیا د هر ماشوم زده‌کړیزې اړتیاوې، غوره کورس، د صنف بڼه او مهالویش جلا ورزیات کړئ.',
+      formSteps: ['د کورنۍ معلومات', 'د زده کوونکي پروفایل', 'کورس او مهالویش', 'د ماشومانو بیاکتنه', 'تګلارې او رضایت'],
+      stepOf: 'پړاو {current} له {total}',
+      childProfiles: '{count} د زده کوونکي پروفایلونه',
+      fields: {
+        parentFullName: 'د والد یا سرپرست بشپړ نوم', city: 'ښار', timezone: 'وخت زون', relationship: 'له زده کوونکي سره اړیکه',
+        firstName: 'نوم', lastName: 'تخلص', gender: 'جنسیت', dateOfBirth: 'د زېږون نېټه', age: 'عمر',
+        nativeLanguage: 'د کور ژبه', currentLevel: 'د زده کړې اوسنۍ کچه', courseCategory: 'د کورس څانګه',
+        courseName: 'کورس', classType: 'د صنف بڼه', schedulePreference: 'غوره مهالویش'
+      },
+      selections: {
+        timezone: 'وخت زون وټاکئ', gender: 'جنسیت وټاکئ', language: 'ژبه وټاکئ', level: 'کچه وټاکئ',
+        category: 'څانګه وټاکئ', course: 'کورس وټاکئ'
+      },
+      review: {
+        newChild: 'نوی ماشوم', agePending: 'عمر نه دی لیکل شوی', levelPending: 'کچه نه ده ټاکل شوې', coursePending: 'کورس نه دی ټاکل شوی',
+        edit: 'پروفایل سم کړئ', addChild: 'بل ماشوم زیات کړئ'
+      },
+      agreements: {
+        trialTitle: 'د دوه ورځني آزمایښتي پړاو تګلاره', trialText: 'هر نوی زده کوونکی له تادیې مخکې دوه ورځنی آزمایښتي پړاو ترلاسه کوي.',
+        paymentTitle: 'د میاشتني فیس تګلاره',
+        paymentText: 'هره تادیه نوملیکنه د ۳۰ ورځو لپاره فعالوي. پر وخت تمدید د زده کوونکي ریکارډ له ګډوډۍ پرته صنفي لاسرسی روان ساتي.',
+        rulesTitle: 'د اکاډمۍ زده‌کړیزه هوکړه',
+        rulesText: 'کورنۍ منظمې حاضري، درناوی لرونکې اړیکې، کورنۍ دندې او مناسب آنلاین صنفي چلند ته ژمنېږي.'
+      },
+      actions: { back: 'شاته', continue: 'دوام', submitting: 'لېږل کېږي', referralCodes: 'د زده کوونکو د معرفي کوډونه' },
+      validation: {
+        parent: 'مهرباني وکړئ له دوام مخکې د والد یا سرپرست معلومات بشپړ کړئ.',
+        student: 'مهرباني وکړئ له دوام مخکې د دې زده کوونکي پروفایل بشپړ کړئ.',
+        course: 'مهرباني وکړئ د دې ماشوم لپاره کورس، د صنف بڼه او مهالویش وټاکئ.',
+        children: 'مهرباني وکړئ د تګلارو له کتلو مخکې د ټولو ماشومانو پروفایلونه بشپړ کړئ.',
+        policies: 'مهرباني وکړئ د اکاډمۍ ټولې درې تګلارې ولولئ او ومنئ.'
+      },
+      optionLabels: {
+        father: 'پلار', mother: 'مور', guardian: 'سرپرست', female: 'نجلۍ', male: 'هلک', undisclosed: 'نه غواړم ووایم',
+        dari: 'دري', pashto: 'پښتو', english: 'انګلیسي', urdu: 'اردو', arabic: 'عربي', other: 'بله ژبه',
+        newBeginner: 'نوی زده کوونکی', understands: 'ژبه پوهېږي او د خبرو تمرین ته اړتیا لري', beginner: 'پیل کوونکی',
+        intermediate: 'منځنۍ کچه', advanced: 'لوړه کچه', group: 'ډله‌ییز صنف (۳۰ ډالر په میاشت کې)',
+        special: 'خصوصي یا نیمه‌خصوصي صنف (۱۰۰ ډالر په میاشت کې)', premium: 'ځانګړی ژبنی پروګرام (۱۵۰ ډالر په میاشت کې)',
+        weekdays: 'د اونۍ ورځې', weekends: 'د اونۍ پای', flexible: 'انعطاف‌منونکی'
+      },
       formAria: 'د زده کوونکي نوملیکنه',
       nextTitle: 'وروسته څه کېږي؟',
       steps: [
@@ -1857,11 +2280,25 @@ export const messages = {
       title: 'روښنايي ته بیا ښه راغلاست',
       description:
         'د ژوندیو صنفونو لینکونو، د زده کوونکي پرمختګ، دندو، سندونو او د والدینو یادښتونو ته لاسرسی ومومئ.',
+      roleAccess: 'د رول له مخې خوندي لاسرسی',
+      roleDescription:
+        'ستاسو حساب یوازې د رول اړوند وسایل پرانیزي، څو د کورنۍ معلومات او د اکاډمۍ چارې روښانه، منظم او جلا پاتې شي.',
+      signedIn: 'ننوتلي یاست',
+      account: 'د {role} حساب',
+      openDashboard: 'ډشبورډ پرانیزئ',
+      switchAccount: 'حساب بدل کړئ',
+      chooseRole: 'خپل رول وټاکئ',
+      rememberRole: 'دا حساب په دې وسیله په یاد وساتئ',
+      signingIn: 'ننوتل روان دي',
+      loginAs: 'د {role} په توګه دوام',
+      redirecting: 'ننوتل بریالي شول. ډشبورډ پرانیستل کېږي.',
+      newFamily: 'نوې کورنۍ یاست؟',
+      registerChildren: 'ماشومان ثبت کړئ',
       formAria: 'روښنايي اکاډمي ته ننوتل',
       forgotPassword: 'پټنوم مو هېر شوی؟',
       submitIdle: 'ننوتل',
       submitLoading: 'حساب کتل کېږي',
-      success: 'ازمایښتي ننوتل واستول شول. په تولید کې دا د تصدیق سیستم سره نښلېږي.',
+      success: 'ننوتل بریالي شول. ستاسو ډشبورډ چمتو دی.',
       newUser: 'روښنايي ته نوي یاست؟'
     },
     dashboard: {

@@ -1,9 +1,20 @@
 export type CourseCategory = string
 
+export interface CourseEnrollmentOption {
+  name: string
+  price: string
+  priceLabel: string
+  size: string
+  summary: string
+  highlights: string[]
+}
+
 export interface Course {
   slug: string
   title: string
   category: CourseCategory
+  categoryKey: string
+  badge?: string
   summary: string
   description: string
   level: string
@@ -15,12 +26,24 @@ export interface Course {
   rating: string
   students: string
   featured: boolean
+  specialOnly?: boolean
   accentClass: string
   teacherSlug: string
   benefits: string[]
   outcomes: string[]
   syllabus: string[]
   parentNote: string
+  learningObjectives: string[]
+  whatStudentsWillLearn: string[]
+  teachingMethod: string
+  groupClass: CourseEnrollmentOption
+  specialClass: CourseEnrollmentOption
+  languageOfInstruction?: string
+  targetStudents?: string
+  premiumHighlights?: string[]
+  monthlyProgressReport: string
+  certificate: string
+  trialClassInfo: string
 }
 
 export interface Teacher {
@@ -60,7 +83,18 @@ export type AttendanceStatus = 'present' | 'absent' | 'late' | 'excused'
 
 export type ClassroomStatus = 'Active' | 'Trial Only' | 'Paused' | 'Full'
 
-export type MeetingProvider = 'Zoom' | 'Google Meet' | 'Jitsi'
+export type MeetingProvider = 'Zoom' | 'Google Meet'
+
+export type ClassType = 'Group' | 'Special' | 'Premium'
+
+export type Weekday =
+  | 'Monday'
+  | 'Tuesday'
+  | 'Wednesday'
+  | 'Thursday'
+  | 'Friday'
+  | 'Saturday'
+  | 'Sunday'
 
 export type AssignmentStatus = 'draft' | 'published' | 'closed'
 
@@ -68,6 +102,8 @@ export type HomeworkStatus = 'submitted' | 'late' | 'reviewed'
 
 export type ResourceType =
   | 'PDF Lesson'
+  | 'Document'
+  | 'Worksheet'
   | 'Audio File'
   | 'Video Link'
   | 'Quran Practice'
@@ -75,8 +111,10 @@ export type ResourceType =
   | 'Class Notes'
 
 export type AnnouncementType =
+  | 'holiday notice'
   | 'class cancellation'
   | 'homework reminder'
+  | 'exam announcement'
   | 'schedule change'
   | 'parent meeting'
 
@@ -141,11 +179,32 @@ export interface ClassSchedule {
   courseId: string
   teacherId: string
   day: string
+  daysOfWeek: Weekday[]
   time: string
+  startTime: string
+  endTime: string
+  durationMinutes: number
   timezone: string
+  classType: ClassType
+  meetingPlatform: MeetingProvider
   meetingLink: string
+  meetingId: string
+  meetingPassword: string
   capacity: number
   enrolledStudentIds: string[]
+}
+
+export interface ClassroomLiveSession {
+  id: string
+  classroomId: string
+  meetingPlatform: MeetingProvider
+  meetingLink: string
+  meetingId: string
+  meetingPassword: string
+  classDate: string
+  classNotes: string
+  updatedBy: string
+  updatedAt: string
 }
 
 export interface Classroom {
@@ -168,6 +227,7 @@ export interface ClassroomAssignment {
   instructions: string
   dueDate: string
   fileAttachmentLabel: string
+  attachmentUrl?: string
   status: AssignmentStatus
 }
 
@@ -177,7 +237,9 @@ export interface HomeworkSubmission {
   assignmentId: string
   studentId: string
   textAnswer: string
+  studentComment: string
   fileUploadLabel: string
+  fileUploadUrl?: string
   submittedAt: string
   status: HomeworkStatus
   score: number | null
@@ -203,6 +265,7 @@ export interface ClassroomProgress {
   attendancePercentage: number
   homeworkCompletion: number
   quizAverage: number
+  teacherEvaluation: string
   teacherNotes: string
   learningProgress: number
 }
@@ -210,11 +273,26 @@ export interface ClassroomProgress {
 export interface ClassroomAnnouncement {
   id: string
   classroomId: string
-  authorRole: 'Teacher' | 'Admin'
+  authorRole: 'Teacher' | 'Manager' | 'Admin'
   title: string
   type: AnnouncementType
   message: string
   postedAt: string
+}
+
+export interface MonthlyStudentReport {
+  id: string
+  classroomId: string
+  studentId: string
+  teacherId: string
+  month: string
+  attendanceSummary: string
+  academicProgress: string
+  strengths: string
+  areasForImprovement: string
+  teacherNotes: string
+  status: 'draft' | 'completed'
+  completedAt: string
 }
 
 export interface StudentClassroomAccess {

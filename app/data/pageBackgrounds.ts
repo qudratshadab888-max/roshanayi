@@ -14,8 +14,28 @@ export const pageBackgrounds = {
 
 export const courseBackgrounds: Record<string, string> = {
   'afghan-culture-heritage': '/images/page-backgrounds/course-heritage.png',
+  'daily-duas-islamic-manners': '/images/page-backgrounds/course-quran-reading.png',
   'dari-language-foundations': '/images/page-backgrounds/course-dari-language.png',
+  'dari-for-children': '/images/page-backgrounds/course-dari-language.png',
+  'dari-for-english-speakers-beginner': '/images/page-backgrounds/course-dari-language.png',
+  'dari-for-english-speakers-intermediate': '/images/page-backgrounds/course-dari-language.png',
+  'dari-for-teens': '/images/page-backgrounds/course-dari-language.png',
+  'dari-reading-writing': '/images/page-backgrounds/course-dari-language.png',
+  'english-advanced': '/images/page-backgrounds/courses-catalog.png',
+  'english-beginner': '/images/page-backgrounds/courses-catalog.png',
+  'english-intermediate': '/images/page-backgrounds/courses-catalog.png',
+  'english-starter': '/images/page-backgrounds/courses-catalog.png',
+  'islamic-studies-for-children': '/images/page-backgrounds/course-quran-reading.png',
   'pashto-for-kids': '/images/page-backgrounds/course-pashto-language.png',
+  'pashto-for-children': '/images/page-backgrounds/course-pashto-language.png',
+  'pashto-for-english-speakers-beginner': '/images/page-backgrounds/course-pashto-language.png',
+  'pashto-for-english-speakers-intermediate': '/images/page-backgrounds/course-pashto-language.png',
+  'pashto-for-teens': '/images/page-backgrounds/course-pashto-language.png',
+  'pashto-reading-writing': '/images/page-backgrounds/course-pashto-language.png',
   'quran-reading-for-beginners': '/images/page-backgrounds/course-quran-reading.png',
+  'quran-reading-basics': '/images/page-backgrounds/course-quran-reading.png',
+  'quran-tajweed': '/images/page-backgrounds/course-tajweed.png',
+  'seerah-of-prophet-muhammad': '/images/page-backgrounds/course-tajweed.png',
+  'spoken-english': '/images/page-backgrounds/courses-catalog.png',
   'tajweed-essentials': '/images/page-backgrounds/course-tajweed.png'
 }
