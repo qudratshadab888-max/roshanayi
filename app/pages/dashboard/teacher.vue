@@ -20,6 +20,8 @@ useSeoMeta({
 
 const { currentUser, syncUser } = useRoleAuth()
 const role = getRoleDefinition('teacher')
+const { approvedManagementTeachers } = useTeacherApplications()
+const availableTeachers = computed(() => [...managementTeachers, ...approvedManagementTeachers.value])
 const {
   classroomRecords,
   schedules,
@@ -58,7 +60,7 @@ const teacherId = computed(() =>
     : 'teacher-idrees'
 )
 const teacher = computed(() =>
-  managementTeachers.find((item) => item.id === teacherId.value) ?? managementTeachers[0]
+  availableTeachers.value.find((item) => item.id === teacherId.value) ?? availableTeachers.value[0]
 )
 const assignedClassrooms = computed(() => classroomRecords.value.filter((classroom) => classroom.teacherId === teacherId.value))
 const selectedClassroom = computed(() =>

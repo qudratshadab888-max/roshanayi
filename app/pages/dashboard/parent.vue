@@ -22,7 +22,10 @@ useSeoMeta({
 })
 
 const { currentUser, syncUser } = useRoleAuth()
+const { getRegisteredParent, getRegisteredStudent, getRegisteredStudentsForParent } = useFamilyAccounts()
+const { initialize: initializePayments, getStudentPaymentAccess, getNotificationsForParent } = usePaymentSystem()
 const role = getRoleDefinition('parent')
+const { getApplicationTeacherName } = useTeacherApplications()
 const {
   classroomRecords,
   schedules,
@@ -41,10 +44,13 @@ const parentId = computed(() =>
     ? currentUser.value.profileId
     : 'parent-farzana'
 )
+const registeredParent = computed(() => getRegisteredParent(parentId.value))
 const parent = computed(() =>
-  managementParents.find((item) => item.id === parentId.value) ?? managementParents[0]
+  registeredParent.value ?? managementParents.find((item) => item.id === parentId.value) ?? managementParents[0]
 )
-const children = computed(() => getParentStudents(parentId.value))
+const children = computed(() =>
+  registeredParent.value ? getRegisteredStudentsForParent(parentId.value) : getParentStudents(parentId.value)
+)
 const selectedChild = computed(() =>
   children.value.find((child) => child.id === selectedChildId.value) ?? children.value[0]
 )
@@ -100,9 +106,13 @@ const selectedMonthlyReports = computed(() =>
 )
 const lifecycleSummaries = computed(() => getParentLifecycleSummaries(parentId.value))
 const selectedLifecycle = computed(() =>
-  selectedChild.value ? getStudentLifecycleSummary(selectedChild.value.id) : undefined
+  selectedChild.value && !getRegisteredStudent(selectedChild.value.id) ? getStudentLifecycleSummary(selectedChild.value.id) : undefined
 )
-const parentNotifications = computed(() => getParentNotifications(parentId.value))
+const selectedPaymentAccess = computed(() => selectedChild.value ? getStudentPaymentAccess(selectedChild.value.id) : undefined)
+const parentNotifications = computed(() => [
+  ...getParentNotifications(parentId.value),
+  ...getNotificationsForParent(parentId.value)
+])
 const selectedSystemNotifications = computed(() =>
   selectedChild.value
     ? parentNotifications.value.filter((notification) => notification.studentId === selectedChild.value?.id)
@@ -111,7 +121,7 @@ const selectedSystemNotifications = computed(() =>
 const teacherContacts = computed(() =>
   selectedClassrooms.value.map((classroom) => ({
     className: classroom.className,
-    teacherName: getTeacherName(classroom.teacherId),
+    teacherName: getApplicationTeacherName(classroom.teacherId) ?? getTeacherName(classroom.teacherId),
     courseTitle: getCourseTitle(classroom.courseId)
   }))
 )
@@ -125,9 +135,9 @@ const childRows = computed(() =>
 
     return {
       child,
-      courseTitle: getCourseTitle(child.selectedCourseId),
+      courseTitle: 'courseName' in child ? child.courseName : getCourseTitle(child.selectedCourseId),
       attendancePercent: childAttendance.length ? Math.round((presentCount / childAttendance.length) * 100) : 0,
-      paymentStatus: lifecycle?.paymentStatus ?? payment?.status ?? 'Unpaid',
+      paymentStatus: getStudentPaymentAccess(child.id).invoiceStatus ?? lifecycle?.paymentStatus ?? payment?.status ?? 'Unpaid',
       lifecycle
     }
   })
@@ -137,7 +147,7 @@ const stats = computed(() => [
   { label: 'Children', value: children.value.length, detail: 'Linked to this parent account', tone: 'purple' as const },
   { label: 'Attendance records', value: selectedAttendance.value.length, detail: selectedChild.value?.name ?? 'Selected child', tone: 'sky' as const },
   { label: 'Notifications', value: selectedSystemNotifications.value.length, detail: 'Trial and payment alerts', tone: 'amber' as const },
-  { label: 'Payment status', value: selectedLifecycle.value?.paymentStatus ?? selectedPayment.value?.status ?? 'Unpaid', detail: selectedLifecycle.value?.nextDueDate ? `Next due ${selectedLifecycle.value.nextDueDate}` : 'No payment record', tone: selectedLifecycle.value?.accessStatus === 'Suspended' ? 'rose' as const : 'emerald' as const }
+  { label: 'Payment status', value: selectedPaymentAccess.value?.invoiceStatus ?? selectedLifecycle.value?.paymentStatus ?? selectedPayment.value?.status ?? 'Unpaid', detail: selectedPaymentAccess.value?.nextDueDate ? `Next due ${selectedPaymentAccess.value.nextDueDate}` : 'No payment record', tone: selectedPaymentAccess.value?.canAccess ? 'emerald' as const : 'rose' as const }
 ])
 
 watchEffect(() => {
@@ -148,6 +158,7 @@ watchEffect(() => {
 
 onMounted(() => {
   syncUser()
+  initializePayments()
 })
 
 const sendTeacherMessage = (teacherName: string) => {
@@ -182,6 +193,7 @@ const sendTeacherMessage = (teacherName: string) => {
     <section class="section-padding bg-slate-50 dark:bg-slate-900/50">
       <div class="container-wide grid gap-8">
         <PermissionPanel title="Parent dashboard access" :permissions="role.permissions" />
+        <BaseButton to="/dashboard/parent/payments" class="justify-self-start">Open Family Payments</BaseButton>
 
         <div class="rounded-lg border border-slate-200 bg-white p-6 shadow-soft dark:border-slate-800 dark:bg-slate-900">
           <div class="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
@@ -230,9 +242,9 @@ const sendTeacherMessage = (teacherName: string) => {
           <div class="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
             <div>
               <h2 class="text-xl font-bold text-slate-950 dark:text-white">{{ selectedLifecycle.studentName }} enrollment timeline</h2>
-              <p class="mt-2 text-sm leading-6 text-slate-600 dark:text-slate-300">{{ selectedLifecycle.actionRequired }}</p>
+              <p class="mt-2 text-sm leading-6 text-slate-600 dark:text-slate-300">{{ selectedPaymentAccess?.message ?? selectedLifecycle.actionRequired }}</p>
             </div>
-            <span :class="['rounded-full px-3 py-1 text-xs font-bold', getLifecycleTone(selectedLifecycle.accessStatus)]">{{ selectedLifecycle.accessStatus }}</span>
+            <PaymentStatusBadge :status="selectedPaymentAccess?.status ?? selectedLifecycle.accessStatus" />
           </div>
           <div class="mt-5 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
             <div class="rounded-md bg-slate-50 p-4 dark:bg-slate-800">
@@ -249,7 +261,7 @@ const sendTeacherMessage = (teacherName: string) => {
             </div>
             <div class="rounded-md bg-slate-50 p-4 dark:bg-slate-800">
               <p class="text-xs font-bold uppercase text-slate-500 dark:text-slate-400">Next Due Date</p>
-              <p class="mt-1 font-semibold text-slate-950 dark:text-white">{{ selectedLifecycle.nextDueDate || 'Not scheduled' }}</p>
+              <p class="mt-1 font-semibold text-slate-950 dark:text-white">{{ selectedPaymentAccess?.nextDueDate || selectedLifecycle.nextDueDate || 'Not scheduled' }}</p>
             </div>
             <div class="rounded-md bg-slate-50 p-4 dark:bg-slate-800">
               <p class="text-xs font-bold uppercase text-slate-500 dark:text-slate-400">Payment Date</p>
@@ -265,7 +277,7 @@ const sendTeacherMessage = (teacherName: string) => {
             </div>
             <div class="rounded-md bg-slate-50 p-4 dark:bg-slate-800">
               <p class="text-xs font-bold uppercase text-slate-500 dark:text-slate-400">Payment Status</p>
-              <span :class="['mt-2 inline-flex rounded-full px-3 py-1 text-xs font-bold', getLifecycleTone(selectedLifecycle.paymentStatus)]">{{ selectedLifecycle.paymentStatus }}</span>
+              <PaymentStatusBadge class="mt-2" :status="selectedPaymentAccess?.invoiceStatus ?? selectedLifecycle.paymentStatus" />
             </div>
           </div>
         </article>
@@ -396,9 +408,9 @@ const sendTeacherMessage = (teacherName: string) => {
             class="mt-5"
             :schedule="selectedSchedule"
             :live-session="selectedLiveSession"
-            :teacher-name="selectedScheduleClassroom ? getTeacherName(selectedScheduleClassroom.teacherId) : 'Teacher assignment pending'"
-            :can-join="Boolean(selectedLifecycle?.canAccessClass)"
-            :access-message="selectedLifecycle?.actionRequired ?? 'Class access is being confirmed.'"
+            :teacher-name="selectedScheduleClassroom ? (getApplicationTeacherName(selectedScheduleClassroom.teacherId) ?? getTeacherName(selectedScheduleClassroom.teacherId)) : 'Teacher assignment pending'"
+            :can-join="Boolean(selectedPaymentAccess?.canAccess)"
+            :access-message="selectedPaymentAccess?.message ?? selectedLifecycle?.actionRequired ?? 'Class access is being confirmed.'"
           />
         </article>
       </div>

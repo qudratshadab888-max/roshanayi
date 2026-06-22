@@ -1,9 +1,7 @@
 import {
   canRoleAccessDashboardPath,
   getDashboardPathForRole,
-  getDemoUserByRole,
   isRoleSessionUser,
-  type AcademyUserRole,
   type RoleSessionUser
 } from '~/data/roles'
 
@@ -53,15 +51,10 @@ export const useRoleAuth = () => {
     }
   }
 
-  const loginAsRole = (role: AcademyUserRole, email?: string, remember = true) => {
-    const demoUser = getDemoUserByRole(role)
-    const user: RoleSessionUser = {
-      ...demoUser,
-      email: email?.trim() || demoUser.email
-    }
-
-    persistUser(user, remember)
-
+  const loginWithCredentials = async (identifier: string, password: string, remember = true) => {
+    const { authenticate } = useFamilyAccounts()
+    const user = await authenticate(identifier, password)
+    if (user) persistUser(user, remember)
     return user
   }
 
@@ -90,7 +83,7 @@ export const useRoleAuth = () => {
     sessionLoaded,
     dashboardPath,
     syncUser,
-    loginAsRole,
+    loginWithCredentials,
     logout,
     canAccessPath
   }

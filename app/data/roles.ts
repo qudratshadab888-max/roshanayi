@@ -28,6 +28,7 @@ export const roleDefinitions: RoleDefinition[] = [
     permissions: [
       'Manage managers',
       'Manage teachers',
+      'Review teacher applications',
       'Manage parents',
       'Manage students',
       'Manage courses',
@@ -46,6 +47,7 @@ export const roleDefinitions: RoleDefinition[] = [
     dashboardPath: '/dashboard/manager',
     permissions: [
       'Manage teachers',
+      'Review teacher applications',
       'Manage parents',
       'Manage students',
       'Create classes',

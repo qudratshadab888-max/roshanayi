@@ -24,6 +24,7 @@ const routes = [
   'courses/seerah-of-prophet-muhammad',
   'courses/afghan-culture-heritage',
   'teachers',
+  'apply-teacher',
   'pricing',
   'contact',
   'dashboard',

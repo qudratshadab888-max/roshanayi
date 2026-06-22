@@ -15,6 +15,10 @@ interface StudentRegistrationForm {
   courseName: string
   classType: string
   schedulePreference: string
+  wantsStudentLogin: boolean
+  studentIdentifier: string
+  studentPassword: string
+  confirmStudentPassword: string
 }
 
 const { t, tm } = useI18n()
@@ -26,6 +30,7 @@ useSeoMeta({
 })
 
 const currentStep = ref(1)
+const highestStepReached = ref(1)
 const currentChildIndex = ref(0)
 const isSubmitting = ref(false)
 const submitted = ref(false)
@@ -36,6 +41,8 @@ const parent = reactive({
   fullName: '',
   email: '',
   whatsappNumber: '',
+  password: '',
+  confirmPassword: '',
   country: '',
   city: '',
   timezone: '',
@@ -54,7 +61,11 @@ const createChild = (index: number): StudentRegistrationForm => ({
   courseCategory: '',
   courseName: '',
   classType: 'Group Class ($30/month)',
-  schedulePreference: 'Weekdays'
+  schedulePreference: 'Weekdays',
+  wantsStudentLogin: false,
+  studentIdentifier: '',
+  studentPassword: '',
+  confirmStudentPassword: ''
 })
 
 const children = ref<StudentRegistrationForm[]>([createChild(1)])
@@ -164,23 +175,42 @@ const childIsComplete = (child: StudentRegistrationForm) =>
       child.schedulePreference
   )
 
+const validEmail = (value: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)
+
 const validateCurrentStep = () => {
   if (
     currentStep.value === 1 &&
-    (!parent.fullName ||
-      !parent.email ||
-      !parent.whatsappNumber ||
-      !parent.country ||
-      !parent.city ||
-      !parent.timezone ||
-      !parent.relationship)
+    (!parent.fullName || !parent.email || !parent.whatsappNumber)
   ) {
-    notice.value = t('register.validation.parent')
+    notice.value = 'Please enter the parent full name, email, and WhatsApp number.'
+    return false
+  }
+
+  if (currentStep.value === 1 && !validEmail(parent.email)) {
+    notice.value = 'Enter a valid parent email address.'
+    return false
+  }
+
+  if (currentStep.value === 1 && parent.password.length < 8) {
+    notice.value = 'Parent password must be at least 8 characters.'
+    return false
+  }
+
+  if (currentStep.value === 1 && parent.password !== parent.confirmPassword) {
+    notice.value = 'Parent passwords do not match.'
     return false
   }
 
   if (
     currentStep.value === 2 &&
+    (!parent.country || !parent.city || !parent.timezone || !parent.relationship)
+  ) {
+    notice.value = 'Please complete the parent location and relationship information.'
+    return false
+  }
+
+  if (
+    currentStep.value === 3 &&
     (!currentChild.value.firstName ||
       !currentChild.value.lastName ||
       !currentChild.value.gender ||
@@ -194,7 +224,27 @@ const validateCurrentStep = () => {
   }
 
   if (
-    currentStep.value === 3 &&
+    currentStep.value === 4 &&
+    Number(currentChild.value.age) >= 13 &&
+    currentChild.value.wantsStudentLogin &&
+    (!currentChild.value.studentIdentifier || !currentChild.value.studentPassword || !currentChild.value.confirmStudentPassword)
+  ) {
+    notice.value = 'Enter the student email or username and both password fields, or turn off student login.'
+    return false
+  }
+
+  if (currentStep.value === 4 && Number(currentChild.value.age) >= 13 && currentChild.value.wantsStudentLogin && currentChild.value.studentPassword.length < 8) {
+    notice.value = 'Student password must be at least 8 characters.'
+    return false
+  }
+
+  if (currentStep.value === 4 && Number(currentChild.value.age) >= 13 && currentChild.value.wantsStudentLogin && currentChild.value.studentPassword !== currentChild.value.confirmStudentPassword) {
+    notice.value = 'Student passwords do not match.'
+    return false
+  }
+
+  if (
+    currentStep.value === 5 &&
     (!currentChild.value.courseCategory ||
       !currentChild.value.courseName ||
       !currentChild.value.classType ||
@@ -204,7 +254,7 @@ const validateCurrentStep = () => {
     return false
   }
 
-  if (currentStep.value === 4 && !children.value.every(childIsComplete)) {
+  if (currentStep.value === 6 && !children.value.every(childIsComplete)) {
     notice.value = t('register.validation.children')
     return false
   }
@@ -213,6 +263,7 @@ const validateCurrentStep = () => {
 }
 
 const goToStep = (step: number) => {
+  if (step > highestStepReached.value) return
   currentStep.value = step
   notice.value = ''
 }
@@ -223,6 +274,7 @@ const nextStep = () => {
   }
 
   currentStep.value = Math.min(currentStep.value + 1, steps.value.length)
+  highestStepReached.value = Math.max(highestStepReached.value, currentStep.value)
   notice.value = ''
 }
 
@@ -234,15 +286,45 @@ const previousStep = () => {
 const addAnotherChild = () => {
   children.value.push(createChild(children.value.length + 1))
   currentChildIndex.value = children.value.length - 1
-  goToStep(2)
+  goToStep(3)
 }
 
 const editChild = (index: number) => {
   currentChildIndex.value = index
-  goToStep(2)
+  goToStep(3)
 }
 
 const submitRegistration = async () => {
+  if (
+    !parent.fullName || !validEmail(parent.email) || !parent.whatsappNumber ||
+    !parent.country || !parent.city || !parent.timezone || !parent.relationship
+  ) {
+    notice.value = 'Please complete all parent account and location information.'
+    return
+  }
+
+  if (!childIsComplete(currentChild.value) || !children.value.every(childIsComplete)) {
+    notice.value = 'Please complete the information and course selection for every child.'
+    return
+  }
+
+  const invalidStudentLogin = children.value.some((child) =>
+    Number(child.age) >= 13 && child.wantsStudentLogin && (
+      !child.studentIdentifier ||
+      child.studentPassword.length < 8 ||
+      child.studentPassword !== child.confirmStudentPassword
+    )
+  )
+  if (invalidStudentLogin) {
+    notice.value = 'Check each optional student login. Passwords must be at least 8 characters and match.'
+    return
+  }
+
+  if (parent.password.length < 8 || parent.password !== parent.confirmPassword) {
+    notice.value = 'Check the parent password. It must be at least 8 characters and both entries must match.'
+    return
+  }
+
   if (!agreement.trialPolicy || !agreement.paymentPolicy || !agreement.academyRules) {
     notice.value = t('register.validation.policies')
     return
@@ -252,14 +334,49 @@ const submitRegistration = async () => {
   submitted.value = false
   notice.value = ''
 
-  await new Promise((resolve) => globalThis.setTimeout(resolve, 700))
-
-  generatedReferralCodes.value = children.value.map((child) => ({
-    name: childFullName(child),
-    code: generateReferralCode(childFullName(child))
-  }))
-  isSubmitting.value = false
-  submitted.value = true
+  try {
+    const { registerFamily } = useFamilyAccounts()
+    const { loginWithCredentials } = useRoleAuth()
+    await registerFamily({
+      parent: {
+        fullName: parent.fullName,
+        email: parent.email,
+        whatsappNumber: parent.whatsappNumber,
+        password: parent.password,
+        country: parent.country,
+        city: parent.city,
+        timezone: parent.timezone,
+        relationship: parent.relationship
+      },
+      children: children.value.map((child) => ({
+        firstName: child.firstName,
+        lastName: child.lastName,
+        gender: child.gender,
+        dateOfBirth: child.dateOfBirth,
+        age: Number(child.age),
+        nativeLanguage: child.nativeLanguage,
+        currentLanguageLevel: child.currentLanguageLevel,
+        courseCategory: child.courseCategory,
+        courseName: child.courseName,
+        classType: child.classType,
+        schedulePreference: child.schedulePreference,
+        ...(Number(child.age) >= 13 && child.wantsStudentLogin
+          ? { studentIdentifier: child.studentIdentifier, studentPassword: child.studentPassword }
+          : {})
+      }))
+    })
+    generatedReferralCodes.value = children.value.map((child) => ({
+      name: childFullName(child),
+      code: generateReferralCode(childFullName(child))
+    }))
+    await loginWithCredentials(parent.email, parent.password, true)
+    submitted.value = true
+    await navigateTo('/dashboard/parent')
+  } catch (error) {
+    notice.value = error instanceof Error ? error.message : 'Registration could not be completed. Please try again.'
+  } finally {
+    isSubmitting.value = false
+  }
 }
 </script>
 
@@ -282,11 +399,14 @@ const submitRegistration = async () => {
             v-for="(step, index) in steps"
             :key="step"
             type="button"
+            :disabled="index + 1 > highestStepReached"
             :class="[
               'focus-ring grid grid-cols-[auto_1fr] items-center gap-3 rounded-lg border px-4 py-3 text-left transition',
               currentStep === index + 1
                 ? 'border-brand-gold bg-white text-slate-950'
-                : 'border-white/15 bg-white/10 text-slate-100 hover:border-brand-gold'
+                : index + 1 > highestStepReached
+                  ? 'cursor-not-allowed border-white/10 bg-white/5 text-slate-400'
+                  : 'border-white/15 bg-white/10 text-slate-100 hover:border-brand-gold'
             ]"
             @click="goToStep(index + 1)"
           >
@@ -328,6 +448,18 @@ const submitRegistration = async () => {
             <input id="register-whatsapp" v-model="parent.whatsappNumber" required type="tel" autocomplete="tel" class="focus-ring mt-2 w-full rounded-md border border-slate-300 bg-white px-4 py-3 text-sm dark:border-slate-700 dark:bg-slate-950">
           </div>
           <div>
+            <label class="text-sm font-semibold text-slate-700 dark:text-slate-200" for="parent-password">Password</label>
+            <input id="parent-password" v-model="parent.password" required minlength="8" type="password" autocomplete="new-password" aria-describedby="parent-password-help" class="focus-ring mt-2 w-full rounded-md border border-slate-300 bg-white px-4 py-3 text-sm dark:border-slate-700 dark:bg-slate-950">
+            <p id="parent-password-help" class="mt-2 text-xs text-slate-500 dark:text-slate-400">Use at least 8 characters.</p>
+          </div>
+          <div>
+            <label class="text-sm font-semibold text-slate-700 dark:text-slate-200" for="parent-confirm-password">Confirm Password</label>
+            <input id="parent-confirm-password" v-model="parent.confirmPassword" required minlength="8" type="password" autocomplete="new-password" class="focus-ring mt-2 w-full rounded-md border border-slate-300 bg-white px-4 py-3 text-sm dark:border-slate-700 dark:bg-slate-950">
+          </div>
+        </div>
+
+        <div v-else-if="currentStep === 2" class="mt-6 grid gap-5 sm:grid-cols-2">
+          <div>
             <label class="text-sm font-semibold text-slate-700 dark:text-slate-200" for="country">{{ t('common.labels.country') }}</label>
             <input id="country" v-model="parent.country" required type="text" autocomplete="country-name" class="focus-ring mt-2 w-full rounded-md border border-slate-300 bg-white px-4 py-3 text-sm dark:border-slate-700 dark:bg-slate-950">
           </div>
@@ -350,7 +482,7 @@ const submitRegistration = async () => {
           </div>
         </div>
 
-        <div v-else-if="currentStep === 2" class="mt-6 grid gap-5 sm:grid-cols-2">
+        <div v-else-if="currentStep === 3" class="mt-6 grid gap-5 sm:grid-cols-2">
           <div>
             <label class="text-sm font-semibold text-slate-700 dark:text-slate-200" for="student-first-name">{{ t('register.fields.firstName') }}</label>
             <input id="student-first-name" v-model="currentChild.firstName" required type="text" class="focus-ring mt-2 w-full rounded-md border border-slate-300 bg-white px-4 py-3 text-sm dark:border-slate-700 dark:bg-slate-950">
@@ -390,7 +522,38 @@ const submitRegistration = async () => {
           </div>
         </div>
 
-        <div v-else-if="currentStep === 3" class="mt-6 grid gap-5">
+        <div v-else-if="currentStep === 4" class="mt-6 grid gap-5">
+          <div v-if="Number(currentChild.age) < 13" class="rounded-lg border border-sky-200 bg-sky-50 p-5 text-sky-900 dark:border-sky-900 dark:bg-sky-950/40 dark:text-sky-100">
+            <h3 class="font-bold">No separate login is needed</h3>
+            <p class="mt-2 text-sm leading-6">Children under 13 use their parent account. The parent can manage this profile from the Parent Dashboard.</p>
+          </div>
+          <template v-else>
+            <label class="flex gap-3 rounded-lg border border-slate-200 p-4 dark:border-slate-800">
+              <input v-model="currentChild.wantsStudentLogin" type="checkbox" class="mt-1 h-4 w-4 rounded border-slate-300 text-brand-purple">
+              <span>
+                <span class="block font-bold text-slate-950 dark:text-white">Create optional student login</span>
+                <span class="mt-1 block text-sm leading-6 text-slate-600 dark:text-slate-300">This student will have their own Student Dashboard while remaining linked to the parent account.</span>
+              </span>
+            </label>
+            <div v-if="currentChild.wantsStudentLogin" class="grid gap-5 sm:grid-cols-2">
+              <div class="sm:col-span-2">
+                <label class="text-sm font-semibold text-slate-700 dark:text-slate-200" for="student-login-identifier">Student Email or Username</label>
+                <input id="student-login-identifier" v-model="currentChild.studentIdentifier" required type="text" autocomplete="username" class="focus-ring mt-2 w-full rounded-md border border-slate-300 bg-white px-4 py-3 text-sm dark:border-slate-700 dark:bg-slate-950">
+              </div>
+              <div>
+                <label class="text-sm font-semibold text-slate-700 dark:text-slate-200" for="student-password">Student Password</label>
+                <input id="student-password" v-model="currentChild.studentPassword" required minlength="8" type="password" autocomplete="new-password" class="focus-ring mt-2 w-full rounded-md border border-slate-300 bg-white px-4 py-3 text-sm dark:border-slate-700 dark:bg-slate-950">
+                <p class="mt-2 text-xs text-slate-500 dark:text-slate-400">Use at least 8 characters.</p>
+              </div>
+              <div>
+                <label class="text-sm font-semibold text-slate-700 dark:text-slate-200" for="student-confirm-password">Confirm Student Password</label>
+                <input id="student-confirm-password" v-model="currentChild.confirmStudentPassword" required minlength="8" type="password" autocomplete="new-password" class="focus-ring mt-2 w-full rounded-md border border-slate-300 bg-white px-4 py-3 text-sm dark:border-slate-700 dark:bg-slate-950">
+              </div>
+            </div>
+          </template>
+        </div>
+
+        <div v-else-if="currentStep === 5" class="mt-6 grid gap-5">
           <div class="grid gap-5 sm:grid-cols-2">
             <div>
               <label class="text-sm font-semibold text-slate-700 dark:text-slate-200" for="course-category">{{ t('register.fields.courseCategory') }}</label>
@@ -447,7 +610,7 @@ const submitRegistration = async () => {
           </fieldset>
         </div>
 
-        <div v-else-if="currentStep === 4" class="mt-6 grid gap-4">
+        <div v-else-if="currentStep === 6" class="mt-6 grid gap-4">
           <article
             v-for="(child, index) in children"
             :key="child.id"

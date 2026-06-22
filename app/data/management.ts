@@ -135,7 +135,7 @@ export const managementCourses: ManagementCourse[] = [
     teacherId: 'teacher-maryam',
     schedule: 'Tue & Thu, 5:00 PM EST',
     capacity: 10,
-    price: 79,
+    price: 30,
     description: 'Live Dari reading, speaking, and writing for Afghan children abroad.'
   },
   {
@@ -147,7 +147,7 @@ export const managementCourses: ManagementCourse[] = [
     teacherId: 'teacher-ahmad',
     schedule: 'Mon & Wed, 6:00 PM CET',
     capacity: 10,
-    price: 79,
+    price: 30,
     description: 'Gentle Pashto speaking, listening, alphabet, and family vocabulary practice.'
   },
   {
@@ -158,8 +158,8 @@ export const managementCourses: ManagementCourse[] = [
     ageGroup: 'Ages 7-16',
     teacherId: 'teacher-sarah',
     schedule: 'Sat, 11:00 AM GMT',
-    capacity: 12,
-    price: 69,
+    capacity: 10,
+    price: 30,
     description: 'Practical English speaking, reading, and writing support for global learners.'
   },
   {
@@ -171,7 +171,7 @@ export const managementCourses: ManagementCourse[] = [
     teacherId: 'teacher-sarah',
     schedule: 'Sun, 4:00 PM GMT',
     capacity: 8,
-    price: 89,
+    price: 150,
     description: 'A bridge course for children who mainly speak English at home.'
   },
   {
@@ -183,7 +183,7 @@ export const managementCourses: ManagementCourse[] = [
     teacherId: 'teacher-idrees',
     schedule: 'Thu & Sun, 6:30 PM GMT',
     capacity: 8,
-    price: 89,
+    price: 30,
     description: 'Arabic letters, vowels, joining rules, and guided Quran reading practice.'
   },
   {
@@ -195,7 +195,7 @@ export const managementCourses: ManagementCourse[] = [
     teacherId: 'teacher-maryam',
     schedule: 'Fri, 5:30 PM EST',
     capacity: 8,
-    price: 59,
+    price: 30,
     description: 'Short readings, pronunciation, pacing, and confidence for heritage readers.'
   },
   {
@@ -207,7 +207,7 @@ export const managementCourses: ManagementCourse[] = [
     teacherId: 'teacher-idrees',
     schedule: 'Sat, 7:00 PM GMT',
     capacity: 8,
-    price: 99,
+    price: 100,
     description: 'Makharij, madd, stopping signs, and practical correction while reciting.'
   },
   {
@@ -218,8 +218,8 @@ export const managementCourses: ManagementCourse[] = [
     ageGroup: 'Ages 6-12',
     teacherId: 'teacher-idrees',
     schedule: 'Sun, 10:00 AM GMT',
-    capacity: 12,
-    price: 49,
+    capacity: 10,
+    price: 30,
     description: 'Age-appropriate Islamic manners, duas, stories, and daily practice.'
   },
   {
@@ -230,8 +230,8 @@ export const managementCourses: ManagementCourse[] = [
     ageGroup: 'Ages 7-15',
     teacherId: 'teacher-ahmad',
     schedule: 'Sat, 3:00 PM CET',
-    capacity: 12,
-    price: 69,
+    capacity: 10,
+    price: 30,
     description: 'Geography, poetry, family stories, celebrations, values, and heritage presentations.'
   }
 ]
@@ -407,7 +407,7 @@ export const classSchedules: ClassSchedule[] = [
     meetingLink: 'https://meet.google.com/ros-engl-demo',
     meetingId: 'ros-engl-demo',
     meetingPassword: '',
-    capacity: 12,
+    capacity: 10,
     enrolledStudentIds: ['student-samira']
   },
   {
@@ -421,7 +421,7 @@ export const classSchedules: ClassSchedule[] = [
     endTime: '5:00 PM',
     durationMinutes: 60,
     timezone: 'EST',
-    classType: 'Special',
+    classType: 'Premium',
     meetingPlatform: 'Zoom',
     meetingLink: '',
     meetingId: '',

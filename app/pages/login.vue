@@ -1,76 +1,59 @@
 <script setup lang="ts">
 import { pageBackgrounds } from '~/data/pageBackgrounds'
-import {
-  canRoleAccessDashboardPath,
-  getDashboardPathForRole,
-  getDemoUserByRole,
-  getRoleDefinition,
-  roleDefinitions,
-  type AcademyUserRole
-} from '~/data/roles'
+import { canRoleAccessDashboardPath, getDashboardPathForRole, getRoleDefinition } from '~/data/roles'
 
 const route = useRoute()
 const { t } = useI18n()
-const { currentUser, dashboardPath, loginAsRole, logout, syncUser } = useRoleAuth()
+const { currentUser, dashboardPath, loginWithCredentials, logout, syncUser } = useRoleAuth()
 
 useSeoMeta({
   title: () => t('seo.login.title'),
   description: () => t('seo.login.description')
 })
 
-const selectedRole = ref<AcademyUserRole>('parent')
-const email = ref('')
-const password = ref('demo123')
+const identifier = ref('')
+const password = ref('')
 const rememberMe = ref(true)
 const isSubmitting = ref(false)
-const submitted = ref(false)
+const errorMessage = ref('')
 
-const selectedRoleDefinition = computed(() => getRoleDefinition(selectedRole.value))
-const selectedDemoUser = computed(() => getDemoUserByRole(selectedRole.value))
-
-watch(
-  selectedRole,
-  (role) => {
-    email.value = getDemoUserByRole(role).email
-  },
-  { immediate: true }
-)
-
-onMounted(() => {
-  syncUser()
-})
-
-const redirectTargetForRole = (role: AcademyUserRole) => {
-  const requestedPath = typeof route.query.redirect === 'string' ? route.query.redirect : ''
-
-  if (requestedPath && canRoleAccessDashboardPath(role, requestedPath)) {
-    return requestedPath
-  }
-
-  return getDashboardPathForRole(role)
-}
+onMounted(syncUser)
 
 const login = async () => {
+  errorMessage.value = ''
+  if (!identifier.value.trim() || !password.value) {
+    errorMessage.value = 'Enter your email or username and password.'
+    return
+  }
+
   isSubmitting.value = true
-  submitted.value = false
+  let user = null
+  try {
+    user = await loginWithCredentials(identifier.value, password.value, rememberMe.value)
+  } catch {
+    errorMessage.value = 'Login is temporarily unavailable. Please try again.'
+    return
+  } finally {
+    isSubmitting.value = false
+  }
 
-  await new Promise((resolve) => globalThis.setTimeout(resolve, 450))
+  if (!user) {
+    errorMessage.value = 'The email/username or password is incorrect.'
+    return
+  }
 
-  const user = loginAsRole(selectedRole.value, email.value, rememberMe.value)
-
-  isSubmitting.value = false
-  submitted.value = true
-
-  await navigateTo(redirectTargetForRole(user.role))
-}
-
-const continueToDashboard = async () => {
-  await navigateTo(dashboardPath.value)
+  const requestedPath = typeof route.query.redirect === 'string' ? route.query.redirect : ''
+  const destination = requestedPath && canRoleAccessDashboardPath(user.role, requestedPath)
+    ? requestedPath
+    : getDashboardPathForRole(user.role)
+  await navigateTo(destination)
 }
 
 const switchAccount = () => {
   logout()
-  submitted.value = false
+  identifier.value = ''
+  password.value = ''
+  errorMessage.value = ''
 }
 </script>
 
@@ -85,31 +68,20 @@ const switchAccount = () => {
           {{ t('login.title') }}
         </h1>
         <p class="mt-5 text-lg leading-8 text-slate-200">
-          {{ t('login.roleDescription') }}
+          Sign in once and we will open the dashboard assigned to your account.
         </p>
 
-        <div class="mt-8 rounded-lg border border-white/15 bg-white/10 p-5 backdrop-blur">
-          <div class="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-            <div>
-              <p class="text-sm font-semibold uppercase tracking-[0.16em] text-brand-gold">
-                {{ selectedRoleDefinition.label }}
-              </p>
-              <h2 class="mt-2 text-2xl font-bold text-white">{{ selectedDemoUser.name }}</h2>
-              <p class="mt-2 text-sm leading-6 text-slate-200">{{ selectedRoleDefinition.description }}</p>
-            </div>
-            <span class="rounded-full bg-brand-gold px-3 py-1 text-xs font-bold text-slate-950">
-              {{ selectedRoleDefinition.dashboardPath }}
-            </span>
-          </div>
-          <div class="mt-5 grid gap-2 sm:grid-cols-2">
-            <p
-              v-for="permission in selectedRoleDefinition.permissions.slice(0, 6)"
-              :key="permission"
-              class="rounded-md bg-white/10 px-3 py-2 text-sm font-semibold text-slate-100"
-            >
-              {{ permission }}
-            </p>
-          </div>
+        <div class="mt-8 grid gap-4 sm:grid-cols-2">
+          <article class="rounded-lg border border-white/15 bg-white/10 p-5 backdrop-blur">
+            <p class="text-sm font-bold uppercase tracking-[0.16em] text-brand-gold">Families</p>
+            <h2 class="mt-2 text-xl font-bold text-white">Parent and student access</h2>
+            <p class="mt-2 text-sm leading-6 text-slate-200">Parents use their email. Students aged 13+ can use an optional email or username created during registration.</p>
+          </article>
+          <article class="rounded-lg border border-white/15 bg-white/10 p-5 backdrop-blur">
+            <p class="text-sm font-bold uppercase tracking-[0.16em] text-brand-gold">Academy staff</p>
+            <h2 class="mt-2 text-xl font-bold text-white">Provisioned accounts only</h2>
+            <p class="mt-2 text-sm leading-6 text-slate-200">Teacher, Manager, and Super Admin access is created internally and is not available through public registration.</p>
+          </article>
         </div>
       </div>
 
@@ -123,40 +95,25 @@ const switchAccount = () => {
             </p>
           </div>
           <div class="grid gap-3 sm:grid-cols-2">
-            <BaseButton type="button" block @click="continueToDashboard">{{ t('login.openDashboard') }}</BaseButton>
+            <BaseButton :to="dashboardPath" block>{{ t('login.openDashboard') }}</BaseButton>
             <BaseButton type="button" variant="outline" block @click="switchAccount">{{ t('login.switchAccount') }}</BaseButton>
           </div>
         </div>
 
         <form v-else class="grid gap-5" :aria-label="t('login.formAria')" @submit.prevent="login">
           <div>
-            <p class="eyebrow">{{ t('login.chooseRole') }}</p>
-            <div class="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-5">
-              <button
-                v-for="definition in roleDefinitions"
-                :key="definition.role"
-                type="button"
-                :class="[
-                  'focus-ring min-h-12 rounded-md border px-3 py-2 text-sm font-bold transition',
-                  selectedRole === definition.role
-                    ? 'border-brand-purple bg-brand-purple text-white dark:border-brand-gold dark:bg-brand-gold dark:text-slate-950'
-                    : 'border-slate-200 bg-white text-slate-700 hover:border-brand-purple hover:text-brand-purple dark:border-slate-700 dark:bg-slate-950 dark:text-slate-200 dark:hover:border-brand-gold dark:hover:text-brand-gold'
-                ]"
-                @click="selectedRole = definition.role"
-              >
-                {{ definition.shortLabel }}
-              </button>
-            </div>
+            <p class="eyebrow">Account login</p>
+            <h2 class="mt-2 text-2xl font-black text-slate-950 dark:text-white">Welcome back</h2>
           </div>
 
           <div>
-            <label class="text-sm font-semibold text-slate-700 dark:text-slate-200" for="login-email">{{ t('common.labels.email') }}</label>
+            <label class="text-sm font-semibold text-slate-700 dark:text-slate-200" for="login-identifier">Email or username</label>
             <input
-              id="login-email"
-              v-model="email"
+              id="login-identifier"
+              v-model="identifier"
               required
-              type="email"
-              autocomplete="email"
+              type="text"
+              autocomplete="username"
               class="focus-ring mt-2 w-full rounded-md border border-slate-300 bg-white px-4 py-3 text-sm dark:border-slate-700 dark:bg-slate-950"
             >
           </div>
@@ -178,13 +135,17 @@ const switchAccount = () => {
             {{ t('login.rememberRole') }}
           </label>
 
+          <p v-if="errorMessage" class="rounded-md bg-rose-50 p-3 text-sm font-semibold text-rose-700 dark:bg-rose-950/40 dark:text-rose-200" role="alert">
+            {{ errorMessage }}
+          </p>
+
           <BaseButton type="submit" block :loading="isSubmitting">
-            {{ isSubmitting ? t('login.signingIn') : t('login.loginAs', { role: selectedRoleDefinition.label }) }}
+            {{ isSubmitting ? t('login.signingIn') : t('login.submitIdle') }}
           </BaseButton>
 
-          <p v-if="submitted" class="text-sm font-semibold text-emerald-600 dark:text-emerald-300" role="status" aria-live="polite">
-            {{ t('login.redirecting') }}
-          </p>
+          <div class="rounded-md bg-slate-50 p-3 text-xs leading-5 text-slate-600 dark:bg-slate-800 dark:text-slate-300">
+            Demo: <strong>parent@roshanayi.academy</strong> / <strong>demo1234</strong>
+          </div>
         </form>
 
         <p class="mt-6 text-center text-sm text-slate-600 dark:text-slate-300">

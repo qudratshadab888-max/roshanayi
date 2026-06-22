@@ -15,6 +15,7 @@ const quickLinks = computed(() => [
   { label: t('common.nav.about'), to: '/about' },
   { label: t('common.nav.courses'), to: '/courses' },
   { label: t('common.nav.teachers'), to: '/teachers' },
+  { label: 'Apply as a Teacher', to: '/apply-teacher' },
   { label: libraryLabel.value, to: '/pricing' }
 ])
 

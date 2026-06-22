@@ -49,6 +49,9 @@ import {
 const route = useRoute()
 const { locale } = useI18n()
 const { currentUser, syncUser } = useRoleAuth()
+const { initialize: initializePayments, getStudentPaymentAccess } = usePaymentSystem()
+const { approvedManagementTeachers, getApplicationTeacherName } = useTeacherApplications()
+const availableTeachers = computed(() => [...managementTeachers, ...approvedManagementTeachers.value])
 const {
   classroomRecords,
   schedules,
@@ -311,7 +314,10 @@ watch(
   { immediate: true }
 )
 
-onMounted(() => syncUser())
+onMounted(() => {
+  syncUser()
+  initializePayments()
+})
 
 const courseTitle = computed(() =>
   classroom.value
@@ -320,7 +326,9 @@ const courseTitle = computed(() =>
 )
 
 const teacherName = computed(() =>
-  classroom.value ? getTeacherName(classroom.value.teacherId) : ui.value.classroomDetail.fallbacks.unassignedTeacher
+  classroom.value
+    ? getApplicationTeacherName(classroom.value.teacherId) ?? getTeacherName(classroom.value.teacherId)
+    : ui.value.classroomDetail.fallbacks.unassignedTeacher
 )
 
 const selectedStudent = computed(() =>
@@ -339,10 +347,13 @@ const studentAccess = computed(() =>
 const selectedStudentLifecycle = computed(() =>
   selectedStudentId.value ? getStudentLifecycleSummary(selectedStudentId.value) : undefined
 )
+const selectedStudentPaymentAccess = computed(() =>
+  selectedStudentId.value ? getStudentPaymentAccess(selectedStudentId.value) : undefined
+)
 const canJoinLiveClass = computed(() =>
   canTeach.value ||
   ((currentUser.value?.role === 'student' || currentUser.value?.role === 'parent') &&
-    studentAccess.value.canJoin && Boolean(selectedStudentLifecycle.value?.canAccessClass))
+    studentAccess.value.isEnrolled && Boolean(selectedStudentPaymentAccess.value?.canAccess))
 )
 
 watch(
@@ -356,8 +367,8 @@ watch(
   }
 )
 const liveAccessMessage = computed(() =>
-  selectedStudentLifecycle.value && !selectedStudentLifecycle.value.canAccessClass
-    ? selectedStudentLifecycle.value.actionRequired
+  selectedStudentPaymentAccess.value && !selectedStudentPaymentAccess.value.canAccess
+    ? selectedStudentPaymentAccess.value.message
     : accessMessage(studentAccess.value.message)
 )
 
@@ -846,7 +857,7 @@ const videoFeatureLabel = (feature: string) => getVideoFeatureLabel(locale.value
               <div>
                 <label for="schedule-teacher" class="text-sm font-semibold text-slate-700 dark:text-slate-200">{{ ui.classroomDetail.labels.teacher }}</label>
                 <select id="schedule-teacher" v-model="scheduleDraft.teacherId" class="focus-ring mt-2 w-full rounded-md border border-slate-300 px-4 py-3 text-sm dark:border-slate-700 dark:bg-slate-950">
-                  <option v-for="teacher in managementTeachers" :key="teacher.id" :value="teacher.id">{{ teacher.name }}</option>
+                  <option v-for="teacher in availableTeachers" :key="teacher.id" :value="teacher.id">{{ teacher.name }}</option>
                 </select>
               </div>
               <div class="sm:col-span-2">

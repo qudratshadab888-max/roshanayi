@@ -3,6 +3,8 @@ import { pageBackgrounds } from '~/data/pageBackgrounds'
 
 const { t, tm } = useI18n()
 const { teachers } = useAcademyData()
+const { publicTeacherProfiles } = useTeacherApplications()
+const allTeachers = computed(() => [...teachers.value, ...publicTeacherProfiles.value])
 
 useSeoMeta({
   title: () => t('seo.teachers.title'),
@@ -23,7 +25,12 @@ const standards = computed(() => tm<string[]>('teachersPage.standards.items'))
 
     <section class="section-padding bg-white dark:bg-slate-950">
       <div class="container-wide grid gap-6 md:grid-cols-2">
-        <TeacherCard v-for="teacher in teachers" :key="teacher.slug" :teacher="teacher" />
+        <TeacherCard v-for="teacher in allTeachers" :key="teacher.slug" :teacher="teacher" />
+      </div>
+      <div class="container-wide mt-10 rounded-lg border border-purple-200 bg-purple-50 p-6 text-center dark:border-purple-900 dark:bg-purple-950/40">
+        <h2 class="text-2xl font-black text-slate-950 dark:text-white">Interested in teaching with Roshanayi?</h2>
+        <p class="mx-auto mt-2 max-w-2xl text-sm leading-6 text-slate-600 dark:text-slate-300">Submit your experience, availability, public profile details, and qualifications for academy review.</p>
+        <BaseButton to="/apply-teacher" class="mt-5">Apply as a Teacher</BaseButton>
       </div>
     </section>
 

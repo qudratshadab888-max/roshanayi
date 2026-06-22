@@ -59,6 +59,74 @@ export interface Teacher {
   initials: string
   avatarClass: string
   approach: string
+  photoUrl?: string
+  subjects?: string[]
+}
+
+export type TeacherApplicationStatus =
+  | 'New'
+  | 'Under Review'
+  | 'Approved'
+  | 'Rejected'
+  | 'Needs More Information'
+
+export interface TeacherApplicationFile {
+  name: string
+  type: string
+  size: number
+  url: string
+}
+
+export interface TeacherApplication {
+  id: string
+  submittedAt: string
+  updatedAt: string
+  status: TeacherApplicationStatus
+  fullName: string
+  email: string
+  whatsapp: string
+  country: string
+  city: string
+  timezone: string
+  gender: string
+  subjects: string[]
+  teachingLanguages: string[]
+  yearsExperience: number
+  educationLevel: string
+  previousExperience: string
+  professionalBio: string
+  availableDays: Weekday[]
+  availableTimeSlots: string[]
+  preferredClassTypes: string[]
+  canTeachChildren: boolean
+  canTeachTeenagers: boolean
+  canTeachEnglishSpeakers: boolean
+  displayName: string
+  profilePhoto: TeacherApplicationFile | null
+  websiteBio: string
+  profileSubjects: string[]
+  profileLanguages: string[]
+  resume: TeacherApplicationFile
+  certificate: TeacherApplicationFile | null
+  idDocument: TeacherApplicationFile | null
+  introVideoUrl: string
+  informationConfirmed: boolean
+  contactConsent: boolean
+  publicationConsent: boolean
+  internalNotes: string
+  publicProfileApproved: boolean
+  reviewedBy: string
+  reviewedAt: string
+  approvedTeacherId: string
+}
+
+export interface TeacherAccessAccount {
+  id: string
+  teacherId: string
+  displayName: string
+  email: string
+  active: boolean
+  createdAt: string
 }
 
 export interface Testimonial {
@@ -313,6 +381,95 @@ export interface PaymentRecord {
   status: PaymentStatus
   receiptNumber: string
   adminConfirmation: boolean
+}
+
+export type PaymentClassType = 'Group Class' | 'Special Class' | 'Premium Language Program'
+
+export type InvoiceStatus = 'Draft' | 'Pending' | 'Paid' | 'Overdue' | 'Cancelled'
+
+export type ManualPaymentMethod =
+  | 'Bank Transfer'
+  | 'Wise'
+  | 'PayPal'
+  | 'Stripe'
+  | 'Western Union'
+  | 'Other'
+
+export interface PaymentInvoice {
+  id: string
+  parentId: string
+  parentName: string
+  studentId: string
+  studentName: string
+  courseId: string
+  courseName: string
+  classType: PaymentClassType
+  amount: number
+  currency: 'USD'
+  invoiceDate: string
+  dueDate: string
+  status: InvoiceStatus
+  billingPeriod: string
+  createdAutomatically: boolean
+}
+
+export interface PaymentReceipt {
+  id: string
+  invoiceId: string
+  parentId: string
+  parentName: string
+  studentId: string
+  studentName: string
+  courseName: string
+  amountPaid: number
+  currency: 'USD'
+  paymentDate: string
+  paymentMethod: ManualPaymentMethod
+  transactionId?: string
+  receivedBy: string
+}
+
+export interface PaymentSubmission {
+  id: string
+  invoiceId: string
+  studentId: string
+  paymentMethod: ManualPaymentMethod
+  transactionId?: string
+  submittedAt: string
+  status: 'Awaiting confirmation' | 'Confirmed'
+}
+
+export type PaymentNotificationType =
+  | 'Trial Ended: Payment Required'
+  | 'Invoice Created'
+  | 'Payment Due'
+  | 'Payment Overdue'
+  | 'Payment Received'
+  | 'Receipt Generated'
+  | 'Access Suspended'
+  | 'Access Reactivated'
+
+export interface PaymentNotification {
+  id: string
+  type: PaymentNotificationType
+  audience: 'parent' | 'student' | 'manager'
+  parentId: string
+  studentId: string
+  title: string
+  message: string
+  createdAt: string
+  priority: 'normal' | 'high'
+  read: boolean
+}
+
+export interface StudentPaymentAccess {
+  studentId: string
+  suspended: boolean
+  temporaryAccessAllowed: boolean
+  activeThrough: string
+  nextDueDate: string
+  updatedAt: string
+  updatedBy: string
 }
 
 export interface AttendanceRecord {

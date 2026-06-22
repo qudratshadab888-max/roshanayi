@@ -6,7 +6,7 @@ import {
   managementStudents
 } from '~/data/management'
 
-export const academyToday = '2026-06-21'
+export const academyToday = '2026-06-22'
 
 export const trialEndedMessage =
   'Your 2-day trial has ended. Please complete registration and payment to continue your classes.'

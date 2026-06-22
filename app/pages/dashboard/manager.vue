@@ -37,7 +37,10 @@ useSeoMeta({
 })
 
 const { currentUser, syncUser } = useRoleAuth()
+const { initialize: initializePayments, getManagerPaymentNotifications } = usePaymentSystem()
 const role = getRoleDefinition('manager')
+const { approvedManagementTeachers, getApplicationTeacherName } = useTeacherApplications()
+const availableTeachers = computed(() => [...managementTeachers, ...approvedManagementTeachers.value])
 const { classroomRecords, schedules, attendance, reports, saveSchedule: persistSchedule } = useClassroomSystem()
 const classNotice = ref('')
 const paymentActionNotice = ref('')
@@ -49,7 +52,7 @@ const teacherAssignments = reactive<Record<string, string>>(
 const classDraft = reactive({
   className: '',
   courseId: managementCourses[0]?.id ?? '',
-  teacherId: managementTeachers[0]?.id ?? '',
+  teacherId: availableTeachers.value[0]?.id ?? '',
   daysOfWeek: [...WEEKDAYS] as Weekday[],
   startTime: '',
   endTime: '',
@@ -79,6 +82,7 @@ watch(
 
 onMounted(() => {
   syncUser()
+  initializePayments()
 })
 
 const attendanceIssues = computed(() =>
@@ -87,14 +91,14 @@ const attendanceIssues = computed(() =>
     .map((record) => ({
       ...record,
       studentName: getStudentName(record.studentId),
-      teacherName: getTeacherName(record.teacherId),
+      teacherName: getApplicationTeacherName(record.teacherId) ?? getTeacherName(record.teacherId),
       courseTitle: getCourseTitle(record.courseId)
     }))
 )
 
 const lifecycleRows = computed(() => getAllStudentLifecycleSummaries())
 const reportCounts = computed(() => getLifecycleReportCounts())
-const managerNotifications = computed(() => getManagerNotifications())
+const managerNotifications = computed(() => [...getManagerNotifications(), ...getManagerPaymentNotifications()])
 const paymentIssues = computed(() => getManagerOverduePaymentRows())
 
 const studentRows = computed(() =>
@@ -114,7 +118,7 @@ const scheduleRows = computed(() =>
   schedules.value.map((schedule) => ({
     ...schedule,
     courseTitle: getCourseTitle(schedule.courseId),
-    teacherName: getTeacherName(schedule.teacherId),
+    teacherName: getApplicationTeacherName(schedule.teacherId) ?? getTeacherName(schedule.teacherId),
     classroomId: classroomRecords.value.find((classroom) => classroom.scheduleId === schedule.id)?.id
   }))
 )
@@ -123,13 +127,13 @@ const classroomRows = computed(() =>
   classroomRecords.value.map((classroom) => ({
     ...classroom,
     courseTitle: getCourseTitle(classroom.courseId),
-    teacherName: getTeacherName(teacherAssignments[classroom.id] ?? classroom.teacherId),
+    teacherName: getApplicationTeacherName(teacherAssignments[classroom.id] ?? classroom.teacherId) ?? getTeacherName(teacherAssignments[classroom.id] ?? classroom.teacherId),
     schedule: schedules.value.find((schedule) => schedule.id === classroom.scheduleId)
   }))
 )
 
 const stats = computed(() => [
-  { label: 'Teachers', value: managementTeachers.length, detail: 'Available for assignments', tone: 'emerald' as const },
+  { label: 'Teachers', value: availableTeachers.value.length, detail: 'Available for assignments', tone: 'emerald' as const },
   { label: 'Parents', value: managementParents.length, detail: 'Families needing service', tone: 'sky' as const },
   { label: 'Students', value: managementStudents.length, detail: 'Enrollment records', tone: 'purple' as const },
   { label: 'Classes', value: classroomRecords.value.length, detail: 'Live class groups', tone: 'amber' as const },
@@ -266,6 +270,9 @@ const removeStudentFromClass = (studentName: string, studentId: string) => {
           :permissions="role.permissions"
           :restricted-permissions="role.restrictedPermissions"
         />
+        <BaseButton to="/dashboard/manager/payments" class="justify-self-start">Open Payment Management</BaseButton>
+
+        <TeacherApplicationReview :reviewer-name="currentUser?.name ?? 'Manager'" />
 
         <section class="grid gap-4 sm:grid-cols-2 xl:grid-cols-6">
           <DashboardStatCard v-for="card in reportCards" :key="card.label" v-bind="card" />
@@ -314,7 +321,7 @@ const removeStudentFromClass = (studentName: string, studentId: string) => {
               <div>
                 <label class="text-sm font-semibold text-slate-700 dark:text-slate-200" for="manager-teacher">Teacher</label>
                 <select id="manager-teacher" v-model="classDraft.teacherId" class="focus-ring mt-2 w-full rounded-md border border-slate-300 px-4 py-3 text-sm dark:border-slate-700 dark:bg-slate-950">
-                  <option v-for="teacher in managementTeachers" :key="teacher.id" :value="teacher.id">{{ teacher.name }}</option>
+                  <option v-for="teacher in availableTeachers" :key="teacher.id" :value="teacher.id">{{ teacher.name }}</option>
                 </select>
               </div>
               <div>
@@ -384,7 +391,7 @@ const removeStudentFromClass = (studentName: string, studentId: string) => {
               <div v-for="item in createdClasses" :key="item.id" class="rounded-md border border-slate-200 p-4 dark:border-slate-800">
                 <p class="font-bold text-slate-950 dark:text-white">{{ item.className }}</p>
                 <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">{{ getCourseTitle(item.courseId) }}</p>
-                <p class="mt-2 text-sm text-slate-600 dark:text-slate-300">{{ getTeacherName(item.teacherId) }} | {{ item.daysOfWeek.join(', ') }} | {{ item.startTime }}-{{ item.endTime }} {{ item.timezone }}</p>
+                <p class="mt-2 text-sm text-slate-600 dark:text-slate-300">{{ getApplicationTeacherName(item.teacherId) ?? getTeacherName(item.teacherId) }} | {{ item.daysOfWeek.join(', ') }} | {{ item.startTime }}-{{ item.endTime }} {{ item.timezone }}</p>
                 <BaseButton :to="`/classrooms/${item.id}`" size="sm" variant="outline" class="mt-3">Open classroom</BaseButton>
               </div>
               <p v-if="!createdClasses.length" class="rounded-md bg-slate-50 p-4 text-sm text-slate-600 dark:bg-slate-800 dark:text-slate-300">No new classes have been created in this session.</p>
@@ -415,7 +422,7 @@ const removeStudentFromClass = (studentName: string, studentId: string) => {
                   <td class="px-5 py-4">{{ getScheduleDaysLabel(classroom.schedule) }}, {{ classroom.schedule?.time }}</td>
                   <td class="px-5 py-4">
                     <select v-model="teacherAssignments[classroom.id]" class="focus-ring rounded-md border border-slate-300 px-3 py-2 text-sm dark:border-slate-700 dark:bg-slate-950" @change="assignTeacher(classroom.id)">
-                      <option v-for="teacher in managementTeachers" :key="teacher.id" :value="teacher.id">{{ teacher.name }}</option>
+                      <option v-for="teacher in availableTeachers" :key="teacher.id" :value="teacher.id">{{ teacher.name }}</option>
                     </select>
                   </td>
                 </tr>
@@ -428,7 +435,7 @@ const removeStudentFromClass = (studentName: string, studentId: string) => {
           <article class="rounded-lg border border-slate-200 bg-white p-6 shadow-soft dark:border-slate-800 dark:bg-slate-900">
             <h2 class="text-xl font-bold text-slate-950 dark:text-white">Manage teachers</h2>
             <div class="mt-5 grid gap-4">
-              <div v-for="teacher in managementTeachers" :key="teacher.id" class="rounded-md bg-slate-50 p-4 dark:bg-slate-800">
+              <div v-for="teacher in availableTeachers" :key="teacher.id" class="rounded-md bg-slate-50 p-4 dark:bg-slate-800">
                 <p class="font-bold text-slate-950 dark:text-white">{{ teacher.name }}</p>
                 <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">{{ teacher.timezone }} | {{ teacher.activeClasses }} active classes</p>
                 <p class="mt-2 text-sm text-slate-600 dark:text-slate-300">{{ teacher.specialties.join(', ') }}</p>
@@ -614,7 +621,7 @@ const removeStudentFromClass = (studentName: string, studentId: string) => {
               <tbody class="divide-y divide-slate-200 dark:divide-slate-800">
                 <tr v-for="report in reports" :key="report.id">
                   <td class="px-5 py-4 font-semibold text-slate-950 dark:text-white">{{ getStudentName(report.studentId) }}</td>
-                  <td class="px-5 py-4">{{ getTeacherName(report.teacherId) }}</td>
+                  <td class="px-5 py-4">{{ getApplicationTeacherName(report.teacherId) ?? getTeacherName(report.teacherId) }}</td>
                   <td class="px-5 py-4">{{ classroomRecords.find((item) => item.id === report.classroomId)?.className }}</td>
                   <td class="px-5 py-4">{{ report.month }}</td>
                   <td class="px-5 py-4"><span :class="['rounded-full px-3 py-1 text-xs font-bold', getStatusTone(report.status)]">{{ report.status }}</span></td>

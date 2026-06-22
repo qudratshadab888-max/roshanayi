@@ -6,7 +6,9 @@ export default defineNuxtConfig({
   runtimeConfig: {
     public: {
       supabaseUrl: process.env.NUXT_PUBLIC_SUPABASE_URL || '',
-      supabasePublishableKey: process.env.NUXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY || ''
+      supabasePublishableKey: process.env.NUXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY || '',
+      stripePublishableKey: process.env.NUXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || '',
+      paypalClientId: process.env.NUXT_PUBLIC_PAYPAL_CLIENT_ID || ''
     }
   },
   components: [
@@ -68,6 +70,7 @@ export default defineNuxtConfig({
         '/courses/seerah-of-prophet-muhammad',
         '/courses/afghan-culture-heritage',
         '/teachers',
+        '/apply-teacher',
         '/pricing',
         '/contact',
         '/management',
@@ -83,10 +86,14 @@ export default defineNuxtConfig({
         '/classrooms/classroom-afghan-culture',
         '/dashboard',
         '/dashboard/admin',
+        '/dashboard/admin/payments',
         '/dashboard/manager',
+        '/dashboard/manager/payments',
         '/dashboard/teacher',
         '/dashboard/parent',
+        '/dashboard/parent/payments',
         '/dashboard/student',
+        '/dashboard/student/payments',
         '/login',
         '/register'
       ]

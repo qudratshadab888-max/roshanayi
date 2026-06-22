@@ -634,7 +634,7 @@ export const messages = {
       familyTitle: 'Register every child through one family account.',
       familyDescription:
         'Create the parent profile once, then add each child’s learning needs, preferred course, class format, and schedule.',
-      formSteps: ['Family contact', 'Student profile', 'Course and schedule', 'Review children', 'Policies and consent'],
+      formSteps: ['Parent Account', 'Parent Location', 'Student Information', 'Optional Student Login', 'Course Selection', 'Add Another Child', 'Agreement and Submit'],
       stepOf: 'Step {current} of {total}',
       childProfiles: '{count} child profiles',
       fields: {
@@ -1426,7 +1426,7 @@ export const messages = {
       familyTitle: 'همه فرزندان خود را از یک حساب خانوادگی ثبت‌نام کنید.',
       familyDescription:
         'پروفایل والد را یک‌بار بسازید، سپس نیاز آموزشی، دوره دلخواه، شیوه صنف و برنامه هر کودک را جداگانه اضافه کنید.',
-      formSteps: ['اطلاعات خانواده', 'پروفایل شاگرد', 'دوره و برنامه', 'بازبینی فرزندان', 'سیاست‌ها و رضایت'],
+      formSteps: ['حساب والدین', 'موقعیت والدین', 'اطلاعات شاگرد', 'ورود اختیاری شاگرد', 'انتخاب دوره', 'افزودن فرزند دیگر', 'توافق و ارسال'],
       stepOf: 'مرحله {current} از {total}',
       childProfiles: '{count} پروفایل شاگرد',
       fields: {
@@ -2218,7 +2218,7 @@ export const messages = {
       familyTitle: 'خپل ټول ماشومان د یوه کورني حساب له لارې ثبت کړئ.',
       familyDescription:
         'د والد پروفایل یو ځل جوړ کړئ، بیا د هر ماشوم زده‌کړیزې اړتیاوې، غوره کورس، د صنف بڼه او مهالویش جلا ورزیات کړئ.',
-      formSteps: ['د کورنۍ معلومات', 'د زده کوونکي پروفایل', 'کورس او مهالویش', 'د ماشومانو بیاکتنه', 'تګلارې او رضایت'],
+      formSteps: ['د والدینو حساب', 'د والدینو ځای', 'د زده کوونکي معلومات', 'اختیاري زده کوونکي ننوتل', 'د کورس ټاکنه', 'بل ماشوم اضافه کړئ', 'تړون او سپارل'],
       stepOf: 'پړاو {current} له {total}',
       childProfiles: '{count} د زده کوونکي پروفایلونه',
       fields: {

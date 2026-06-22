@@ -23,6 +23,8 @@ useSeoMeta({
 
 const { currentUser, syncUser } = useRoleAuth()
 const role = getRoleDefinition('super-admin')
+const { approvedManagementTeachers, getApplicationTeacherName } = useTeacherApplications()
+const availableTeachers = computed(() => [...managementTeachers, ...approvedManagementTeachers.value])
 
 onMounted(() => {
   syncUser()
@@ -43,7 +45,7 @@ const attendanceIssues = computed(() =>
 
 const stats = computed(() => [
   { label: 'Managers', value: managerAccounts.value.length, detail: 'Operational accounts', tone: 'purple' as const },
-  { label: 'Teachers', value: managementTeachers.length, detail: 'Instructor profiles', tone: 'emerald' as const },
+  { label: 'Teachers', value: availableTeachers.value.length, detail: 'Instructor profiles', tone: 'emerald' as const },
   { label: 'Parents', value: managementParents.length, detail: 'Family accounts', tone: 'sky' as const },
   { label: 'Students', value: managementStudents.length, detail: 'Registered learners', tone: 'amber' as const },
   { label: 'Courses', value: managementCourses.length, detail: 'Active catalog entries', tone: 'purple' as const },
@@ -61,7 +63,7 @@ const studentsWithDetails = computed(() =>
 const courseRows = computed(() =>
   managementCourses.map((course) => ({
     ...course,
-    teacherName: getTeacherName(course.teacherId)
+    teacherName: getApplicationTeacherName(course.teacherId) ?? getTeacherName(course.teacherId)
   }))
 )
 
@@ -69,7 +71,7 @@ const scheduleRows = computed(() =>
   classSchedules.map((schedule) => ({
     ...schedule,
     courseTitle: getCourseTitle(schedule.courseId),
-    teacherName: getTeacherName(schedule.teacherId)
+    teacherName: getApplicationTeacherName(schedule.teacherId) ?? getTeacherName(schedule.teacherId)
   }))
 )
 
@@ -124,6 +126,9 @@ const academySettings = [
     <section class="section-padding bg-slate-50 dark:bg-slate-900/50">
       <div class="container-wide grid gap-8">
         <PermissionPanel title="Super Admin permissions" :permissions="role.permissions" />
+        <BaseButton to="/dashboard/admin/payments" class="justify-self-start">Open Full Payment Management</BaseButton>
+
+        <TeacherApplicationReview :reviewer-name="currentUser?.name ?? 'Super Admin'" />
 
         <div class="grid gap-8 xl:grid-cols-[0.8fr_1.2fr]">
           <article class="rounded-lg border border-slate-200 bg-white p-6 shadow-soft dark:border-slate-800 dark:bg-slate-900">
@@ -157,7 +162,7 @@ const academySettings = [
           <article class="rounded-lg border border-slate-200 bg-white p-6 shadow-soft dark:border-slate-800 dark:bg-slate-900">
             <h2 class="text-xl font-bold text-slate-950 dark:text-white">Manage teachers</h2>
             <div class="mt-5 grid gap-4">
-              <div v-for="teacher in managementTeachers" :key="teacher.id" class="rounded-md bg-slate-50 p-4 dark:bg-slate-800">
+              <div v-for="teacher in availableTeachers" :key="teacher.id" class="rounded-md bg-slate-50 p-4 dark:bg-slate-800">
                 <div class="flex items-start justify-between gap-4">
                   <div>
                     <p class="font-bold text-slate-950 dark:text-white">{{ teacher.name }}</p>

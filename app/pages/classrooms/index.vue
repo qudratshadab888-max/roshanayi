@@ -17,6 +17,7 @@ import { HOLIDAY_DAYS, getScheduleDaysLabel, getScheduleDurationLabel, getTodayC
 const { locale } = useI18n()
 const { currentUser, syncUser } = useRoleAuth()
 const { classroomRecords, schedules } = useClassroomSystem()
+const { getApplicationTeacherName } = useTeacherApplications()
 const ui = computed(() => getUiCopy(locale.value))
 const localText = (value: string) => getLocalizedValue(locale.value, value)
 const canAccessClassroom = (classroomId: string) => {
@@ -42,7 +43,7 @@ const classroomRows = computed(() =>
         classroom,
         schedule,
         courseTitle: getCourseTitle(classroom.courseId),
-        teacherName: getTeacherName(classroom.teacherId),
+        teacherName: getApplicationTeacherName(classroom.teacherId) ?? getTeacherName(classroom.teacherId),
         enrolledCount: schedule?.enrolledStudentIds.length ?? 0,
         capacity: schedule?.capacity ?? 0
       }
