@@ -1,6 +1,5 @@
 <script setup lang="ts">
 const { locale, t, tm } = useI18n()
-const { courses } = useAcademyData()
 
 const libraryLabel = computed(
   () =>
@@ -28,7 +27,7 @@ const copyright = computed(() =>
 <template>
   <footer class="border-t border-slate-200 bg-slate-950 text-white dark:border-slate-800">
     <div class="container-wide py-14">
-      <div class="grid gap-10 lg:grid-cols-[1.25fr_0.75fr_2.1fr_1fr]">
+      <div class="grid gap-10 lg:grid-cols-[1.35fr_0.8fr_1fr]">
         <div>
           <NuxtLink to="/" class="focus-ring inline-flex items-center gap-3 rounded-md">
             <span class="flex h-11 w-11 items-center justify-center rounded-lg bg-brand-gold text-lg font-black text-slate-950">
@@ -54,15 +53,6 @@ const copyright = computed(() =>
           <ul class="mt-5 space-y-3 text-sm text-slate-300">
             <li v-for="link in quickLinks" :key="link.to">
               <NuxtLink class="hover:text-brand-gold" :to="link.to">{{ link.label }}</NuxtLink>
-            </li>
-          </ul>
-        </div>
-
-        <div>
-          <h2 class="text-sm font-bold uppercase tracking-[0.16em] text-brand-gold">{{ t('layout.footer.courses') }}</h2>
-          <ul class="mt-5 grid gap-x-6 gap-y-3 text-sm text-slate-300 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3">
-            <li v-for="course in courses" :key="course.slug">
-              <NuxtLink class="hover:text-brand-gold" :to="`/courses/${course.slug}`">{{ course.category }}</NuxtLink>
             </li>
           </ul>
         </div>
