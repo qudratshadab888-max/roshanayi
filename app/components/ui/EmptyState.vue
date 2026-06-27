@@ -11,6 +11,8 @@ withDefaults(
     actionTo: ''
   }
 )
+
+defineEmits<{ action: [] }>()
 </script>
 
 <template>
@@ -21,5 +23,6 @@ withDefaults(
     <h2 class="mt-4 text-xl font-bold text-slate-950 dark:text-white">{{ title }}</h2>
     <p class="mx-auto mt-2 max-w-md text-sm leading-6 text-slate-600 dark:text-slate-300">{{ description }}</p>
     <BaseButton v-if="actionTo && actionLabel" :to="actionTo" class="mt-6">{{ actionLabel }}</BaseButton>
+    <BaseButton v-else-if="actionLabel" class="mt-6" @click="$emit('action')">{{ actionLabel }}</BaseButton>
   </div>
 </template>

@@ -83,7 +83,6 @@ export default defineNuxtConfig({
         '/apply-teacher',
         '/pricing',
         '/contact',
-        '/management',
         '/classrooms',
         '/classrooms/classroom-dari-foundations',
         '/classrooms/classroom-quran-beginners',

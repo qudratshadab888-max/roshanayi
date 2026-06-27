@@ -16,16 +16,23 @@ const libraryLabel = computed(
     })[locale.value] ?? 'Library'
 )
 
-const navItems = computed(() => [
-  { label: t('common.nav.home'), to: '/' },
-  { label: t('common.nav.about'), to: '/about' },
-  { label: t('common.nav.courses'), to: '/courses' },
-  { label: t('common.nav.classrooms'), to: '/classrooms' },
-  { label: t('common.nav.teachers'), to: '/teachers' },
-  { label: libraryLabel.value, to: '/pricing' },
-  { label: t('common.nav.contact'), to: '/contact' },
-  { label: t('common.nav.management'), to: '/management' }
-])
+const canOpenManagement = computed(() =>
+  currentUser.value?.role === 'manager' || currentUser.value?.role === 'super-admin'
+)
+const navItems = computed(() => {
+  const items = [
+    { label: t('common.nav.home'), to: '/' },
+    { label: t('common.nav.about'), to: '/about' },
+    { label: t('common.nav.courses'), to: '/courses' },
+    { label: t('common.nav.classrooms'), to: '/classrooms' },
+    { label: t('common.nav.teachers'), to: '/teachers' },
+    { label: libraryLabel.value, to: '/pricing' },
+    { label: t('common.nav.contact'), to: '/contact' }
+  ]
+
+  if (canOpenManagement.value) items.push({ label: t('common.nav.management'), to: '/management' })
+  return items
+})
 
 const selectedLocale = computed({
   get: () => locale.value,
