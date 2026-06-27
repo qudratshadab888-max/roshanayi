@@ -106,7 +106,7 @@ useSeoMeta({
       </div>
     </section>
 
-    <section class="section-padding bg-white dark:bg-slate-950">
+    <section id="home-trust" class="section-padding scroll-mt-28 bg-white dark:bg-slate-950">
       <div class="container-wide">
         <SectionHeading
           :eyebrow="home.trust.eyebrow"
@@ -131,7 +131,7 @@ useSeoMeta({
       </div>
     </section>
 
-    <section class="section-padding bg-slate-50 dark:bg-slate-900/50">
+    <section id="home-registration" class="section-padding scroll-mt-28 bg-slate-50 dark:bg-slate-900/50">
       <div class="container-wide grid gap-10 lg:grid-cols-[0.82fr_1.18fr] lg:items-start">
         <SectionHeading
           :eyebrow="home.registration.eyebrow"
@@ -154,7 +154,7 @@ useSeoMeta({
       </div>
     </section>
 
-    <section class="section-padding bg-white dark:bg-slate-950">
+    <section id="home-safety" class="section-padding scroll-mt-28 bg-white dark:bg-slate-950">
       <div class="container-wide grid gap-10 lg:grid-cols-[1.05fr_0.95fr] lg:items-center">
         <div>
           <p class="eyebrow">{{ home.safety.eyebrow }}</p>
@@ -192,7 +192,7 @@ useSeoMeta({
       </div>
     </section>
 
-    <section class="section-padding bg-slate-50 dark:bg-slate-900/50">
+    <section id="home-programs" class="section-padding scroll-mt-28 bg-slate-50 dark:bg-slate-900/50">
       <div class="container-wide">
         <SectionHeading
           :eyebrow="home.programs.eyebrow"
@@ -215,7 +215,7 @@ useSeoMeta({
       </div>
     </section>
 
-    <section class="section-padding bg-white dark:bg-slate-950">
+    <section id="home-dashboard" class="section-padding scroll-mt-28 bg-white dark:bg-slate-950">
       <div class="container-wide grid gap-10 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
         <SectionHeading
           :eyebrow="home.dashboard.eyebrow"
@@ -246,7 +246,7 @@ useSeoMeta({
       </div>
     </section>
 
-    <section class="section-padding bg-slate-50 dark:bg-slate-900/50">
+    <section id="home-testimonials" class="section-padding scroll-mt-28 bg-slate-50 dark:bg-slate-900/50">
       <div class="container-wide">
         <SectionHeading
           :eyebrow="home.testimonials.eyebrow"
@@ -265,7 +265,7 @@ useSeoMeta({
       </div>
     </section>
 
-    <section class="section-padding bg-white dark:bg-slate-950">
+    <section id="home-faq" class="section-padding scroll-mt-28 bg-white dark:bg-slate-950">
       <div class="container-wide grid gap-10 lg:grid-cols-[0.85fr_1.15fr] lg:items-start">
         <SectionHeading
           :eyebrow="home.faq.eyebrow"
@@ -276,7 +276,7 @@ useSeoMeta({
       </div>
     </section>
 
-    <section class="bg-slate-950 py-16 text-white">
+    <section id="home-cta" class="scroll-mt-28 bg-slate-950 py-16 text-white">
       <div class="container-wide grid gap-8 lg:grid-cols-[1fr_auto] lg:items-center">
         <div>
           <p class="text-sm font-semibold uppercase tracking-[0.16em] text-brand-gold">{{ home.cta.eyebrow }}</p>

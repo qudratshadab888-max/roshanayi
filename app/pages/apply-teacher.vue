@@ -8,6 +8,7 @@ useSeoMeta({
 })
 
 const { submitApplication } = useTeacherApplications()
+const route = useRoute()
 const steps = ['Personal information', 'Teaching information', 'Availability', 'Public profile', 'Documents', 'Agreement']
 const subjects = ['Dari', 'Pashto', 'English', 'Quran Reading', 'Tajweed', 'Islamic Studies', 'Afghan Culture']
 const languages = ['Dari', 'Pashto', 'English', 'Urdu', 'Arabic']
@@ -85,6 +86,16 @@ const submit = () => {
   submittedId.value = application.id
   notice.value = ''
 }
+
+onMounted(async () => {
+  if (route.hash !== '#teacher-application-form') return
+
+  await nextTick()
+  document.getElementById('teacher-application-form')?.scrollIntoView({
+    behavior: 'smooth',
+    block: 'start'
+  })
+})
 </script>
 
 <template>
@@ -97,7 +108,7 @@ const submit = () => {
       height="compact"
     />
 
-    <section class="section-padding bg-slate-50 dark:bg-slate-950">
+    <section id="teacher-application-form" class="section-padding scroll-mt-28 bg-slate-50 dark:bg-slate-950">
       <div class="container-wide">
         <div v-if="submittedId" class="mx-auto max-w-3xl rounded-xl border border-emerald-200 bg-white p-8 text-center shadow-soft dark:border-emerald-900 dark:bg-slate-900">
           <span class="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-emerald-100 text-2xl font-black text-emerald-700">✓</span>
@@ -204,7 +215,7 @@ const submit = () => {
 
 <style scoped>
 .form-label { @apply mb-2 block text-sm font-bold text-slate-700 dark:text-slate-200; }
-.form-input { @apply focus-ring mt-2 w-full rounded-md border border-slate-300 bg-white px-4 py-3 text-sm text-slate-900 dark:border-slate-700 dark:bg-slate-950 dark:text-white; }
+.form-input { @apply mt-2 w-full rounded-md border border-slate-300 bg-white px-4 py-3 text-sm text-slate-900 focus-visible:ring-2 focus-visible:ring-brand-gold focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:border-slate-700 dark:bg-slate-950 dark:text-white dark:focus-visible:ring-offset-slate-950; }
 .option-grid { @apply mt-2 grid gap-2 sm:grid-cols-2 lg:grid-cols-3; }
 .option-card { @apply flex min-h-12 items-center gap-3 rounded-md border border-slate-200 bg-white p-3 text-sm font-semibold text-slate-700 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-200; }
 .option-card:has(input:checked) { @apply border-brand-purple bg-purple-50 text-brand-purple dark:border-brand-gold dark:bg-purple-950/40 dark:text-brand-gold; }

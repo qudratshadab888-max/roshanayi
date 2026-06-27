@@ -138,6 +138,7 @@ const childRows = computed(() =>
       courseTitle: 'courseName' in child ? child.courseName : getCourseTitle(child.selectedCourseId),
       attendancePercent: childAttendance.length ? Math.round((presentCount / childAttendance.length) * 100) : 0,
       paymentStatus: getStudentPaymentAccess(child.id).invoiceStatus ?? lifecycle?.paymentStatus ?? payment?.status ?? 'Unpaid',
+      hasSeparateLogin: 'hasSeparateLogin' in child ? Boolean(child.hasSeparateLogin) : false,
       lifecycle
     }
   })
@@ -229,6 +230,17 @@ const sendTeacherMessage = (teacherName: string) => {
                 <p class="rounded-md bg-white p-3 text-sm dark:bg-slate-950">Attendance: <strong>{{ row.attendancePercent }}%</strong></p>
                 <p class="rounded-md bg-white p-3 text-sm dark:bg-slate-950">Payment: <strong>{{ row.paymentStatus }}</strong></p>
               </div>
+              <div class="mt-3 rounded-md bg-white p-3 text-sm dark:bg-slate-950">
+                <p class="font-semibold text-slate-700 dark:text-slate-200">
+                  Has separate login:
+                  <span :class="row.hasSeparateLogin ? 'text-emerald-600 dark:text-emerald-300' : 'text-sky-600 dark:text-sky-300'">
+                    {{ row.hasSeparateLogin ? 'Yes' : 'No' }}
+                  </span>
+                </p>
+                <p class="mt-1 text-slate-500 dark:text-slate-400">
+                  {{ row.hasSeparateLogin ? 'Student can log in separately' : 'Managed by parent account' }}
+                </p>
+              </div>
               <div v-if="row.lifecycle" class="mt-3 grid gap-2 sm:grid-cols-3">
                 <span :class="['rounded-md px-3 py-2 text-xs font-bold', getLifecycleTone(row.lifecycle.trialStatus)]">{{ row.lifecycle.trialStatus }}</span>
                 <span :class="['rounded-md px-3 py-2 text-xs font-bold', getLifecycleTone(row.lifecycle.paymentStatus)]">{{ row.lifecycle.paymentStatus }}</span>
@@ -237,6 +249,31 @@ const sendTeacherMessage = (teacherName: string) => {
             </button>
           </div>
         </div>
+
+        <section v-if="selectedChild" id="child-classes" class="rounded-lg border border-slate-200 bg-white p-6 shadow-soft dark:border-slate-800 dark:bg-slate-900">
+          <div class="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+            <div>
+              <p class="eyebrow">Selected child</p>
+              <h2 class="mt-2 text-xl font-bold text-slate-950 dark:text-white">{{ selectedChild.name }} learning record</h2>
+              <p class="mt-2 text-sm text-slate-600 dark:text-slate-300">Open this child's classrooms or move directly to a specific family record.</p>
+            </div>
+            <nav class="flex flex-wrap gap-2" aria-label="Child record sections">
+              <a href="#child-attendance" class="focus-ring rounded-md border border-slate-300 px-3 py-2 text-xs font-bold text-slate-700 dark:border-slate-700 dark:text-slate-200">Attendance</a>
+              <a href="#child-homework" class="focus-ring rounded-md border border-slate-300 px-3 py-2 text-xs font-bold text-slate-700 dark:border-slate-700 dark:text-slate-200">Homework</a>
+              <a href="#child-reports" class="focus-ring rounded-md border border-slate-300 px-3 py-2 text-xs font-bold text-slate-700 dark:border-slate-700 dark:text-slate-200">Reports</a>
+              <a href="#child-notifications" class="focus-ring rounded-md border border-slate-300 px-3 py-2 text-xs font-bold text-slate-700 dark:border-slate-700 dark:text-slate-200">Notifications</a>
+              <a href="#child-payment" class="focus-ring rounded-md border border-slate-300 px-3 py-2 text-xs font-bold text-slate-700 dark:border-slate-700 dark:text-slate-200">Payment</a>
+            </nav>
+          </div>
+          <div v-if="selectedClassrooms.length" class="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            <div v-for="classroom in selectedClassrooms" :key="classroom.id" class="rounded-md border border-slate-200 p-4 dark:border-slate-800">
+              <p class="font-bold text-slate-950 dark:text-white">{{ classroom.className }}</p>
+              <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">{{ getCourseTitle(classroom.courseId) }}</p>
+              <BaseButton :to="`/classrooms/${classroom.id}`" size="sm" class="mt-3">Open classroom</BaseButton>
+            </div>
+          </div>
+          <p v-else class="mt-5 rounded-md bg-slate-50 p-4 text-sm text-slate-600 dark:bg-slate-800 dark:text-slate-300">Class placement is still being confirmed for this child.</p>
+        </section>
 
         <article v-if="selectedLifecycle" class="rounded-lg border border-slate-200 bg-white p-6 shadow-soft dark:border-slate-800 dark:bg-slate-900">
           <div class="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
@@ -283,7 +320,7 @@ const sendTeacherMessage = (teacherName: string) => {
         </article>
 
         <div class="grid gap-8 xl:grid-cols-[0.9fr_1.1fr]">
-          <article class="rounded-lg border border-slate-200 bg-white p-6 shadow-soft dark:border-slate-800 dark:bg-slate-900">
+          <article id="child-attendance" class="scroll-mt-24 rounded-lg border border-slate-200 bg-white p-6 shadow-soft dark:border-slate-800 dark:bg-slate-900">
             <h2 class="text-xl font-bold text-slate-950 dark:text-white">Attendance</h2>
             <div class="mt-5 grid gap-3">
               <div v-for="record in selectedAttendance" :key="record.id" class="flex items-center justify-between rounded-md border border-slate-200 p-4 dark:border-slate-800">
@@ -296,7 +333,7 @@ const sendTeacherMessage = (teacherName: string) => {
             </div>
           </article>
 
-          <article class="rounded-lg border border-slate-200 bg-white p-6 shadow-soft dark:border-slate-800 dark:bg-slate-900">
+          <article id="child-homework" class="scroll-mt-24 rounded-lg border border-slate-200 bg-white p-6 shadow-soft dark:border-slate-800 dark:bg-slate-900">
             <h2 class="text-xl font-bold text-slate-950 dark:text-white">Homework</h2>
             <div class="mt-5 grid gap-4">
               <div v-for="assignment in selectedAssignments" :key="assignment.id" class="rounded-md border border-slate-200 p-4 dark:border-slate-800">
@@ -329,7 +366,7 @@ const sendTeacherMessage = (teacherName: string) => {
             </div>
           </article>
 
-          <article class="rounded-lg border border-slate-200 bg-white p-6 shadow-soft dark:border-slate-800 dark:bg-slate-900">
+          <article id="child-reports" class="scroll-mt-24 rounded-lg border border-slate-200 bg-white p-6 shadow-soft dark:border-slate-800 dark:bg-slate-900">
             <h2 class="text-xl font-bold text-slate-950 dark:text-white">Monthly reports</h2>
             <div class="mt-5 grid gap-4">
               <div v-for="report in selectedMonthlyReports" :key="report.id" class="rounded-md bg-purple-50 p-4 dark:bg-purple-950/40">
@@ -347,7 +384,7 @@ const sendTeacherMessage = (teacherName: string) => {
             </div>
           </article>
 
-          <article class="rounded-lg border border-slate-200 bg-white p-6 shadow-soft dark:border-slate-800 dark:bg-slate-900">
+          <article id="child-payment" class="scroll-mt-24 rounded-lg border border-slate-200 bg-white p-6 shadow-soft dark:border-slate-800 dark:bg-slate-900">
             <h2 class="text-xl font-bold text-slate-950 dark:text-white">Payment status</h2>
             <div class="mt-5 rounded-md bg-slate-50 p-4 dark:bg-slate-800">
               <span :class="['rounded-full px-3 py-1 text-xs font-bold uppercase', getLifecycleTone(selectedLifecycle?.paymentStatus ?? selectedPayment?.status ?? 'Unpaid')]">{{ selectedLifecycle?.paymentStatus ?? selectedPayment?.status ?? 'Unpaid' }}</span>
@@ -361,7 +398,7 @@ const sendTeacherMessage = (teacherName: string) => {
         </div>
 
         <div class="grid gap-8 xl:grid-cols-[0.9fr_1.1fr]">
-          <article class="rounded-lg border border-slate-200 bg-white p-6 shadow-soft dark:border-slate-800 dark:bg-slate-900">
+          <article id="child-notifications" class="scroll-mt-24 rounded-lg border border-slate-200 bg-white p-6 shadow-soft dark:border-slate-800 dark:bg-slate-900">
             <h2 class="text-xl font-bold text-slate-950 dark:text-white">Notifications</h2>
             <div v-if="selectedSystemNotifications.length || selectedClassroomNotifications.length" class="mt-5 grid gap-4">
               <div v-for="notification in selectedSystemNotifications" :key="notification.id" class="rounded-md border border-slate-200 p-4 dark:border-slate-800">

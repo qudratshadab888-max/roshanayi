@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { pageBackgrounds } from '~/data/pageBackgrounds'
-import { generateReferralCode } from '~/data/management'
+import type { FamilyRegistrationResult } from '~/composables/useSupabaseRegistration'
 
 interface StudentRegistrationForm {
-  id: string
+  clientRequestId: string
   firstName: string
   lastName: string
   gender: string
@@ -16,9 +16,17 @@ interface StudentRegistrationForm {
   classType: string
   schedulePreference: string
   wantsStudentLogin: boolean
-  studentIdentifier: string
+  loginChoiceTouched: boolean
+  studentEmail: string
   studentPassword: string
   confirmStudentPassword: string
+}
+
+interface RegistrationSuccessSummary {
+  message: string
+  requestKey: string
+  sessionFlow: FamilyRegistrationResult['sessionFlow']
+  children: Array<{ id: string; name: string; hasSeparateLogin: boolean; email?: string }>
 }
 
 const { t, tm } = useI18n()
@@ -35,7 +43,12 @@ const currentChildIndex = ref(0)
 const isSubmitting = ref(false)
 const submitted = ref(false)
 const notice = ref('')
-const generatedReferralCodes = ref<Array<{ name: string; code: string }>>([])
+const successSummary = ref<RegistrationSuccessSummary | null>(null)
+const redirectDestination = ref('/login')
+const showParentPassword = ref(false)
+const showParentConfirmPassword = ref(false)
+const showStudentPassword = ref(false)
+const showStudentConfirmPassword = ref(false)
 
 const parent = reactive({
   fullName: '',
@@ -49,8 +62,17 @@ const parent = reactive({
   relationship: 'Father'
 })
 
+const createRequestUuid = () => {
+  if (!globalThis.crypto?.randomUUID) {
+    throw new Error('Secure registration identifiers are unavailable in this browser.')
+  }
+  return globalThis.crypto.randomUUID()
+}
+
+const registrationRequestKey = ref(createRequestUuid())
+
 const createChild = (index: number): StudentRegistrationForm => ({
-  id: `child-${index}`,
+  clientRequestId: createRequestUuid(),
   firstName: '',
   lastName: '',
   gender: '',
@@ -63,7 +85,8 @@ const createChild = (index: number): StudentRegistrationForm => ({
   classType: 'Group Class ($30/month)',
   schedulePreference: 'Weekdays',
   wantsStudentLogin: false,
-  studentIdentifier: '',
+  loginChoiceTouched: false,
+  studentEmail: '',
   studentPassword: '',
   confirmStudentPassword: ''
 })
@@ -128,6 +151,27 @@ const courseOptionsForCurrentChild = computed(() =>
   courses.value.filter((course) => !currentChild.value.courseCategory || course.category === currentChild.value.courseCategory)
 )
 
+const isTeenOrOlder = (child: StudentRegistrationForm) => Number(child.age) >= 13
+const studentLoginHelperText = (child: StudentRegistrationForm) =>
+  isTeenOrOlder(child)
+    ? 'Recommended for students 13 and older so they can open their own Student Dashboard.'
+    : 'Default is parent-managed for younger children. You can still create a separate login if your family wants it.'
+const syncStudentLoginDefault = (child: StudentRegistrationForm) => {
+  if (!child.loginChoiceTouched) {
+    child.wantsStudentLogin = isTeenOrOlder(child)
+  }
+}
+const setStudentLoginChoice = (child: StudentRegistrationForm, value: boolean) => {
+  child.wantsStudentLogin = value
+  child.loginChoiceTouched = true
+
+  if (!value) {
+    child.studentEmail = ''
+    child.studentPassword = ''
+    child.confirmStudentPassword = ''
+  }
+}
+
 watch(
   () => currentChild.value.courseCategory,
   () => {
@@ -154,6 +198,14 @@ watch(
     }
 
     currentChild.value.age = Number.isFinite(age) ? Math.max(age, 0) : currentChild.value.age
+    syncStudentLoginDefault(currentChild.value)
+  }
+)
+
+watch(
+  () => currentChild.value.age,
+  () => {
+    syncStudentLoginDefault(currentChild.value)
   }
 )
 
@@ -175,8 +227,7 @@ const childIsComplete = (child: StudentRegistrationForm) =>
       child.schedulePreference
   )
 
-const validEmail = (value: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)
-
+const validEmail = (value: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim().toLowerCase())
 const validateCurrentStep = () => {
   if (
     currentStep.value === 1 &&
@@ -225,20 +276,24 @@ const validateCurrentStep = () => {
 
   if (
     currentStep.value === 4 &&
-    Number(currentChild.value.age) >= 13 &&
     currentChild.value.wantsStudentLogin &&
-    (!currentChild.value.studentIdentifier || !currentChild.value.studentPassword || !currentChild.value.confirmStudentPassword)
+    (!currentChild.value.studentEmail || !currentChild.value.studentPassword || !currentChild.value.confirmStudentPassword)
   ) {
-    notice.value = 'Enter the student email or username and both password fields, or turn off student login.'
+    notice.value = 'Enter the student email and both password fields, or choose parent-managed access.'
     return false
   }
 
-  if (currentStep.value === 4 && Number(currentChild.value.age) >= 13 && currentChild.value.wantsStudentLogin && currentChild.value.studentPassword.length < 8) {
+  if (currentStep.value === 4 && currentChild.value.wantsStudentLogin && !validEmail(currentChild.value.studentEmail)) {
+    notice.value = 'Enter a valid email address for the student account.'
+    return false
+  }
+
+  if (currentStep.value === 4 && currentChild.value.wantsStudentLogin && currentChild.value.studentPassword.length < 8) {
     notice.value = 'Student password must be at least 8 characters.'
     return false
   }
 
-  if (currentStep.value === 4 && Number(currentChild.value.age) >= 13 && currentChild.value.wantsStudentLogin && currentChild.value.studentPassword !== currentChild.value.confirmStudentPassword) {
+  if (currentStep.value === 4 && currentChild.value.wantsStudentLogin && currentChild.value.studentPassword !== currentChild.value.confirmStudentPassword) {
     notice.value = 'Student passwords do not match.'
     return false
   }
@@ -289,12 +344,48 @@ const addAnotherChild = () => {
   goToStep(3)
 }
 
+let redirectTimer: ReturnType<typeof setTimeout> | undefined
+onBeforeUnmount(() => {
+  if (redirectTimer) clearTimeout(redirectTimer)
+})
+
+const clearPasswords = () => {
+  parent.password = ''
+  parent.confirmPassword = ''
+  children.value.forEach((child) => {
+    child.studentPassword = ''
+    child.confirmStudentPassword = ''
+  })
+}
+
+const redirectAfterRegistration = async (result: FamilyRegistrationResult) => {
+  let effectiveFlow = result.sessionFlow
+  if (result.sessionFlow === 'authenticated') {
+    const user = await useRoleAuth().syncUser(true)
+    if (user?.role === 'parent') {
+      redirectDestination.value = '/dashboard/parent'
+    } else {
+      effectiveFlow = 'login_required'
+      redirectDestination.value = '/login?registered=1'
+    }
+  } else if (result.sessionFlow === 'email_confirmation_required') {
+    redirectDestination.value = `/login?registered=1&confirm=1&email=${encodeURIComponent(parent.email.trim())}`
+  } else {
+    redirectDestination.value = `/login?registered=1&email=${encodeURIComponent(parent.email.trim())}`
+  }
+
+  redirectTimer = setTimeout(() => navigateTo(redirectDestination.value), 3500)
+  return effectiveFlow
+}
+
 const editChild = (index: number) => {
   currentChildIndex.value = index
   goToStep(3)
 }
 
 const submitRegistration = async () => {
+  if (isSubmitting.value || submitted.value) return
+
   if (
     !parent.fullName || !validEmail(parent.email) || !parent.whatsappNumber ||
     !parent.country || !parent.city || !parent.timezone || !parent.relationship
@@ -309,14 +400,15 @@ const submitRegistration = async () => {
   }
 
   const invalidStudentLogin = children.value.some((child) =>
-    Number(child.age) >= 13 && child.wantsStudentLogin && (
-      !child.studentIdentifier ||
+    child.wantsStudentLogin && (
+      !child.studentEmail ||
+      !validEmail(child.studentEmail) ||
       child.studentPassword.length < 8 ||
       child.studentPassword !== child.confirmStudentPassword
     )
   )
   if (invalidStudentLogin) {
-    notice.value = 'Check each optional student login. Passwords must be at least 8 characters and match.'
+    notice.value = 'Check each optional student login. Use a valid student email, and make sure passwords are at least 8 characters and match.'
     return
   }
 
@@ -332,12 +424,13 @@ const submitRegistration = async () => {
 
   isSubmitting.value = true
   submitted.value = false
+  successSummary.value = null
   notice.value = ''
 
   try {
-    const { registerFamily } = useFamilyAccounts()
-    const { loginWithCredentials } = useRoleAuth()
-    await registerFamily({
+    const { registerFamilyWithSupabase } = useSupabaseRegistration()
+    const result = await registerFamilyWithSupabase({
+      requestKey: registrationRequestKey.value,
       parent: {
         fullName: parent.fullName,
         email: parent.email,
@@ -349,6 +442,7 @@ const submitRegistration = async () => {
         relationship: parent.relationship
       },
       children: children.value.map((child) => ({
+        clientRequestId: child.clientRequestId,
         firstName: child.firstName,
         lastName: child.lastName,
         gender: child.gender,
@@ -360,18 +454,27 @@ const submitRegistration = async () => {
         courseName: child.courseName,
         classType: child.classType,
         schedulePreference: child.schedulePreference,
-        ...(Number(child.age) >= 13 && child.wantsStudentLogin
-          ? { studentIdentifier: child.studentIdentifier, studentPassword: child.studentPassword }
+        createSeparateLogin: child.wantsStudentLogin,
+        ...(child.wantsStudentLogin
+          ? { studentEmail: child.studentEmail, studentPassword: child.studentPassword }
           : {})
       }))
     })
-    generatedReferralCodes.value = children.value.map((child) => ({
-      name: childFullName(child),
-      code: generateReferralCode(childFullName(child))
-    }))
-    await loginWithCredentials(parent.email, parent.password, true)
+
+    const effectiveSessionFlow = await redirectAfterRegistration(result)
+    successSummary.value = {
+      message: result.message,
+      requestKey: result.requestKey,
+      sessionFlow: effectiveSessionFlow,
+      children: result.students.map((student) => ({
+        id: student.id,
+        name: student.name,
+        hasSeparateLogin: student.hasSeparateLogin,
+        ...(student.loginIdentifier ? { email: student.loginIdentifier } : {})
+      }))
+    }
     submitted.value = true
-    await navigateTo('/dashboard/parent')
+    clearPasswords()
   } catch (error) {
     notice.value = error instanceof Error ? error.message : 'Registration could not be completed. Please try again.'
   } finally {
@@ -399,7 +502,7 @@ const submitRegistration = async () => {
             v-for="(step, index) in steps"
             :key="step"
             type="button"
-            :disabled="index + 1 > highestStepReached"
+            :disabled="isSubmitting || index + 1 > highestStepReached"
             :class="[
               'focus-ring grid grid-cols-[auto_1fr] items-center gap-3 rounded-lg border px-4 py-3 text-left transition',
               currentStep === index + 1
@@ -423,7 +526,7 @@ const submitRegistration = async () => {
         </div>
       </div>
 
-      <form class="rounded-lg border border-slate-200 bg-white p-6 text-brand-ink shadow-soft dark:border-slate-800 dark:bg-slate-900 dark:text-slate-100" :aria-label="t('register.formAria')" @submit.prevent="submitRegistration">
+      <form class="rounded-lg border border-slate-200 bg-white p-6 text-brand-ink shadow-soft dark:border-slate-800 dark:bg-slate-900 dark:text-slate-100" :aria-label="t('register.formAria')" :aria-busy="isSubmitting" @submit.prevent="submitRegistration">
         <div class="flex flex-col gap-3 border-b border-slate-200 pb-5 dark:border-slate-800 sm:flex-row sm:items-end sm:justify-between">
           <div>
             <p class="eyebrow">{{ t('register.stepOf', { current: currentStep, total: steps.length }) }}</p>
@@ -449,12 +552,34 @@ const submitRegistration = async () => {
           </div>
           <div>
             <label class="text-sm font-semibold text-slate-700 dark:text-slate-200" for="parent-password">Password</label>
-            <input id="parent-password" v-model="parent.password" required minlength="8" type="password" autocomplete="new-password" aria-describedby="parent-password-help" class="focus-ring mt-2 w-full rounded-md border border-slate-300 bg-white px-4 py-3 text-sm dark:border-slate-700 dark:bg-slate-950">
+            <div class="relative mt-2">
+              <input id="parent-password" v-model="parent.password" required minlength="8" :type="showParentPassword ? 'text' : 'password'" autocomplete="new-password" aria-describedby="parent-password-help" class="focus-ring w-full rounded-md border border-slate-300 bg-white px-4 py-3 pr-24 text-sm dark:border-slate-700 dark:bg-slate-950">
+              <button
+                type="button"
+                class="focus-ring absolute inset-y-1 right-1 inline-flex items-center gap-1 rounded-md px-3 text-xs font-bold text-brand-purple hover:bg-purple-50 dark:text-brand-gold dark:hover:bg-slate-800"
+                :aria-label="showParentPassword ? 'Hide parent password' : 'Show parent password'"
+                :aria-pressed="showParentPassword"
+                @click="showParentPassword = !showParentPassword"
+              >
+                <span>{{ showParentPassword ? 'Hide' : 'Show' }}</span>
+              </button>
+            </div>
             <p id="parent-password-help" class="mt-2 text-xs text-slate-500 dark:text-slate-400">Use at least 8 characters.</p>
           </div>
           <div>
             <label class="text-sm font-semibold text-slate-700 dark:text-slate-200" for="parent-confirm-password">Confirm Password</label>
-            <input id="parent-confirm-password" v-model="parent.confirmPassword" required minlength="8" type="password" autocomplete="new-password" class="focus-ring mt-2 w-full rounded-md border border-slate-300 bg-white px-4 py-3 text-sm dark:border-slate-700 dark:bg-slate-950">
+            <div class="relative mt-2">
+              <input id="parent-confirm-password" v-model="parent.confirmPassword" required minlength="8" :type="showParentConfirmPassword ? 'text' : 'password'" autocomplete="new-password" class="focus-ring w-full rounded-md border border-slate-300 bg-white px-4 py-3 pr-24 text-sm dark:border-slate-700 dark:bg-slate-950">
+              <button
+                type="button"
+                class="focus-ring absolute inset-y-1 right-1 inline-flex items-center gap-1 rounded-md px-3 text-xs font-bold text-brand-purple hover:bg-purple-50 dark:text-brand-gold dark:hover:bg-slate-800"
+                :aria-label="showParentConfirmPassword ? 'Hide confirm password' : 'Show confirm password'"
+                :aria-pressed="showParentConfirmPassword"
+                @click="showParentConfirmPassword = !showParentConfirmPassword"
+              >
+                <span>{{ showParentConfirmPassword ? 'Hide' : 'Show' }}</span>
+              </button>
+            </div>
           </div>
         </div>
 
@@ -506,6 +631,52 @@ const submitRegistration = async () => {
             <label class="text-sm font-semibold text-slate-700 dark:text-slate-200" for="student-age">{{ t('register.fields.age') }}</label>
             <input id="student-age" v-model.number="currentChild.age" required min="3" max="18" type="number" class="focus-ring mt-2 w-full rounded-md border border-slate-300 bg-white px-4 py-3 text-sm dark:border-slate-700 dark:bg-slate-950">
           </div>
+          <div class="sm:col-span-2 rounded-lg border border-slate-200 bg-slate-50 p-4 dark:border-slate-800 dark:bg-slate-950/60">
+            <div class="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+              <div>
+                <p class="text-sm font-bold text-slate-950 dark:text-white">Create a separate login for this student?</p>
+                <p class="mt-1 text-sm leading-6 text-slate-600 dark:text-slate-300">{{ studentLoginHelperText(currentChild) }}</p>
+              </div>
+              <span
+                :class="[
+                  'rounded-full px-3 py-1 text-xs font-bold',
+                  isTeenOrOlder(currentChild)
+                    ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-200'
+                    : 'bg-sky-100 text-sky-700 dark:bg-sky-950 dark:text-sky-200'
+                ]"
+              >
+                {{ isTeenOrOlder(currentChild) ? 'Recommended: separate login' : 'Default: parent-managed' }}
+              </span>
+            </div>
+            <div class="mt-4 grid gap-3 sm:grid-cols-2">
+              <button
+                type="button"
+                :class="[
+                  'focus-ring rounded-md border p-4 text-left transition',
+                  !currentChild.wantsStudentLogin
+                    ? 'border-brand-purple bg-purple-50 text-brand-purple dark:border-brand-gold dark:bg-purple-950/40 dark:text-brand-gold'
+                    : 'border-slate-200 bg-white text-slate-700 hover:border-brand-purple dark:border-slate-800 dark:bg-slate-900 dark:text-slate-200'
+                ]"
+                @click="setStudentLoginChoice(currentChild, false)"
+              >
+                <span class="block font-bold">No, manage through the parent account</span>
+                <span class="mt-1 block text-sm leading-6">The child stays linked to the parent dashboard and does not need login credentials.</span>
+              </button>
+              <button
+                type="button"
+                :class="[
+                  'focus-ring rounded-md border p-4 text-left transition',
+                  currentChild.wantsStudentLogin
+                    ? 'border-brand-purple bg-purple-50 text-brand-purple dark:border-brand-gold dark:bg-purple-950/40 dark:text-brand-gold'
+                    : 'border-slate-200 bg-white text-slate-700 hover:border-brand-purple dark:border-slate-800 dark:bg-slate-900 dark:text-slate-200'
+                ]"
+                @click="setStudentLoginChoice(currentChild, true)"
+              >
+                <span class="block font-bold">Yes, create a separate student account</span>
+                <span class="mt-1 block text-sm leading-6">The student can log in separately and see only their own dashboard.</span>
+              </button>
+            </div>
+          </div>
           <div>
             <label class="text-sm font-semibold text-slate-700 dark:text-slate-200" for="native-language">{{ t('register.fields.nativeLanguage') }}</label>
             <select id="native-language" v-model="currentChild.nativeLanguage" required class="focus-ring mt-2 w-full rounded-md border border-slate-300 bg-white px-4 py-3 text-sm dark:border-slate-700 dark:bg-slate-950">
@@ -523,34 +694,69 @@ const submitRegistration = async () => {
         </div>
 
         <div v-else-if="currentStep === 4" class="mt-6 grid gap-5">
-          <div v-if="Number(currentChild.age) < 13" class="rounded-lg border border-sky-200 bg-sky-50 p-5 text-sky-900 dark:border-sky-900 dark:bg-sky-950/40 dark:text-sky-100">
-            <h3 class="font-bold">No separate login is needed</h3>
-            <p class="mt-2 text-sm leading-6">Children under 13 use their parent account. The parent can manage this profile from the Parent Dashboard.</p>
+          <div class="rounded-lg border border-slate-200 bg-slate-50 p-5 dark:border-slate-800 dark:bg-slate-950/60">
+            <div class="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+              <div>
+                <h3 class="font-bold text-slate-950 dark:text-white">
+                  {{ currentChild.wantsStudentLogin ? 'Separate student login selected' : 'Managed by parent account' }}
+                </h3>
+                <p class="mt-2 text-sm leading-6 text-slate-600 dark:text-slate-300">
+                  {{ currentChild.wantsStudentLogin
+                    ? 'This student will have a separate Student Dashboard and will remain linked to the parent account.'
+                    : 'No student credentials are needed. The parent can manage this child from the Parent Dashboard.' }}
+                </p>
+              </div>
+              <button type="button" class="focus-ring rounded-md border border-slate-300 px-3 py-2 text-sm font-bold text-slate-700 dark:border-slate-700 dark:text-slate-200" @click="goToStep(3)">
+                Change choice
+              </button>
+            </div>
           </div>
-          <template v-else>
-            <label class="flex gap-3 rounded-lg border border-slate-200 p-4 dark:border-slate-800">
-              <input v-model="currentChild.wantsStudentLogin" type="checkbox" class="mt-1 h-4 w-4 rounded border-slate-300 text-brand-purple">
-              <span>
-                <span class="block font-bold text-slate-950 dark:text-white">Create optional student login</span>
-                <span class="mt-1 block text-sm leading-6 text-slate-600 dark:text-slate-300">This student will have their own Student Dashboard while remaining linked to the parent account.</span>
-              </span>
-            </label>
-            <div v-if="currentChild.wantsStudentLogin" class="grid gap-5 sm:grid-cols-2">
-              <div class="sm:col-span-2">
-                <label class="text-sm font-semibold text-slate-700 dark:text-slate-200" for="student-login-identifier">Student Email or Username</label>
-                <input id="student-login-identifier" v-model="currentChild.studentIdentifier" required type="text" autocomplete="username" class="focus-ring mt-2 w-full rounded-md border border-slate-300 bg-white px-4 py-3 text-sm dark:border-slate-700 dark:bg-slate-950">
+
+          <div v-if="currentChild.wantsStudentLogin" class="grid gap-5 sm:grid-cols-2">
+            <div class="sm:col-span-2">
+              <label class="text-sm font-semibold text-slate-700 dark:text-slate-200" for="student-login-email">Student Email</label>
+              <input id="student-login-email" v-model="currentChild.studentEmail" required type="email" autocomplete="email" class="focus-ring mt-2 w-full rounded-md border border-slate-300 bg-white px-4 py-3 text-sm dark:border-slate-700 dark:bg-slate-950">
+              <p class="mt-2 text-xs leading-5 text-slate-500 dark:text-slate-400">
+                Use an email address that is different from the parent email and any sibling account email.
+              </p>
+            </div>
+            <div>
+              <label class="text-sm font-semibold text-slate-700 dark:text-slate-200" for="student-password">Student Password</label>
+              <div class="relative mt-2">
+                <input id="student-password" v-model="currentChild.studentPassword" required minlength="8" :type="showStudentPassword ? 'text' : 'password'" autocomplete="new-password" class="focus-ring w-full rounded-md border border-slate-300 bg-white px-4 py-3 pr-24 text-sm dark:border-slate-700 dark:bg-slate-950">
+                <button
+                  type="button"
+                  class="focus-ring absolute inset-y-1 right-1 inline-flex items-center gap-1 rounded-md px-3 text-xs font-bold text-brand-purple hover:bg-purple-50 dark:text-brand-gold dark:hover:bg-slate-800"
+                  :aria-label="showStudentPassword ? 'Hide student password' : 'Show student password'"
+                  :aria-pressed="showStudentPassword"
+                  @click="showStudentPassword = !showStudentPassword"
+                >
+                  <span>{{ showStudentPassword ? 'Hide' : 'Show' }}</span>
+                </button>
               </div>
-              <div>
-                <label class="text-sm font-semibold text-slate-700 dark:text-slate-200" for="student-password">Student Password</label>
-                <input id="student-password" v-model="currentChild.studentPassword" required minlength="8" type="password" autocomplete="new-password" class="focus-ring mt-2 w-full rounded-md border border-slate-300 bg-white px-4 py-3 text-sm dark:border-slate-700 dark:bg-slate-950">
-                <p class="mt-2 text-xs text-slate-500 dark:text-slate-400">Use at least 8 characters.</p>
-              </div>
-              <div>
-                <label class="text-sm font-semibold text-slate-700 dark:text-slate-200" for="student-confirm-password">Confirm Student Password</label>
-                <input id="student-confirm-password" v-model="currentChild.confirmStudentPassword" required minlength="8" type="password" autocomplete="new-password" class="focus-ring mt-2 w-full rounded-md border border-slate-300 bg-white px-4 py-3 text-sm dark:border-slate-700 dark:bg-slate-950">
+              <p class="mt-2 text-xs text-slate-500 dark:text-slate-400">Use at least 8 characters.</p>
+            </div>
+            <div>
+              <label class="text-sm font-semibold text-slate-700 dark:text-slate-200" for="student-confirm-password">Confirm Student Password</label>
+              <div class="relative mt-2">
+                <input id="student-confirm-password" v-model="currentChild.confirmStudentPassword" required minlength="8" :type="showStudentConfirmPassword ? 'text' : 'password'" autocomplete="new-password" class="focus-ring w-full rounded-md border border-slate-300 bg-white px-4 py-3 pr-24 text-sm dark:border-slate-700 dark:bg-slate-950">
+                <button
+                  type="button"
+                  class="focus-ring absolute inset-y-1 right-1 inline-flex items-center gap-1 rounded-md px-3 text-xs font-bold text-brand-purple hover:bg-purple-50 dark:text-brand-gold dark:hover:bg-slate-800"
+                  :aria-label="showStudentConfirmPassword ? 'Hide confirm student password' : 'Show confirm student password'"
+                  :aria-pressed="showStudentConfirmPassword"
+                  @click="showStudentConfirmPassword = !showStudentConfirmPassword"
+                >
+                  <span>{{ showStudentConfirmPassword ? 'Hide' : 'Show' }}</span>
+                </button>
               </div>
             </div>
-          </template>
+          </div>
+
+          <div v-else class="rounded-lg border border-sky-200 bg-sky-50 p-5 text-sky-900 dark:border-sky-900 dark:bg-sky-950/40 dark:text-sky-100">
+            <h3 class="font-bold">Managed by parent account</h3>
+            <p class="mt-2 text-sm leading-6">This child will not have separate login credentials. The parent can still view payments, classes, homework, attendance, reports, and notifications for this child.</p>
+          </div>
         </div>
 
         <div v-else-if="currentStep === 5" class="mt-6 grid gap-5">
@@ -613,7 +819,7 @@ const submitRegistration = async () => {
         <div v-else-if="currentStep === 6" class="mt-6 grid gap-4">
           <article
             v-for="(child, index) in children"
-            :key="child.id"
+            :key="child.clientRequestId"
             class="rounded-lg border border-slate-200 p-4 dark:border-slate-800"
           >
             <div class="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
@@ -622,6 +828,12 @@ const submitRegistration = async () => {
                 <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">{{ child.age || t('register.review.agePending') }} | {{ child.currentLanguageLevel ? getLanguageLevelLabel(child.currentLanguageLevel) : t('register.review.levelPending') }}</p>
                 <p class="mt-2 text-sm font-semibold text-brand-purple dark:text-brand-gold">{{ child.courseName || t('register.review.coursePending') }}</p>
                 <p class="mt-1 text-sm text-slate-600 dark:text-slate-300">{{ getClassTypeLabel(child.classType) }} | {{ getSchedulePreferenceLabel(child.schedulePreference) }}</p>
+                <p class="mt-2 text-sm font-semibold text-slate-700 dark:text-slate-200">
+                  Separate login:
+                  <span :class="child.wantsStudentLogin ? 'text-emerald-600 dark:text-emerald-300' : 'text-sky-600 dark:text-sky-300'">
+                    {{ child.wantsStudentLogin ? 'Yes - student can log in separately' : 'No - managed by parent account' }}
+                  </span>
+                </p>
               </div>
               <button type="button" class="focus-ring rounded-md border border-slate-300 px-3 py-2 text-sm font-bold text-slate-700 dark:border-slate-700 dark:text-slate-200" @click="editChild(index)">
                 {{ t('register.review.edit') }}
@@ -662,7 +874,7 @@ const submitRegistration = async () => {
           <div class="flex gap-3">
             <BaseButton v-if="currentStep > 1" type="button" variant="outline" @click="previousStep">{{ t('register.actions.back') }}</BaseButton>
             <BaseButton v-if="currentStep < steps.length" type="button" @click="nextStep">{{ t('register.actions.continue') }}</BaseButton>
-            <BaseButton v-else type="submit" :loading="isSubmitting">
+            <BaseButton v-else type="submit" :loading="isSubmitting" :disabled="isSubmitting || submitted">
               {{ isSubmitting ? t('register.actions.submitting') : t('register.submitIdle') }}
             </BaseButton>
           </div>
@@ -672,13 +884,25 @@ const submitRegistration = async () => {
           </p>
         </div>
 
-        <div v-if="submitted && generatedReferralCodes.length" class="mt-5 rounded-lg bg-purple-50 p-4 text-sm text-brand-purple dark:bg-purple-950/40 dark:text-purple-100">
-          <p class="font-bold">{{ t('register.actions.referralCodes') }}</p>
-          <div class="mt-3 grid gap-2 sm:grid-cols-2">
-            <p v-for="item in generatedReferralCodes" :key="item.code" class="rounded-md bg-white p-3 dark:bg-slate-900">
-              {{ item.name }}: <strong>{{ item.code }}</strong>
-            </p>
+        <div v-if="successSummary" class="mt-5 rounded-lg border border-emerald-200 bg-emerald-50 p-5 text-sm text-emerald-950 dark:border-emerald-900 dark:bg-emerald-950/40 dark:text-emerald-100" role="status" aria-live="polite">
+          <p class="text-lg font-bold">Family registration complete</p>
+          <p class="mt-2 leading-6">{{ successSummary.message }}</p>
+          <div class="mt-4 grid gap-2 sm:grid-cols-2">
+            <div v-for="child in successSummary.children" :key="child.id" class="rounded-md bg-white p-3 dark:bg-slate-900">
+              <p class="font-bold">{{ child.name }}</p>
+              <p class="mt-1 text-xs leading-5">
+                {{ child.hasSeparateLogin ? `Separate student account: ${child.email ?? 'created'}` : 'Managed through the parent account' }}
+              </p>
+            </div>
           </div>
+          <p class="mt-4 text-xs leading-5">
+            {{ successSummary.sessionFlow === 'authenticated'
+              ? 'Opening the Parent Dashboard...'
+              : successSummary.sessionFlow === 'email_confirmation_required'
+                ? 'Please confirm the parent email, then sign in. Opening login...'
+                : 'Opening parent login...' }}
+          </p>
+          <BaseButton :to="redirectDestination" size="sm" class="mt-4">Continue now</BaseButton>
         </div>
       </form>
     </div>

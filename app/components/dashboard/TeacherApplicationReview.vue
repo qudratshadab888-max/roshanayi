@@ -125,5 +125,5 @@ const formatSize = (size: number) => size < 1024 * 1024 ? `${Math.max(Math.round
 .review-card dt { @apply text-xs font-bold uppercase text-slate-500; }
 .review-card dd { @apply text-sm font-semibold text-slate-800 dark:text-slate-100; }
 .review-label { @apply mb-2 block text-sm font-bold text-slate-700 dark:text-slate-200; }
-.review-input { @apply focus-ring w-full rounded-md border border-slate-300 bg-white px-4 py-3 text-sm dark:border-slate-700 dark:bg-slate-900; }
+.review-input { @apply w-full rounded-md border border-slate-300 bg-white px-4 py-3 text-sm focus-visible:ring-2 focus-visible:ring-brand-gold focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:border-slate-700 dark:bg-slate-900 dark:focus-visible:ring-offset-slate-950; }
 </style>

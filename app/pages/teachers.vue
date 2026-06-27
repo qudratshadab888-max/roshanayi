@@ -5,6 +5,7 @@ const { t, tm } = useI18n()
 const { teachers } = useAcademyData()
 const { publicTeacherProfiles } = useTeacherApplications()
 const allTeachers = computed(() => [...teachers.value, ...publicTeacherProfiles.value])
+const teacherApplicationPath = '/apply-teacher#teacher-application-form'
 
 useSeoMeta({
   title: () => t('seo.teachers.title'),
@@ -30,7 +31,19 @@ const standards = computed(() => tm<string[]>('teachersPage.standards.items'))
       <div class="container-wide mt-10 rounded-lg border border-purple-200 bg-purple-50 p-6 text-center dark:border-purple-900 dark:bg-purple-950/40">
         <h2 class="text-2xl font-black text-slate-950 dark:text-white">Interested in teaching with Roshanayi?</h2>
         <p class="mx-auto mt-2 max-w-2xl text-sm leading-6 text-slate-600 dark:text-slate-300">Submit your experience, availability, public profile details, and qualifications for academy review.</p>
-        <BaseButton to="/apply-teacher" class="mt-5">Apply as a Teacher</BaseButton>
+        <NuxtLink
+          :to="teacherApplicationPath"
+          custom
+          v-slot="{ href, navigate }"
+        >
+          <a
+            :href="href ?? teacherApplicationPath"
+            class="focus-ring mt-5 inline-flex items-center justify-center rounded-md bg-brand-purple px-5 py-3 text-sm font-semibold text-white shadow-lift transition hover:bg-brand-purpleDark dark:bg-brand-gold dark:text-slate-950 dark:hover:bg-amber-300"
+            @click="navigate"
+          >
+            Apply as a Teacher
+          </a>
+        </NuxtLink>
       </div>
     </section>
 

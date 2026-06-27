@@ -51,7 +51,7 @@ onMounted(() => {
 })
 
 const logoutAndReturn = async () => {
-  logout()
+  await logout()
   isOpen.value = false
   await navigateTo('/login')
 }

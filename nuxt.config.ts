@@ -4,9 +4,19 @@ export default defineNuxtConfig({
   css: ['~/assets/css/main.css'],
   devtools: { enabled: false },
   runtimeConfig: {
+    supabaseUrl: process.env.SUPABASE_URL || process.env.NUXT_PUBLIC_SUPABASE_URL || '',
+    supabaseServerKey:
+      process.env.SUPABASE_ANON_KEY ||
+      process.env.NUXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY ||
+      process.env.NUXT_PUBLIC_SUPABASE_ANON_KEY ||
+      '',
     public: {
-      supabaseUrl: process.env.NUXT_PUBLIC_SUPABASE_URL || '',
-      supabasePublishableKey: process.env.NUXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY || '',
+      supabaseUrl: process.env.SUPABASE_URL || process.env.NUXT_PUBLIC_SUPABASE_URL || '',
+      supabasePublishableKey:
+        process.env.NUXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY ||
+        process.env.SUPABASE_ANON_KEY ||
+        process.env.NUXT_PUBLIC_SUPABASE_ANON_KEY ||
+        '',
       stripePublishableKey: process.env.NUXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || '',
       paypalClientId: process.env.NUXT_PUBLIC_PAYPAL_CLIENT_ID || ''
     }

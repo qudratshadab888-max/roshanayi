@@ -10,8 +10,7 @@ import {
   getCourseTitle,
   getStatusTone,
   getStudentClassroomAccess,
-  getTeacherName,
-  managementStudents
+  getTeacherName
 } from '~/data/management'
 
 useSeoMeta({
@@ -39,12 +38,10 @@ const selectedClassroomId = ref('')
 const studentId = computed(() =>
   currentUser.value?.role === 'student' && currentUser.value.profileId
     ? currentUser.value.profileId
-    : 'student-amina'
+    : ''
 )
 const registeredStudent = computed(() => getRegisteredStudent(studentId.value))
-const student = computed(() =>
-  registeredStudent.value ?? managementStudents.find((item) => item.id === studentId.value) ?? managementStudents[0]
-)
+const student = computed(() => registeredStudent.value)
 const studentLifecycle = computed(() =>
   registeredStudent.value ? undefined : student.value ? getStudentLifecycleSummary(student.value.id) : undefined
 )
@@ -177,7 +174,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <div>
+  <div v-if="student">
     <PageHero
       :image="pageBackgrounds.dashboard"
       eyebrow="Student"
@@ -387,4 +384,9 @@ onMounted(() => {
       </div>
     </section>
   </div>
+  <section v-else class="section-padding bg-slate-50 dark:bg-slate-950">
+    <div class="container-wide">
+      <LoadingPanel label="Confirming the linked student profile..." />
+    </div>
+  </section>
 </template>

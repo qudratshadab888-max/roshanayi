@@ -42,9 +42,23 @@ const copyright = computed(() =>
             {{ t('layout.footer.description') }}
           </p>
           <div class="mt-6 flex gap-3">
-            <a class="focus-ring rounded-md border border-slate-700 px-3 py-2 text-sm font-semibold text-slate-200 hover:border-brand-gold hover:text-brand-gold" href="https://facebook.com/roshanayiacademy" :aria-label="t('layout.footer.social.facebook')">FB</a>
-            <a class="focus-ring rounded-md border border-slate-700 px-3 py-2 text-sm font-semibold text-slate-200 hover:border-brand-gold hover:text-brand-gold" href="https://instagram.com/roshanayiacademy" :aria-label="t('layout.footer.social.instagram')">IG</a>
-            <a class="focus-ring rounded-md border border-slate-700 px-3 py-2 text-sm font-semibold text-slate-200 hover:border-brand-gold hover:text-brand-gold" href="https://youtube.com/@roshanayiacademy" :aria-label="t('layout.footer.social.youtube')">YT</a>
+            <a class="focus-ring inline-flex h-10 w-10 items-center justify-center rounded-full border border-slate-700 text-slate-200 transition hover:border-brand-gold hover:bg-brand-gold/10 hover:text-brand-gold" href="https://facebook.com/roshanayiacademy" :aria-label="t('layout.footer.social.facebook')">
+              <svg class="h-5 w-5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <path d="M14 8.5h2V5.3A10 10 0 0 0 13.1 5c-2.9 0-4.9 1.8-4.9 5v2.8H5v3.6h3.2V24h3.9v-7.6h3.1l.5-3.6h-3.6v-2.4c0-1 .3-1.9 1.9-1.9Z" />
+              </svg>
+            </a>
+            <a class="focus-ring inline-flex h-10 w-10 items-center justify-center rounded-full border border-slate-700 text-slate-200 transition hover:border-brand-gold hover:bg-brand-gold/10 hover:text-brand-gold" href="https://instagram.com/roshanayiacademy" :aria-label="t('layout.footer.social.instagram')">
+              <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <rect x="3" y="3" width="18" height="18" rx="5" />
+                <circle cx="12" cy="12" r="4" />
+                <path d="M17.5 6.5h.01" />
+              </svg>
+            </a>
+            <a class="focus-ring inline-flex h-10 w-10 items-center justify-center rounded-full border border-slate-700 text-slate-200 transition hover:border-brand-gold hover:bg-brand-gold/10 hover:text-brand-gold" href="https://youtube.com/@roshanayiacademy" :aria-label="t('layout.footer.social.youtube')">
+              <svg class="h-5 w-5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <path d="M21.6 7.2a3 3 0 0 0-2.1-2.1C17.6 4.6 12 4.6 12 4.6s-5.6 0-7.5.5a3 3 0 0 0-2.1 2.1A31.4 31.4 0 0 0 2 12a31.4 31.4 0 0 0 .4 4.8 3 3 0 0 0 2.1 2.1c1.9.5 7.5.5 7.5.5s5.6 0 7.5-.5a3 3 0 0 0 2.1-2.1A31.4 31.4 0 0 0 22 12a31.4 31.4 0 0 0-.4-4.8ZM10 15.5v-7l6 3.5-6 3.5Z" />
+              </svg>
+            </a>
           </div>
         </div>
 

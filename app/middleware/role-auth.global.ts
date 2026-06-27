@@ -1,6 +1,6 @@
 import { canUserAccessClassroom, managementStudents } from '~/data/management'
 
-export default defineNuxtRouteMiddleware((to) => {
+export default defineNuxtRouteMiddleware(async (to) => {
   if (import.meta.server) {
     return
   }
@@ -14,7 +14,7 @@ export default defineNuxtRouteMiddleware((to) => {
 
   const { currentUser, dashboardPath, syncUser, canAccessPath } = useRoleAuth()
 
-  syncUser()
+  await syncUser()
 
   if (to.path === '/dashboard') {
     return navigateTo(currentUser.value ? dashboardPath.value : '/login')
@@ -39,13 +39,15 @@ export default defineNuxtRouteMiddleware((to) => {
     const sharedClassroom = classroomRecords.value.find((classroom) => classroom.id === classroomId)
     const sharedSchedule = schedules.value.find((schedule) => schedule.id === sharedClassroom?.scheduleId)
     const user = currentUser.value
+    const { registeredStudents } = useFamilyAccounts()
+    const linkedStudents = [...managementStudents, ...registeredStudents.value]
     const hasSharedAccess = Boolean(
       user && sharedClassroom && sharedSchedule && (
         user.role === 'super-admin' ||
         user.role === 'manager' ||
         (user.role === 'teacher' && sharedClassroom.teacherId === user.profileId) ||
         (user.role === 'student' && Boolean(user.profileId && sharedSchedule.enrolledStudentIds.includes(user.profileId))) ||
-        (user.role === 'parent' && managementStudents.some(
+        (user.role === 'parent' && linkedStudents.some(
           (student) => student.parentId === user.profileId && sharedSchedule.enrolledStudentIds.includes(student.id)
         ))
       )

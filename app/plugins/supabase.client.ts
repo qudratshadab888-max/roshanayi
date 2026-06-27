@@ -9,9 +9,9 @@ export default defineNuxtPlugin(() => {
   const supabase: SupabaseClient | null = supabaseUrl && supabasePublishableKey
     ? createClient(supabaseUrl, supabasePublishableKey, {
         auth: {
-          autoRefreshToken: import.meta.client,
-          detectSessionInUrl: import.meta.client,
-          persistSession: import.meta.client
+          autoRefreshToken: true,
+          detectSessionInUrl: true,
+          persistSession: true
         }
       })
     : null

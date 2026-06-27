@@ -8,7 +8,6 @@ import {
   getPaymentForStudent,
   getStatusTone,
   getStudentClassroomAccess,
-  getStudentName,
   getTeacherName,
   managementCourses,
   managementStudents,
@@ -49,6 +48,7 @@ import {
 const route = useRoute()
 const { locale } = useI18n()
 const { currentUser, syncUser } = useRoleAuth()
+const { registeredStudents } = useFamilyAccounts()
 const { initialize: initializePayments, getStudentPaymentAccess } = usePaymentSystem()
 const { approvedManagementTeachers, getApplicationTeacherName } = useTeacherApplications()
 const availableTeachers = computed(() => [...managementTeachers, ...approvedManagementTeachers.value])
@@ -102,9 +102,16 @@ const schedule = computed(() =>
   classroom.value ? schedules.value.find((item) => item.id === classroom.value?.scheduleId) : undefined
 )
 const liveSession = computed(() => liveSessions.value.find((item) => item.classroomId === classroomId.value))
+const academyStudents = computed(() => {
+  const students = new Map(managementStudents.map((student) => [student.id, student]))
+  registeredStudents.value.forEach((student) => students.set(student.id, student))
+  return Array.from(students.values())
+})
 const enrolledStudents = computed(() =>
-  managementStudents.filter((student) => schedule.value?.enrolledStudentIds.includes(student.id))
+  academyStudents.value.filter((student) => schedule.value?.enrolledStudentIds.includes(student.id))
 )
+const academyStudentName = (studentId: string) =>
+  academyStudents.value.find((student) => student.id === studentId)?.name ?? 'Student'
 const accessibleStudents = computed(() => {
   if (currentUser.value?.role === 'student') {
     return enrolledStudents.value.filter((student) => student.id === currentUser.value?.profileId)
@@ -384,7 +391,7 @@ const homeworkSubmissions = computed(() =>
       assignmentTitle:
         localText(assignments.value.find((assignment) => assignment.id === submission.assignmentId)?.title ?? '') ||
         ui.value.classroomDetail.fallbacks.unknownAssignment,
-      studentName: getStudentName(submission.studentId)
+      studentName: academyStudentName(submission.studentId)
     }))
 )
 const visibleHomeworkSubmissions = computed(() => {
@@ -394,7 +401,7 @@ const visibleHomeworkSubmissions = computed(() => {
 
   if (currentUser.value?.role === 'parent') {
     const childIds = new Set(
-      managementStudents.filter((student) => student.parentId === currentUser.value?.profileId).map((student) => student.id)
+      academyStudents.value.filter((student) => student.parentId === currentUser.value?.profileId).map((student) => student.id)
     )
     return homeworkSubmissions.value.filter((submission) => childIds.has(submission.studentId))
   }
@@ -405,7 +412,7 @@ const visibleHomeworkSubmissions = computed(() => {
 const attendanceRows = computed(() =>
   attendance.value
     .filter((record) => record.scheduleId === schedule.value?.id)
-    .map((record) => ({ ...record, studentName: getStudentName(record.studentId) }))
+    .map((record) => ({ ...record, studentName: academyStudentName(record.studentId) }))
 )
 const visibleAttendanceRows = computed(() => {
   if (currentUser.value?.role === 'student') {
@@ -413,7 +420,7 @@ const visibleAttendanceRows = computed(() => {
   }
   if (currentUser.value?.role === 'parent') {
     const childIds = new Set(
-      managementStudents.filter((student) => student.parentId === currentUser.value?.profileId).map((student) => student.id)
+      academyStudents.value.filter((student) => student.parentId === currentUser.value?.profileId).map((student) => student.id)
     )
     return attendanceRows.value.filter((record) => childIds.has(record.studentId))
   }
@@ -424,7 +431,7 @@ const resources = computed(() => materials.value.filter((resource) => resource.c
 const progressRows = computed(() =>
   progress.value
     .filter((record) => record.classroomId === classroomId.value)
-    .map((record) => ({ ...record, studentName: getStudentName(record.studentId) }))
+    .map((record) => ({ ...record, studentName: academyStudentName(record.studentId) }))
 )
 const visibleProgressRows = computed(() => {
   if (currentUser.value?.role === 'student') {
@@ -432,7 +439,7 @@ const visibleProgressRows = computed(() => {
   }
   if (currentUser.value?.role === 'parent') {
     const childIds = new Set(
-      managementStudents.filter((student) => student.parentId === currentUser.value?.profileId).map((student) => student.id)
+      academyStudents.value.filter((student) => student.parentId === currentUser.value?.profileId).map((student) => student.id)
     )
     return progressRows.value.filter((record) => childIds.has(record.studentId))
   }
@@ -450,7 +457,7 @@ const visibleReports = computed(() => {
 
   if (currentUser.value?.role === 'parent') {
     const childIds = new Set(
-      managementStudents.filter((student) => student.parentId === currentUser.value?.profileId).map((student) => student.id)
+      academyStudents.value.filter((student) => student.parentId === currentUser.value?.profileId).map((student) => student.id)
     )
     return classroomReports.filter((report) => childIds.has(report.studentId))
   }
@@ -1419,7 +1426,7 @@ const videoFeatureLabel = (feature: string) => getVideoFeatureLabel(locale.value
               <article v-for="report in visibleReports" :key="report.id" class="rounded-md border border-slate-200 p-5 dark:border-slate-800">
                 <div class="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                   <div>
-                    <h3 class="font-bold text-slate-950 dark:text-white">{{ getStudentName(report.studentId) }}</h3>
+                    <h3 class="font-bold text-slate-950 dark:text-white">{{ academyStudentName(report.studentId) }}</h3>
                     <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">{{ report.month }}</p>
                   </div>
                   <span :class="['rounded-full px-3 py-1 text-xs font-bold uppercase', getStatusTone(report.status)]">{{ statusLabel(report.status) }}</span>

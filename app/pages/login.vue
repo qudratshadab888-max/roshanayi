@@ -13,13 +13,21 @@ useSeoMeta({
 
 const identifier = ref('')
 const password = ref('')
+const showPassword = ref(false)
 const rememberMe = ref(true)
 const isSubmitting = ref(false)
 const errorMessage = ref('')
+const registrationMessage = computed(() => {
+  if (route.query.registered !== '1') return ''
+  return route.query.confirm === '1'
+    ? 'Registration is complete. Confirm the parent email address, then sign in.'
+    : 'Registration is complete. Sign in with the parent email and password.'
+})
 
 onMounted(syncUser)
 
 const login = async () => {
+  if (isSubmitting.value) return
   errorMessage.value = ''
   if (!identifier.value.trim() || !password.value) {
     errorMessage.value = 'Enter your email or username and password.'
@@ -30,15 +38,15 @@ const login = async () => {
   let user = null
   try {
     user = await loginWithCredentials(identifier.value, password.value, rememberMe.value)
-  } catch {
-    errorMessage.value = 'Login is temporarily unavailable. Please try again.'
+  } catch (error) {
+    errorMessage.value = error instanceof Error ? error.message : 'Login is temporarily unavailable. Please try again.'
     return
   } finally {
     isSubmitting.value = false
   }
 
   if (!user) {
-    errorMessage.value = 'The email/username or password is incorrect.'
+    errorMessage.value = 'The email, username, or password is incorrect.'
     return
   }
 
@@ -49,8 +57,8 @@ const login = async () => {
   await navigateTo(destination)
 }
 
-const switchAccount = () => {
-  logout()
+const switchAccount = async () => {
+  await logout()
   identifier.value = ''
   password.value = ''
   errorMessage.value = ''
@@ -75,7 +83,7 @@ const switchAccount = () => {
           <article class="rounded-lg border border-white/15 bg-white/10 p-5 backdrop-blur">
             <p class="text-sm font-bold uppercase tracking-[0.16em] text-brand-gold">Families</p>
             <h2 class="mt-2 text-xl font-bold text-white">Parent and student access</h2>
-            <p class="mt-2 text-sm leading-6 text-slate-200">Parents use their email. Students aged 13+ can use an optional email or username created during registration.</p>
+            <p class="mt-2 text-sm leading-6 text-slate-200">Parents use their email. Students can sign in only when a separate student account is linked to their profile.</p>
           </article>
           <article class="rounded-lg border border-white/15 bg-white/10 p-5 backdrop-blur">
             <p class="text-sm font-bold uppercase tracking-[0.16em] text-brand-gold">Academy staff</p>
@@ -107,7 +115,7 @@ const switchAccount = () => {
           </div>
 
           <div>
-            <label class="text-sm font-semibold text-slate-700 dark:text-slate-200" for="login-identifier">Email or username</label>
+            <label class="text-sm font-semibold text-slate-700 dark:text-slate-200" for="login-identifier">Email address</label>
             <input
               id="login-identifier"
               v-model="identifier"
@@ -120,20 +128,35 @@ const switchAccount = () => {
 
           <div>
             <label class="text-sm font-semibold text-slate-700 dark:text-slate-200" for="login-password">{{ t('common.labels.password') }}</label>
-            <input
-              id="login-password"
-              v-model="password"
-              required
-              type="password"
-              autocomplete="current-password"
-              class="focus-ring mt-2 w-full rounded-md border border-slate-300 bg-white px-4 py-3 text-sm dark:border-slate-700 dark:bg-slate-950"
-            >
+            <div class="relative mt-2">
+              <input
+                id="login-password"
+                v-model="password"
+                required
+                :type="showPassword ? 'text' : 'password'"
+                autocomplete="current-password"
+                class="focus-ring w-full rounded-md border border-slate-300 bg-white px-4 py-3 pr-24 text-sm dark:border-slate-700 dark:bg-slate-950"
+              >
+              <button
+                type="button"
+                class="focus-ring absolute inset-y-1 right-1 inline-flex items-center gap-1 rounded-md px-3 text-xs font-bold text-brand-purple hover:bg-purple-50 dark:text-brand-gold dark:hover:bg-slate-800"
+                :aria-label="showPassword ? 'Hide password' : 'Show password'"
+                :aria-pressed="showPassword"
+                @click="showPassword = !showPassword"
+              >
+                <span>{{ showPassword ? 'Hide' : 'Show' }}</span>
+              </button>
+            </div>
           </div>
 
           <label class="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-300">
             <input v-model="rememberMe" type="checkbox" class="h-4 w-4 rounded border-slate-300 text-brand-purple">
             {{ t('login.rememberRole') }}
           </label>
+
+          <p v-if="registrationMessage" class="rounded-md bg-emerald-50 p-3 text-sm font-semibold text-emerald-800 dark:bg-emerald-950/40 dark:text-emerald-100" role="status">
+            {{ registrationMessage }}
+          </p>
 
           <p v-if="errorMessage" class="rounded-md bg-rose-50 p-3 text-sm font-semibold text-rose-700 dark:bg-rose-950/40 dark:text-rose-200" role="alert">
             {{ errorMessage }}
@@ -144,7 +167,7 @@ const switchAccount = () => {
           </BaseButton>
 
           <div class="rounded-md bg-slate-50 p-3 text-xs leading-5 text-slate-600 dark:bg-slate-800 dark:text-slate-300">
-            Demo: <strong>parent@roshanayi.academy</strong> / <strong>demo1234</strong>
+            Use the parent or staff email, or the student email when a separate student account was created.
           </div>
         </form>
 
